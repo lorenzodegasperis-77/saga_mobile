@@ -1,58 +1,83 @@
 <!DOCTYPE html>
 <html lang="it">
-<link rel="icon" type="image/x-icon" href="img/favicon.ico" />
-
 <head>
-    <title>SAGA - Personaggi</title>
-    <script>
-        if (sessionStorage.getItem('splashShown')) {
-            document.documentElement.classList.add('splash-skipped');
-        }
-    </script>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="img/favicon.ico">
     <link rel="stylesheet" href="static/style.css">
-    </script>
+    <title>SAGA - Personaggi</title>
 </head>
 <body>
 
     <div class="border-frame" id="main-menu">
         <div>
-			<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user w-5 h-5">
-			<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
         </div>
         
         <h1>PERSONAGGI</h1>
         <div class="subtitle">Il tuo cammino finora</div>
 
+        <div class="menu-container" id="characters-list">
+            <p style="text-align: center; opacity: 0.6;">Caricamento personaggi...</p>
+        </div>
+
         <div class="menu-container">
-            
-            <div class="adventure-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <h3 style="margin: 0;">Alaric lo Scout</h3>
-                    <span class="badge">Liv. 5</span>
-                </div>
-                <p><strong>Avventura:</strong> Le Ombre di Eldoria</p>
-                <p><strong>Progresso:</strong> Capitolo 3 - Il Bosco Atro</p>
-                <a href="#" class="btn-main primary" style="padding: 8px; font-size: 0.8rem; margin-top: 10px;">CONTINUA</a>
-            </div>
-
-            <div class="adventure-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                    <h3 style="margin: 0;">Morgana</h3>
-                    <span class="badge">Liv. 2</span>
-                </div>
-                <p><strong>Avventura:</strong> Il Trono di Ossa</p>
-                <p><strong>Progresso:</strong> Capitolo 1 - La Cripta</p>
-                <a href="#" class="btn-main primary" style="padding: 8px; font-size: 0.8rem; margin-top: 10px;">CONTINUA</a>
-            </div>
-
-            <a href="#" class="btn-main secondary" style="border-style: dashed; opacity: 0.7;">+ NUOVO PERSONAGGIO</a>
+            <a href="character_creator.html" class="btn-main secondary" style="border-style: dashed; opacity: 0.7;">+ NUOVO PERSONAGGIO</a>
             <a href="index.html" class="btn-main secondary" style="margin-top: 10px;">TORNA AL MENU</a>
         </div>
     </div>
 
+    <script>
+        // INSERISCI QUI L'URL COPIATO DA GOOGLE APPS SCRIPT
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxIlu7hjZFsygAr-EVbUYoQDTU4bw0HRmRMAEY_BQqACBOjcHQCAzugkZIZGEyVDRCZ8g/exec";
+
+		async function loadCharacters() {
+			const listContainer = document.getElementById('characters-list');
+			
+			try {
+				// Usiamo redirect: 'follow' per gestire il comportamento di Google Script
+				const response = await fetch(SCRIPT_URL + "?action=getPGsummary", {
+					method: 'GET',
+					mode: 'cors', // Assicuriamoci che sia in modalità cors
+					redirect: 'follow'
+				});
+
+				if (!response.ok) throw new Error('Network response was not ok');
+				
+				const data = await response.json();
+				
+				listContainer.innerHTML = '';
+
+				if (!data || data.length === 0) {
+					listContainer.innerHTML = '<p style="text-align:center">Nessun personaggio trovato.</p>';
+					return;
+				}
+
+				data.forEach(char => {
+					const charCard = `
+						<div class="adventure-card">
+							<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+								<h3 style="margin: 0;">${char.p_name || 'Senza nome'}</h3>
+								<span class="badge">HP: ${char.p_hp_curr}/${char.p_hp_max}</span>
+							</div>
+							<p><strong>Sesso:</strong> ${char.p_sex || '-'}</p>
+							<p><strong>Statistiche:</strong> V:${char.p_vig} I:${char.p_ins} M:${char.p_min}</p>
+							<a href="#" class="btn-main primary" style="padding: 8px; font-size: 0.8rem; margin-top: 10px;">CONTINUA</a>
+						</div>
+					`;
+					listContainer.innerHTML += charCard;
+				});
+			} catch (error) {
+				console.error("Errore nel caricamento:", error);
+				listContainer.innerHTML = '<p style="color:red; text-align:center">Errore nel caricamento: controlla la console.</p>';
+			}
+		}
+
+        // Avvia il caricamento al caricamento della pagina
+        window.onload = loadCharacters;
+    </script>
 </body>
 </html>
