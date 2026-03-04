@@ -25,14 +25,15 @@
         </div>
 
         <div class="menu-container">
-            <a href="character_creator.html" class="btn-main secondary" style="border-style: dashed; opacity: 0.7;">+ NUOVO PERSONAGGIO</a>
+		
+            <a href="create_character.html" class="btn-main secondary" style="border-style: dashed; opacity: 0.7;">+ NUOVO PERSONAGGIO</a>
             <a href="index.html" class="btn-main secondary" style="margin-top: 10px;">TORNA AL MENU</a>
         </div>
     </div>
 
     <script>
         // INSERISCI QUI L'URL COPIATO DA GOOGLE APPS SCRIPT
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxIlu7hjZFsygAr-EVbUYoQDTU4bw0HRmRMAEY_BQqACBOjcHQCAzugkZIZGEyVDRCZ8g/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCiwAvtAVpcT9BkMtVQQolyeWtSWFnBu3NCAtR9qKGg4f0uxfpQLfdmV5QYOH4Db-qGA/exec";
 
 		async function loadCharacters() {
 			const listContainer = document.getElementById('characters-list');
@@ -65,7 +66,7 @@
 							</div>
 							<p><strong>Sesso:</strong> ${char.p_sex || '-'}</p>
 							<p><strong>Statistiche:</strong> V:${char.p_vig} I:${char.p_ins} M:${char.p_min}</p>
-							<a href="#" class="btn-main primary" style="padding: 8px; font-size: 0.8rem; margin-top: 10px;">CONTINUA</a>
+							<a href="character_sheet.html?id=${char.p_id}" class="btn-main primary" style="padding: 8px; font-size: 0.8rem; margin-top: 10px;">CONTINUA</a>
 						</div>
 					`;
 					listContainer.innerHTML += charCard;

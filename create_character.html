@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGA - Creazione Eroe</title>
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        /* Layout per la creazione: Sidebar fissa e Area Dinamica */
+        .creation-container { display: flex; gap: 20px; max-width: 1200px; margin: 0 auto; align-items: flex-start;}
+        
+        /* Pannello Riepilogo Fisso */
+        .summary-panel { 
+            width: 300px; background: rgba(115, 24, 31, 0.05); padding: 15px; 
+            border: 2px solid var(--burgundy); border-radius: 8px; position: sticky; top: 20px;
+        }
+        .summary-stat { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; }
+        
+        /* Area Step */
+        .wizard-panel { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: var(--shadow); }
+        .step { display: none; animation: fadeIn 0.4s; }
+        .step.active { display: block; }
+        
+        /* Stile Card per le Scelte (Origini, Equip, Talenti) */
+        .choice-card { 
+            border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; cursor: pointer;
+            transition: all 0.2s; position: relative;
+        }
+        .choice-card:hover { border-color: var(--burgundy); background: rgba(0,0,0,0.02); }
+        .choice-card.selected { border: 2px solid var(--burgundy); background: rgba(115, 24, 31, 0.1); }
+        .choice-card.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        
+        .card-title { font-weight: bold; font-size: 1.1rem; color: var(--burgundy); }
+        .card-stats { font-size: 0.85rem; background: #eee; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-top: 5px;}
+        
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;}
+    </style>
+</head>
+<body>
+
+    <h2 id="loading-msg" style="text-align: center; color: var(--burgundy);">Consultazione degli Archivi in corso...</h2>
+
+    <div class="creation-container" id="main-ui" style="display: none;">
+        
+        <div class="summary-panel">
+            <h3 style="margin-top:0; border-bottom: 1px solid var(--burgundy); padding-bottom:5px;" id="disp_name">Eroe Ignoto</h3>
+            <p id="disp_sex" style="font-style: italic; margin-bottom: 15px;"></p>
+            
+            <div class="summary-stat"><span>VIG:</span> <span id="disp_vig">5</span></div>
+            <div class="summary-stat"><span>IST:</span> <span id="disp_ins">5</span></div>
+            <div class="summary-stat"><span>MEN:</span> <span id="disp_min">5</span></div>
+            <hr>
+            <div class="summary-stat"><span>Salute Max:</span> <span id="disp_hp">10</span></div>
+            <div class="summary-stat"><span>Energia Max:</span> <span id="disp_en">10</span></div>
+            <div class="summary-stat"><span>Danno base:</span> <span id="disp_dmg">1</span></div>
+            <div class="summary-stat"><span>Protezione:</span> <span id="disp_prot">0</span></div>
+            <hr>
+            <div class="summary-stat" style="color: green;"><span>Crediti:</span> <span id="disp_credits">0</span></div>
+            <div class="summary-stat"><span>Slot Zaino:</span> <span id="disp_slots">10</span></div>
+            <div class="summary-stat"><span>Talenti:</span> <span id="disp_talents_count">0/3</span></div>
+        </div>
+
+        <div class="wizard-panel">
+            
+            <div id="step-1" class="step active">
+                <h3>1. Identità dell'Eroe</h3>
+                <input type="text" id="input_name" placeholder="Nome del Personaggio" class="input-line" oninput="updateState()">
+                <select id="input_sex" class="input-line" style="margin-top: 15px;" onchange="updateState()">
+                    <option value="">Scegli il Sesso...</option>
+                    <option value="M">Maschio</option>
+                    <option value="F">Femmina</option>
+                    <option value="Altro">Altro / Non specificato</option>
+                </select>
+                <div class="nav-buttons">
+                    <div></div> <button class="btn-main primary" onclick="navStep(2)">LIGNAGGIO ❯</button>
+                </div>
+            </div>
+
+            <div id="step-2" class="step">
+                <h3>2. Scegli il Lignaggio</h3>
+                <p>Le tue origini plasmano il tuo corpo e la tua mente.</p>
+                <div id="list-lineage"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(1)">❮ INDIETRO</button>
+                    <button class="btn-main primary" onclick="navStep(3)">INFANZIA ❯</button>
+                </div>
+            </div>
+
+            <div id="step-3" class="step">
+                <h3>3. Scegli l'Infanzia</h3>
+                <p>Come sei cresciuto prima di prendere in mano il tuo destino?</p>
+                <div id="list-childhood"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(2)">❮ INDIETRO</button>
+                    <button class="btn-main primary" onclick="navStep(4)">PROFESSIONE ❯</button>
+                </div>
+            </div>
+
+            <div id="step-4" class="step">
+                <h3>4. Scegli la Professione</h3>
+                <p>Cosa facevi prima di diventare un avventuriero?</p>
+                <div id="list-profession"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(3)">❮ INDIETRO</button>
+                    <button class="btn-main primary" onclick="navStep(5)">EQUIPAGGIAMENTO ❯</button>
+                </div>
+            </div>
+
+			<div id="step-5" class="step">
+				<h3>5. Risorse Iniziali</h3>
+				<div class="dice-roll-stage" id="roll-area">
+					<p>Tira 4d6 per determinare i tuoi crediti iniziali (Risultato x 10).</p>
+					<button class="btn-main primary" onclick="executeCreditRoll()">LANCIA I DADI</button>
+				</div>
+				<div class="dice-roll-stage" id="result-area" style="display:none;">
+					<p>Il destino ha parlato!</p>
+					<span class="dice-value" id="dice-res-val">0</span>
+					<p>Hai ottenuto <strong id="total-credits-val">0</strong> Crediti.</p>
+					<div class="nav-buttons">
+						<button class="btn-main primary" onclick="navStep(6)">ACQUISTA ARMI ❯</button>
+					</div>
+				</div>
+			</div>
+
+			<div id="step-6" class="step">
+				<h3>6. Armeria: Armi</h3>
+				<div id="list-equip-arma"></div>
+				<div class="nav-buttons">
+					<button class="btn-main secondary" onclick="navStep(4)">❮ INDIETRO</button>
+					<button class="btn-main primary" onclick="navStep(7)">PROTEZIONI ❯</button>
+				</div>
+			</div>
+
+			<div id="step-7" class="step">
+				<h3>7. Armeria: Protezioni</h3>
+				<div id="list-equip-prot"></div>
+				<div class="nav-buttons">
+					<button class="btn-main secondary" onclick="navStep(6)">❮ INDIETRO</button>
+					<button class="btn-main primary" onclick="navStep(8)">OGGETTI E SLOT ❯</button>
+				</div>
+			</div>
+
+			<div id="step-8" class="step">
+				<h3>8. Armeria: Altro</h3>
+				<div id="list-equip-slot"></div>
+				<div class="nav-buttons">
+					<button class="btn-main secondary" onclick="navStep(7)">❮ INDIETRO</button>
+					<button class="btn-main primary" onclick="navStep(9)">TALENTI ❯</button>
+				</div>
+			</div>
+
+			<div id="step-9" class="step">
+				<h3>9. Talenti (Max 3)</h3>
+				<div id="list-talents"></div>
+				<div class="nav-buttons">
+					<button class="btn-main secondary" onclick="navStep(8)">❮ INDIETRO</button>
+					<button class="btn-main primary" onclick="finishCreation()">CONCLUDI ❯</button>
+				</div>
+			</div>
+        </div>
+    </div>
+
+    <script>
+        // --- STATO GLOBALE DEL PERSONAGGIO ---
+        const charState = {
+            id: generateUUID(),
+            name: "",
+            sex: "",
+            baseStats: { vig: 5, ins: 5, min: 5 }, // Valori di partenza
+            origins: { lineage: null, childhood: null, profession: null },
+            credits: 0,
+            hasRolledCredits: false,
+            equipment: [], // Array di oggetti
+            talents: []    // Array di talenti scelti
+        };
+
+        // Cache dei Database
+        let db = { heritage: [], equip: [], talents: [] };
+        
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCiwAvtAVpcT9BkMtVQQolyeWtSWFnBu3NCAtR9qKGg4f0uxfpQLfdmV5QYOH4Db-qGA/exec"; // <--- AGGIORNA QUESTO
+
+        // --- INIZIALIZZAZIONE ---
+        window.onload = async () => {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getCreationData`);
+                db = await response.json();
+                
+                document.getElementById('loading-msg').style.display = 'none';
+                document.getElementById('main-ui').style.display = 'flex';
+                
+                renderOriginLists();
+                updateUI();
+            } catch (error) {
+                document.getElementById('loading-msg').innerText = "Errore di connessione agli Archivi.";
+                console.error(error);
+            }
+        };
+
+        // Generatore ID univoco alfanumerico
+        function generateUUID() {
+            return 'PG-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+
+        // --- NAVIGAZIONE WIZARD ---
+		function navStep(stepNum) {
+			document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+			document.getElementById(`step-${stepNum}`).classList.add('active');
+			// Chiamiamo i render specifici in base allo step in cui entriamo
+				if (stepNum >= 6 && stepNum <= 8) {
+					renderEquipList(); // Aggiorna le liste equipaggiamento
+				}
+				if (stepNum === 9) {
+					renderTalentList(); // Aggiorna la lista talenti
+				}
+				
+				// Scroll in alto per comodità dell'utente
+				window.scrollTo(0, 0);
+			}
+
+        // --- AGGIORNAMENTO STATISTICHE E UI ---
+        function updateState() {
+            charState.name = document.getElementById('input_name').value;
+            charState.sex = document.getElementById('input_sex').value;
+            updateUI();
+        }
+
+        function getCalculatedStats() {
+            let vig = charState.baseStats.vig;
+            let ins = charState.baseStats.ins;
+            let min = charState.baseStats.min;
+
+            // Somma i bonus delle origini
+            ['lineage', 'childhood', 'profession'].forEach(type => {
+                if (charState.origins[type]) {
+                    vig += parseInt(charState.origins[type].vig) || 0;
+                    ins += parseInt(charState.origins[type].ins) || 0;
+                    min += parseInt(charState.origins[type].min) || 0;
+                }
+            });
+
+            return { vig, ins, min };
+        }
+
+        function updateUI() {
+            const stats = getCalculatedStats();
+            
+            // Aggiorna Pannello Sinistro
+            document.getElementById('disp_name').innerText = charState.name || "Eroe Ignoto";
+            document.getElementById('disp_sex').innerText = charState.sex;
+            
+            document.getElementById('disp_vig').innerText = stats.vig;
+            document.getElementById('disp_ins').innerText = stats.ins;
+            document.getElementById('disp_min').innerText = stats.min;
+
+            document.getElementById('disp_hp').innerText = stats.vig * 2;
+            document.getElementById('disp_en').innerText = stats.min * 2; // Come richiesto: 2 volte MIN
+            
+            document.getElementById('disp_slots').innerText = stats.vig * 2;
+            document.getElementById('disp_credits').innerText = charState.credits;
+            document.getElementById('disp_talents_count').innerText = `${charState.talents.length}/3`;
+
+            // Aggiorna lo stato visivo delle card (Origini)
+            updateCardSelection('list-lineage', charState.origins.lineage);
+            updateCardSelection('list-childhood', charState.origins.childhood);
+            updateCardSelection('list-profession', charState.origins.profession);
+        }
+
+        function updateCardSelection(containerId, selectedItem) {
+            const container = document.getElementById(containerId);
+            if(!container) return;
+            Array.from(container.children).forEach(card => {
+                if (selectedItem && card.dataset.name === selectedItem.name) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
+
+        // --- RENDER ORIGINI ---
+        function renderOriginLists() {
+            const lineageDiv = document.getElementById('list-lineage');
+            const childDiv = document.getElementById('list-childhood');
+            const profDiv = document.getElementById('list-profession');
+
+            db.heritage.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'choice-card';
+                card.dataset.name = item.name;
+                
+                // Formatta stringa modificatori es. "+1 VIG, -1 MEN"
+                let mods = [];
+                if (item.vig != 0) mods.push(`${item.vig > 0 ? '+' : ''}${item.vig} VIG`);
+                if (item.ins != 0) mods.push(`${item.ins > 0 ? '+' : ''}${item.ins} IST`);
+                if (item.min != 0) mods.push(`${item.min > 0 ? '+' : ''}${item.min} MEN`);
+                const modStr = mods.length > 0 ? `<div class="card-stats">${mods.join(', ')}</div>` : '';
+
+                card.innerHTML = `
+                    <div class="card-title">${item.name}</div>
+                    <div style="font-size: 0.9rem; margin: 5px 0;"><em>${item.setting}</em></div>
+                    <div style="font-size: 0.9rem;">${item.description}</div>
+                    ${modStr}
+                `;
+
+                // Assegna onClick in base al tipo
+                if (item.origin_type.toLowerCase().includes('lignaggio')) {
+                    card.onclick = () => { charState.origins.lineage = item; updateUI(); };
+                    lineageDiv.appendChild(card);
+                } else if (item.origin_type.toLowerCase().includes('infanzia')) {
+                    card.onclick = () => { charState.origins.childhood = item; updateUI(); };
+                    childDiv.appendChild(card);
+                } else if (item.origin_type.toLowerCase().includes('professione')) {
+                    card.onclick = () => { charState.origins.profession = item; updateUI(); };
+                    profDiv.appendChild(card);
+                }
+            });
+        }
+
+        // --- LOGICA CREDITI E EQUIPAGGIAMENTO ---
+        function rollCredits() {
+            let roll = 0;
+            for(let i=0; i<4; i++) roll += Math.floor(Math.random() * 6) + 1; // 4d6
+            charState.credits = roll * 10;
+            charState.hasRolledCredits = true;
+            
+            document.getElementById('btn-roll-credits').style.display = 'none';
+            const res = document.getElementById('roll-result');
+            res.innerText = `Hai ottenuto ${roll} sul dado. I tuoi crediti iniziali sono: ${charState.credits}`;
+            res.style.display = 'block';
+            
+            document.getElementById('list-equip').style.display = 'block';
+            updateUI();
+            renderEquipList();
+        }
+
+        function renderEquipList() {
+            const container = document.getElementById('list-equip');
+            container.innerHTML = '';
+
+            db.equip.forEach(item => {
+                const count = charState.equipment.filter(e => e.equip_name === item.equip_name).length;
+                const cost = parseInt(item.equip_cost) || 0;
+                
+                const card = document.createElement('div');
+                card.className = 'choice-card';
+                // Disabilita se non hai soldi e non ne possiedi già per rivenderlo
+                if (charState.credits < cost && count === 0) card.classList.add('disabled');
+                
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <span class="card-title">${item.equip_name}</span> 
+                            <span class="card-stats">${cost} Cr. | ${item.equip_inventory} Slot | ${item.equip_slot}</span>
+                            <div style="font-size: 0.9rem; margin-top: 5px;">${item.equip_bonus}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap: 10px;">
+                            <button onclick="changeEquip('${item.equip_name}', -1, ${cost})" ${count===0 ? 'disabled':''}>-</button>
+                            <span style="font-weight:bold; font-size:1.2rem;">${count}</span>
+                            <button onclick="changeEquip('${item.equip_name}', 1, ${cost})" ${charState.credits < cost ? 'disabled':''}>+</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function changeEquip(itemName, delta, cost) {
+            const itemObj = db.equip.find(e => e.equip_name === itemName);
+            if (delta > 0 && charState.credits >= cost) {
+                charState.equipment.push(itemObj);
+                charState.credits -= cost;
+            } else if (delta < 0) {
+                const idx = charState.equipment.findIndex(e => e.equip_name === itemName);
+                if (idx > -1) {
+                    charState.equipment.splice(idx, 1);
+                    charState.credits += cost;
+                }
+            }
+            updateUI();
+            renderEquipList(); // Ricarica la lista per disabilitare bottoni se finisci i soldi
+        }
+
+        // --- LOGICA TALENTI ---
+        function renderTalentList() {
+            const container = document.getElementById('list-talents');
+            container.innerHTML = '';
+            const stats = getCalculatedStats();
+
+            db.talents.forEach(talent => {
+                const card = document.createElement('div');
+                card.className = 'choice-card';
+                
+                const count = charState.talents.filter(t => t.talent_name === talent.talent_name).length;
+                if(count > 0) card.classList.add('selected');
+
+                // 1. Check Caratteristica Base per il ramo di talento (deve essere >= 6)
+                let canPickBranch = true;
+                const tChar = (talent.talent_char || "").toUpperCase().trim();
+                if (tChar === 'VIG' && stats.vig < 6) canPickBranch = false;
+                if (tChar === 'IST' && stats.ins < 6) canPickBranch = false; // DB usa IST per instinto
+                if (tChar === 'MEN' && stats.min < 6) canPickBranch = false;
+
+                // 2. Check Requisiti specifici
+                let reqMet = checkTalentRequirements(talent.talent_requirements, stats);
+                
+                // 3. Check massimi
+                const isMaxed = count >= (parseInt(talent.max) || 1);
+                const isFull = charState.talents.length >= 3;
+
+                // Disabilita card se: ramo chiuso, requisiti non soddisfatti, o hai 3 talenti e non hai questo.
+                if (!canPickBranch || !reqMet || (isFull && count === 0)) {
+                    card.classList.add('disabled');
+                }
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between;">
+                        <div>
+                            <span class="card-title">${talent.talent_name} (${tChar})</span> 
+                            <span class="card-stats">Costo Energia: ${talent.talent_cost || 0}</span>
+                            ${talent.talent_requirements ? `<div style="font-size: 0.8rem; color:#d32f2f;">Req: ${talent.talent_requirements}</div>` : ''}
+                            <div style="font-size: 0.9rem; margin-top: 5px;">${talent.talent_description}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap: 10px;">
+                            <button onclick="changeTalent('${talent.talent_name}', -1)" ${count===0 ? 'disabled':''}>-</button>
+                            <span style="font-weight:bold; font-size:1.2rem;">${count}/${talent.max || 1}</span>
+                            <button onclick="changeTalent('${talent.talent_name}', 1)" ${isMaxed || isFull || !canPickBranch || !reqMet ? 'disabled':''}>+</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function checkTalentRequirements(reqString, stats) {
+            if (!reqString || reqString.trim() === "") return true; // Nessun requisito
+            
+            // Esempi da gestire: "Livello 2", "8 IST", "Immunità"
+            const reqs = reqString.split(',').map(r => r.trim().toUpperCase());
+            
+            for (let req of reqs) {
+                if (req.includes("LIVELLO")) {
+                    // Alla creazione il livello è sempre 1
+                    let lvl = parseInt(req.replace(/[^0-9]/g, ''));
+                    if (lvl > 1) return false; 
+                } 
+                else if (req.includes("VIG")) {
+                    let val = parseInt(req.replace(/[^0-9]/g, ''));
+                    if (stats.vig < val) return false;
+                }
+                else if (req.includes("IST")) {
+                    let val = parseInt(req.replace(/[^0-9]/g, ''));
+                    if (stats.ins < val) return false;
+                }
+                else if (req.includes("MEN")) {
+                    let val = parseInt(req.replace(/[^0-9]/g, ''));
+                    if (stats.min < val) return false;
+                }
+                else {
+                    // Assumiamo sia il nome di un altro talento
+                    const hasTalent = charState.talents.some(t => t.talent_name.toUpperCase() === req);
+                    if (!hasTalent) return false;
+                }
+            }
+            return true; // Tutti i requisiti soddisfatti
+        }
+
+        function changeTalent(talentName, delta) {
+            if (delta > 0 && charState.talents.length < 3) {
+                const tObj = db.talents.find(t => t.talent_name === talentName);
+                charState.talents.push(tObj);
+            } else if (delta < 0) {
+                const idx = charState.talents.findIndex(t => t.talent_name === talentName);
+                if (idx > -1) charState.talents.splice(idx, 1);
+            }
+            updateUI();
+            renderTalentList();
+        }
+
+        // --- CONCLUSIONE ---
+async function finishCreation() {
+    // Validazione base
+    if (!charState.name || !charState.origins.lineage || !charState.origins.childhood || !charState.origins.profession) {
+        alert("Per favore, completa tutti i passaggi dell'identità prima di salvare.");
+        return;
+    }
+
+    const stats = getCalculatedStats();
+    
+    // Preparazione pacchetto dati
+    const payload = {
+        action: 'saveNewCharacter',
+        p_id: charState.id,
+        // Dati per char_overview e ch_general
+        general: {
+            p_id: charState.id,
+            p_name: charState.name,
+            p_sex: charState.sex,
+            heritage: charState.origins.lineage.name,
+            childhood: charState.origins.childhood.name,
+            profession: charState.origins.profession.name,
+            p_vig: stats.vig,
+            p_ins: stats.ins,
+            p_min: stats.min,
+            p_hp_max: stats.vig * 2,
+            p_energy_max: stats.min * 2,
+            credits: charState.credits
+        },
+        // Dati per ch_inventory (raggruppati per quantità)
+		inventory: Object.values(charState.equipment.reduce((acc, item) => {
+				if (!acc[item.equip_name]) {
+					acc[item.equip_name] = { 
+						p_id: charState.id, 
+						item: item.equip_name, 
+						desc: item.equip_bonus,     // Recuperiamo la descrizione
+						quantity: 1, 
+						slot_val: item.equip_inventory // Recuperiamo il valore slot
+					};
+				} else {
+					acc[item.equip_name].quantity += 1;
+				}
+				return acc;
+			}, {})),
+        // Dati per ch_talents
+        talents: charState.talents.map(t => ({
+            p_id: charState.id,
+            talent_name: t.talent_name,
+            talent_description: t.talent_description,
+            talent_cost: t.talent_cost
+        }))
+    };
+
+    // Invio al database
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Importante per Google Apps Script
+            cache: 'no-cache',
+            body: JSON.stringify(payload)
+        });
+        
+        alert("Personaggio salvato con successo negli Archivi!");
+        window.location.href = "characters.html"; // Torna alla lista
+    } catch (error) {
+        console.error("Errore nel salvataggio:", error);
+        alert("Errore durante la connessione al Grande Archivista.");
+    }
+}
+
+
+
+
+
+
+// --- 1. LANCIO DADI (NON RIPETIBILE) ---
+function executeCreditRoll() {
+    let roll = 0;
+    for(let i=0; i<4; i++) roll += Math.floor(Math.random() * 6) + 1;
+    
+    charState.credits = roll * 10;
+    charState.hasRolledCredits = true;
+
+    document.getElementById('roll-area').style.display = 'none';
+    document.getElementById('result-area').style.display = 'block';
+    document.getElementById('dice-res-val').innerText = roll;
+    document.getElementById('total-credits-val').innerText = charState.credits;
+    
+    updateUI();
+}
+
+// --- 2. FORMATTAZIONE FRAZIONARIA SLOT ---
+function formatSlotValue(val) {
+    const num = parseFloat(val);
+    if (isNaN(num)) return val;
+	if (Math.abs(num - 0.5) < 0.01) return "1/2";
+    if (Math.abs(num - 0.33) < 0.01) return "1/3";
+    if (Math.abs(num - 0.25) < 0.01) return "1/4";
+    if (Math.abs(num - 0.2) < 0.01) return "1/5";
+	return num;
+}
+
+// --- 3. RENDER EQUIPAGGIAMENTO FILTRATO ---
+function renderEquipList() {
+    const categories = ['arma', 'prot', 'slot'];
+    
+    categories.forEach(cat => {
+        const container = document.getElementById(`list-equip-${cat}`);
+        if(!container) return;
+        container.innerHTML = '';
+
+        db.equip.filter(e => e.equip_slot.toLowerCase() === cat).forEach(item => {
+            const count = charState.equipment.filter(e => e.equip_name === item.equip_name).length;
+            const cost = parseInt(item.equip_cost) || 0;
+
+            // REGOLA 4: Se non posso permettermelo e non lo possiedo, non lo mostro proprio
+            if (charState.credits < cost && count === 0) return;
+
+            const card = document.createElement('div');
+            card.className = 'choice-card';
+            
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <span class="card-title">${item.equip_name}</span> 
+                        <span class="card-stats">${cost} Cr. | Slot: ${formatSlotValue(item.equip_inventory)}</span>
+                        <div style="font-size: 0.9rem; margin-top: 5px;">${item.equip_bonus}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap: 10px;">
+                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', -1, ${cost})">-</button>
+                        <span style="font-weight:bold;">${count}</span>
+                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', 1, ${cost})">+</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    });
+}
+
+// --- 4. RENDER TALENTI FILTRATI ---
+function renderTalentList() {
+    const container = document.getElementById('list-talents');
+    container.innerHTML = '';
+    const stats = getCalculatedStats();
+
+    db.talents.forEach(talent => {
+        const count = charState.talents.filter(t => t.talent_name === talent.talent_name).length;
+        
+        // Verifiche requisiti
+        let canPickBranch = true;
+        const tChar = (talent.talent_char || "").toUpperCase().trim();
+        if (tChar === 'VIG' && stats.vig < 6) canPickBranch = false;
+        if (tChar === 'IST' && stats.ins < 6) canPickBranch = false;
+        if (tChar === 'MEN' && stats.min < 6) canPickBranch = false;
+        
+        let reqMet = checkTalentRequirements(talent.talent_requirements, stats);
+        const isFull = charState.talents.length >= 3;
+
+        // REGOLA 5: Rimuovi se requisiti non soddisfatti o se pieno e non lo possiedi
+        if (!canPickBranch || !reqMet || (isFull && count === 0)) {
+            return; // Salta il rendering di questa card
+        }
+
+        const card = document.createElement('div');
+        card.className = 'choice-card' + (count > 0 ? ' selected' : '');
+        
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between;">
+                <div>
+                    <span class="card-title">${talent.talent_name}</span> 
+                    <div style="font-size: 0.85rem;">${talent.talent_description}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap: 10px;">
+                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', -1)">-</button>
+                    <span>${count}/${talent.max || 1}</span>
+                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', 1)" ${count >= (talent.max || 1) ? 'disabled' : ''}>+</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+
+
+    </script>
+</body>
+</html>
