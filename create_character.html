@@ -4,37 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAGA - Creazione Eroe</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
     <link rel="stylesheet" href="static/style.css">
-    <style>
-        /* Layout per la creazione: Sidebar fissa e Area Dinamica */
-        .creation-container { display: flex; gap: 20px; max-width: 1200px; margin: 0 auto; align-items: flex-start;}
-        
-        /* Pannello Riepilogo Fisso */
-        .summary-panel { 
-            width: 300px; background: rgba(115, 24, 31, 0.05); padding: 15px; 
-            border: 2px solid var(--burgundy); border-radius: 8px; position: sticky; top: 20px;
-        }
-        .summary-stat { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; }
-        
-        /* Area Step */
-        .wizard-panel { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: var(--shadow); }
-        .step { display: none; animation: fadeIn 0.4s; }
-        .step.active { display: block; }
-        
-        /* Stile Card per le Scelte (Origini, Equip, Talenti) */
-        .choice-card { 
-            border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; cursor: pointer;
-            transition: all 0.2s; position: relative;
-        }
-        .choice-card:hover { border-color: var(--burgundy); background: rgba(0,0,0,0.02); }
-        .choice-card.selected { border: 2px solid var(--burgundy); background: rgba(115, 24, 31, 0.1); }
-        .choice-card.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-        
-        .card-title { font-weight: bold; font-size: 1.1rem; color: var(--burgundy); }
-        .card-stats { font-size: 0.85rem; background: #eee; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-top: 5px;}
-        
-        .nav-buttons { display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;}
-    </style>
 </head>
 <body>
 
@@ -55,7 +26,7 @@
             <div class="summary-stat"><span>Danno base:</span> <span id="disp_dmg">1</span></div>
             <div class="summary-stat"><span>Protezione:</span> <span id="disp_prot">0</span></div>
             <hr>
-            <div class="summary-stat" style="color: green;"><span>Crediti:</span> <span id="disp_credits">0</span></div>
+            <div class="summary-stat" style="color: #18732D;"><span>Crediti:</span> <span id="disp_credits">0</span></div>
             <div class="summary-stat"><span>Slot Zaino:</span> <span id="disp_slots">10</span></div>
             <div class="summary-stat"><span>Talenti:</span> <span id="disp_talents_count">0/3</span></div>
         </div>
@@ -71,8 +42,9 @@
                     <option value="F">Femmina</option>
                     <option value="Altro">Altro / Non specificato</option>
                 </select>
-                <div class="nav-buttons">
-                    <div></div> <button class="btn-main primary" onclick="navStep(2)">LIGNAGGIO ❯</button>
+                <div class="btn-grid" style="margin-top: 30px;">
+                <a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
+                <button class="btn-main primary" onclick="navStep(2)">LIGNAGGIO</button>
                 </div>
             </div>
 
