@@ -269,9 +269,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     padding-bottom: 20px;
 }
 
-.small { width: 60px; height: 60px; }
-
-.char-basics { flex: 1; display: flex; flex-direction: column; gap: 10px; }
 
 .input-blank {
     background: transparent;
@@ -282,14 +279,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     color: var(--text-dark);
 }
 
-.name-field { font-size: 1.5rem; font-weight: bold; color: var(--burgundy); }
+.name-field { font-size: 2.2rem; font-weight: bold; color: var(--burgundy); border-bottom: none !important; }
 
 .basics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 .sheet-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: auto 1fr;
+    gap: 30px;
     margin-bottom: 20px;
 }
 
@@ -302,42 +299,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     margin-bottom: 8px;
     padding: 8px;
 }
-
-.input-area {
-    width: 100%;
-    background: rgba(255,255,255,0.2);
-    border: 1px solid var(--burgundy);
-    border-radius: 5px;
-    padding: 10px;
-    resize: none;
-    font-family: inherit;
-}
-
-.combat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.combat-box {
-    background: var(--burgundy);
-    color: white;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-}
-
-.combat-box input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    font-size: 1rem;
-}
-
-
 
 /* --- SPLASH SCREEN STYLES --- */
 #splash-screen {
@@ -440,7 +401,7 @@ input:checked + .slider:before { transform: translateX(20px); }
    
    
            /* Stili per il Menu Toggle */
-        .sheet-tabs { display: flex; border-bottom: 2px solid var(--burgundy); margin-bottom: 20px; }
+        .sheet-tabs { display: flex; flex-wrap: wrap; border-bottom: 2px solid var(--burgundy); margin-bottom: 20px; }
         .tab-btn { flex: 1; background: transparent; border: none; padding: 10px; cursor: pointer; font-weight: bold; font-family: 'Times New Roman', serif; font-size: 1rem; opacity: 0.6; }
         .tab-btn.active { opacity: 1; border-bottom: 3px solid var(--burgundy); background: rgba(115, 24, 31, 0.05); }
         .tab-content { display: none; }
@@ -455,11 +416,60 @@ input:checked + .slider:before { transform: translateX(20px); }
         .info-row strong { width: 110px; color: var(--burgundy); }
         .input-line-inline { flex: 1; background: transparent; border: none; border-bottom: 1px dashed var(--burgundy); font-family: inherit; font-size: 1.1rem; color: var(--text-dark); outline: none; padding: 2px 5px;}
 
-        /* NUOVI STILI: Caratteristiche */
-        .stats-container { display: flex; justify-content: space-around; margin-top: 15px; margin-bottom: 20px; }
-        .stat-box { display: flex; flex-direction: column; align-items: center; font-weight: bold; font-size: 1rem; color: var(--burgundy); }
-		.stat-value-box { background-color: var(--parchment); color: var(--burgundy);  border-radius: 8px; border: 2px solid var(--burgundy); margin-top: 5px; width: 45px; height: 45px; display: flex; justify-content: right; align-items: right; padding: 0; box-shadow: var(--shadow); overflow: hidden; }
-		.stat-value-box input {     background: transparent; border: none; color: var(--burgundy); font-weight: bold; font-size: 1.2rem; text-align: center; width: 100%; outline: none; display: block; padding: 0; margin: 0; line-height: normal; }
+		/* NUOVI STILI: Caratteristiche (Layout a Righe) */
+		.stats-container { 
+			display: flex; 
+			flex-direction: column; /* Cambia da colonne a righe */
+			gap: 15px; /* Spazio tra una riga e l'altra */
+			margin-top: 15px; 
+			margin-bottom: 20px; 
+		}
+
+		.stat-box { 
+			display: flex; 
+			flex-direction: row; /* Allinea Etichetta - Box - Dot in orizzontale */
+			align-items: center; 
+			justify-content: space-between; /* Distribuisce gli elementi sulla riga */
+			font-size: 1.1rem; 
+			color: var(--burgundy); 
+			width: 100%;
+			padding: 0 10px;
+		}
+
+		.stat-box span {
+			width: 40px; /* Larghezza fissa per l'etichetta (VIG, IST, MEN) */
+		}
+
+		.stat-value-box { 
+			background-color: transparent; 
+			color: var(--burgundy); 
+			width: 50px; 
+			height: 50px; 
+			display: flex; 
+			justify-content: center; 
+			align-items: center; 
+			padding: 0; 
+			overflow: hidden; 
+		}
+
+		.stat-value-box input { 
+			background: transparent; 
+			border: none; 
+			color: var(--burgundy); 
+			font-weight: bold; 
+			font-size: 1.4rem; 
+			text-align: center; 
+			width: 100%; 
+			outline: none; 
+		}
+
+		/* Allineamento dei pallini a destra */
+		.condition-selectors {
+			display: flex;
+			gap: 8px;
+			width: 50px;
+			justify-content: flex-end;
+		}
 
 
         /* NUOVI STILI: Barre Salute ed Energia */
@@ -578,17 +588,14 @@ input, select, button {
     margin: 20px 0;
 }
 
-        .header-flex { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 10px; }
+        .header-flex { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; }
         .level-exp-box { display: flex; gap: 10px; font-family: inherit; }
         .small-input-box { display: flex; flex-direction: column; font-size: 0.8rem; color: var(--burgundy); font-weight: bold; }
-        .small-input-box input { width: 60px; border: none; border-bottom: 2px solid var(--burgundy); background: transparent; text-align: center; font-size: 1.1rem; outline: none; }
+        .small-input-box input { width: 60px; border: none; background: transparent; text-align: center; font-size: 1.1rem; outline: none; }
         .conditions-container { margin-top: 15px; display: flex; justify-content: space-around; padding: 10px; background: rgba(115, 24, 31, 0.05); border-radius: 8px; border: 1px solid rgba(115, 24, 31, 0.2); }
         .bar-input { background: transparent; border: none; color: white; font-weight: bold; width: 40px; text-align: right; font-family: inherit; font-size: 1rem; outline: none; text-shadow: 1px 1px 2px black; }
         .bar-input:focus { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
-
-        /* Layout per la creazione: Sidebar fissa e Area Dinamica */
-        .creation-container { display: flex; gap: 20px; max-width: 1200px; margin: 0 auto; align-items: flex-start;}
         
         /* Pannello Riepilogo Fisso */
         .summary-panel { 
@@ -603,14 +610,14 @@ input, select, button {
         
         /* Stile Card per le Scelte (Origini, Equip, Talenti) */
         .choice-card { 
-            border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 5px; cursor: pointer;
+            border: 1px solid #84785E; padding: 15px; margin-bottom: 10px; border-radius: 5px; cursor: pointer;
             transition: all 0.2s; position: relative;
         }
-        .choice-card:hover { border-color: var(--burgundy); background: rgba(0,0,0,0.02); }
+        .choice-card:hover { border: 1px solid var(--burgundy); background: rgba(0,0,0,0.02); }
         .choice-card.selected { border: 2px solid var(--burgundy); background: rgba(115, 24, 31, 0.1); }
         .choice-card.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
         
         .card-title { font-weight: bold; font-size: 1.1rem; color: var(--burgundy); }
-        .card-stats { font-size: 0.85rem; background: #eee; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-top: 5px;}
+        .card-stats { font-size: 0.85rem; background: rgba(115, 24, 31, 0.05); padding: 3px 6px; border-radius: 4px; display: inline-block; margin-top: 5px;}
         
-        .nav-buttons { display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;}
+        .nav-buttons { display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid #84785E; padding-top: 15px;}

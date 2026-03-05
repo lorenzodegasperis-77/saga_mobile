@@ -43,38 +43,40 @@
                     <div class="sheet-column">
                         <div class="stat-section">
                             <h3>CARATTERISTICHE</h3>
-                            <div class="stats-container">
-                                <div class="stat-box">
-                                    VIG 
-                                    <div class="stat-value-box">
-                                        <input type="number" id="display_vig" readonly>
-                                    </div>
-                                    <div class="condition-selectors">
-                                        <div class="cond-dot" id="dot_vig_1" onclick="toggleCond('vig', 1)" title="Grado 1"></div>
-                                        <div class="cond-dot" id="dot_vig_2" onclick="toggleCond('vig', 2)" title="Grado 2"></div>
-                                    </div>
-                                </div>
-                                <div class="stat-box">
-                                    IST 
-                                    <div class="stat-value-box">
-                                        <input type="number" id="display_ins" readonly>
-                                    </div>
-                                    <div class="condition-selectors">
-                                        <div class="cond-dot" id="dot_ins_1" onclick="toggleCond('ins', 1)" title="Grado 1"></div>
-                                        <div class="cond-dot" id="dot_ins_2" onclick="toggleCond('ins', 2)" title="Grado 2"></div>
-                                    </div>
-                                </div>
-                                <div class="stat-box">
-                                    MEN 
-                                    <div class="stat-value-box">
-                                        <input type="number" id="display_min" readonly>
-                                    </div>
-                                    <div class="condition-selectors">
-                                        <div class="cond-dot" id="dot_min_1" onclick="toggleCond('min', 1)" title="Grado 1"></div>
-                                        <div class="cond-dot" id="dot_min_2" onclick="toggleCond('min', 2)" title="Grado 2"></div>
-                                    </div>
-                                </div>
-                            </div>
+							<div class="stats-container">
+								<div class="stat-box">
+									<span>VIG</span> 
+									<div class="stat-value-box">
+										<input type="number" id="display_vig" readonly>
+									</div>
+									<div class="condition-selectors">
+										<div class="cond-dot" id="dot_vig_1" onclick="toggleCond('vig', 1)" title="Grado 1"></div>
+										<div class="cond-dot" id="dot_vig_2" onclick="toggleCond('vig', 2)" title="Grado 2"></div>
+									</div>
+								</div>
+
+								<div class="stat-box">
+									<span>IST</span> 
+									<div class="stat-value-box">
+										<input type="number" id="display_ins" readonly>
+									</div>
+									<div class="condition-selectors">
+										<div class="cond-dot" id="dot_ins_1" onclick="toggleCond('ins', 1)" title="Grado 1"></div>
+										<div class="cond-dot" id="dot_ins_2" onclick="toggleCond('ins', 2)" title="Grado 2"></div>
+									</div>
+								</div>
+
+								<div class="stat-box">
+									<span>MEN</span> 
+									<div class="stat-value-box">
+										<input type="number" id="display_min" readonly>
+									</div>
+									<div class="condition-selectors">
+										<div class="cond-dot" id="dot_min_1" onclick="toggleCond('min', 1)" title="Grado 1"></div>
+										<div class="cond-dot" id="dot_min_2" onclick="toggleCond('min', 2)" title="Grado 2"></div>
+									</div>
+								</div>
+							</div>
                         </div>
                         <div class="stat-section">
                             <h3>COMBATTIMENTO</h3>
@@ -112,12 +114,14 @@
                             </div>
                         </div>
 
-                        <div class="btn-grid" style="margin-top: 30px;">
-                            <a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
-                            <button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
-                        </div>
                     </div>
+
                 </div>
+				<div class="btn-grid" style="margin-top: 30px;">
+						<a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
+						<button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
+				</div>
+
             </div>
 
             <div id="inventario" class="tab-content">
