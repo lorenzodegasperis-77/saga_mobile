@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGA - Passaggio di Livello</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        .level-up-container { display: flex; gap: 20px; max-width: 1000px; width: 95%; margin: 20px auto; align-items: flex-start; }
+        .stat-boost-grid { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        .boost-card { 
+            background: white; border: 2px solid #ccc; padding: 20px; border-radius: 10px; 
+            text-align: center; cursor: pointer; transition: 0.2s; flex: 1;
+        }
+        .boost-card:hover { border-color: var(--burgundy); transform: translateY(-3px); }
+        .boost-card.selected { border-color: var(--burgundy); background: rgba(115, 24, 31, 0.1); }
+        .boost-card h4 { margin: 0; color: var(--burgundy); font-size: 1.5rem; }
+        .boost-card .val { font-size: 2rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2 id="loading-msg" style="text-align: center; color: var(--burgundy);">L' Archivista sta aggiornando i tuoi annali...</h2>
+
+    <div class="level-up-container" id="main-ui" style="display: none;">
+        
+        <div class="summary-panel">
+            <h3 id="disp_name" style="margin-top:0; border-bottom: 1px solid var(--burgundy);">Eroe</h3>
+            <p style="font-style: italic;">Avanzamento: <span id="old-lvl">1</span> ➔ <span id="new-lvl">2</span></p>
+            
+            <div class="summary-stat"><span>VIG:</span> <span id="disp_vig">-</span></div>
+            <div class="summary-stat"><span>IST:</span> <span id="disp_ins">-</span></div>
+            <div class="summary-stat"><span>MEN:</span> <span id="disp_min">-</span></div>
+            <hr>
+            <div class="summary-stat"><span>Salute:</span> <span id="disp_hp">-</span></div>
+            <div class="summary-stat"><span>Energia:</span> <span id="disp_en">-</span></div>
+            
+            <div id="pending-choices" style="margin-top: 20px; font-size: 0.9rem; color: var(--burgundy); font-weight: bold;">
+                </div>
+        </div>
+
+        <div class="wizard-panel">
+            
+            <div id="step-1" class="step active">
+                <h2 style="color: var(--burgundy);">Miglioramento Caratteristiche</h2>
+                <p id="desc-step1">Il tuo corpo e la tua mente si temprano. Salute ed Energia aumentano di +2.</p>
+                
+                <div id="attribute-choice-area" style="display:none;">
+                    <p><strong>Scegli quale caratteristica aumentare di 1 (Max 10):</strong></p>
+                    <div class="stat-boost-grid">
+                        <div class="boost-card" onclick="selectAttrBoost('vig')" id="boost-vig">
+                            <h4>VIG</h4>
+                            <div class="val" id="val-vig">-</div>
+                        </div>
+                        <div class="boost-card" onclick="selectAttrBoost('ins')" id="boost-ins">
+                            <h4>IST</h4>
+                            <div class="val" id="val-ins">-</div>
+                        </div>
+                        <div class="boost-card" onclick="selectAttrBoost('min')" id="boost-min">
+                            <h4>MEN</h4>
+                            <div class="val" id="val-min">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <span></span>
+                    <button class="btn-main primary" onclick="goToNextStep()">AVANTI</button>
+                </div>
+            </div>
+
+            <div id="step-2" class="step">
+                <h2 style="color: var(--burgundy);">Nuovo Talento</h2>
+                <p>Scegli un nuovo talento per specializzare il tuo eroe.</p>
+                <div id="list-talents-lvl" class="menu-container"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(1)">INDIETRO</button>
+                    <button class="btn-main primary" onclick="goToNextStep()">AVANTI</button>
+                </div>
+            </div>
+
+            <div id="step-3" class="step">
+                <h2 style="color: var(--burgundy);">Abilità Speciale</h2>
+                <p>Sblocca un nuovo potere della mente.</p>
+                <div id="list-abilities-lvl" class="menu-container"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(2)">INDIETRO</button>
+                    <button class="btn-main primary" id="btn-finish" onclick="saveLevelUp()">CONFERMA LIVELLO</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQPcDC6OyP9n1RpZzK5CZ-cFyyWX_w0tKKyobU9D-AZ9CI1FzTGyiiUf1qNXxkZf9s8Q/exec";
+        let charData = null;
+        let db = { talents: [], abilities: [] };
+        
+        // Stato temporaneo dell'aumento di livello
+        let levelUpState = {
+            p_id: "",
+            newLevel: 0,
+            attrBoost: null, // 'vig', 'ins', o 'min'
+            newTalent: null,
+            newAbility: null
+        };
+
+        window.onload = async () => {
+            const params = new URLSearchParams(window.location.search);
+            const charId = params.get('id');
+            if (!charId) { window.location.href = "characters.html"; return; }
+
+            try {
+                // Carichiamo dati personaggio e database contemporaneamente
+                const [charResp, dbResp] = await Promise.all([
+                    fetch(`${SCRIPT_URL}?action=getCharacterDetails&id=${charId}`),
+                    fetch(`${SCRIPT_URL}?action=getCreationData`)
+                ]);
+                
+                charData = await charResp.json();
+                db = await dbResp.json();
+
+                if (charData.general.p_level >= 10) {
+                    alert("Questo eroe ha già raggiunto il massimo livello (10)!");
+                    window.location.href = "character_sheet.html?id=" + charId;
+                    return;
+                }
+
+                initLevelUp();
+            } catch (e) {
+                console.error(e);
+                document.getElementById('loading-msg').innerText = "Errore nel richiamare gli annali.";
+            }
+        };
+
+        function initLevelUp() {
+            levelUpState.p_id = charData.general.p_id;
+            levelUpState.newLevel = parseInt(charData.general.p_level) + 1;
+
+            document.getElementById('loading-msg').style.display = 'none';
+            document.getElementById('main-ui').style.display = 'flex';
+            
+            document.getElementById('disp_name').innerText = charData.general.p_name;
+            document.getElementById('old-lvl').innerText = charData.general.p_level;
+            document.getElementById('new-lvl').innerText = levelUpState.newLevel;
+
+            // Mostra scelta attributi se livello 3, 6, 9
+            if ([3, 6, 9].includes(levelUpState.newLevel)) {
+                document.getElementById('attribute-choice-area').style.display = 'block';
+                document.getElementById('val-vig').innerText = charData.general.p_vig;
+                document.getElementById('val-ins').innerText = charData.general.p_ins;
+                document.getElementById('val-min').innerText = charData.general.p_min;
+            }
+
+            updateSummary();
+            renderLevelTalents();
+            renderLevelAbilities();
+        }
+
+        function selectAttrBoost(stat) {
+            const currentVal = parseInt(charData.general['p_' + stat]);
+            if (currentVal >= 10) {
+                alert("Non puoi aumentare una caratteristica oltre il 10.");
+                return;
+            }
+            levelUpState.attrBoost = stat;
+            document.querySelectorAll('.boost-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('boost-' + stat).classList.add('selected');
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const stats = {
+                vig: parseInt(charData.general.p_vig) + (levelUpState.attrBoost === 'vig' ? 1 : 0),
+                ins: parseInt(charData.general.p_ins) + (levelUpState.attrBoost === 'ins' ? 1 : 0),
+                min: parseInt(charData.general.p_min) + (levelUpState.attrBoost === 'min' ? 1 : 0)
+            };
+
+            document.getElementById('disp_vig').innerText = stats.vig;
+            document.getElementById('disp_ins').innerText = stats.ins;
+            document.getElementById('disp_min').innerText = stats.min;
+            document.getElementById('disp_hp').innerText = (parseInt(charData.general.p_hp_max) + 2);
+            document.getElementById('disp_en').innerText = (parseInt(charData.general.p_energy_max) + 2);
+
+            // Checklist scelte
+            let missing = [];
+            if ([3, 6, 9].includes(levelUpState.newLevel) && !levelUpState.attrBoost) missing.push("Aumento Caratteristica");
+            if ([2, 4, 6, 8, 10].includes(levelUpState.newLevel)) {
+                if (!levelUpState.newTalent) missing.push("Nuovo Talento");
+                if (!levelUpState.newAbility) missing.push("Nuova Abilità");
+            }
+            
+            document.getElementById('pending-choices').innerText = missing.length > 0 ? "Manca: " + missing.join(", ") : "Tutto pronto!";
+        }
+
+        function goToNextStep() {
+            const curLvl = levelUpState.newLevel;
+            const currentStep = document.querySelector('.step.active').id;
+
+            if (currentStep === 'step-1') {
+                if ([3,6,9].includes(curLvl) && !levelUpState.attrBoost) { alert("Scegli un aumento caratteristica!"); return; }
+                if ([2,4,6,8,10].includes(curLvl)) navStep(2); else saveLevelUp();
+            } else if (currentStep === 'step-2') {
+                if (!levelUpState.newTalent) { alert("Scegli un talento!"); return; }
+                navStep(3);
+            }
+        }
+
+        function navStep(n) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step-' + n).classList.add('active');
+        }
+
+        function renderLevelTalents() {
+            const container = document.getElementById('list-talents-lvl');
+            db.talents.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'choice-card';
+                card.id = "t-" + t.talent_name.replace(/\s/g, '');
+                card.innerHTML = `<strong>${t.talent_name}</strong><br><small>${t.talent_description}</small>`;
+                card.onclick = () => {
+                    levelUpState.newTalent = t;
+                    document.querySelectorAll('#list-talents-lvl .choice-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    updateSummary();
+                };
+                container.appendChild(card);
+            });
+        }
+
+        function renderLevelAbilities() {
+            const container = document.getElementById('list-abilities-lvl');
+            db.abilities.forEach(a => {
+                const card = document.createElement('div');
+                card.className = 'choice-card';
+                card.innerHTML = `<strong>${a.ability_name}</strong><br><small>${a.ability_description}</small>`;
+                card.onclick = () => {
+                    levelUpState.newAbility = a;
+                    document.querySelectorAll('#list-abilities-lvl .choice-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    updateSummary();
+                };
+                container.appendChild(card);
+            });
+        }
+
+			async function saveLevelUp() {
+				const btn = document.getElementById('btn-finish');
+				btn.disabled = true;
+				btn.innerText = "SALVATAGGIO...";
+
+				// Calcolo dei nuovi massimali
+				const newHpMax = parseInt(charData.general.p_hp_max) + 2;
+				const newEnMax = parseInt(charData.general.p_energy_max) + 2;
+
+				const payload = {
+					action: 'updateCharacter',
+					p_id: levelUpState.p_id,
+					updates: {
+						p_level: levelUpState.newLevel,
+						p_exp: 0,
+						// Caratteristiche incrementate
+						p_vig: parseInt(charData.general.p_vig) + (levelUpState.attrBoost === 'vig' ? 1 : 0),
+						p_ins: parseInt(charData.general.p_ins) + (levelUpState.attrBoost === 'ins' ? 1 : 0),
+						p_min: parseInt(charData.general.p_min) + (levelUpState.attrBoost === 'min' ? 1 : 0),
+						// Condizioni (le manteniamo come sono o le resettiamo a 0)
+						c_vig: charData.general.c_vig,
+						c_ins: charData.general.c_ins,
+						c_min: charData.general.c_min,
+						// Salute ed Energia aggiornate (Max e Correnti)
+						p_hp_max: newHpMax,
+						p_hp_curr: newHpMax, // Quando sali di livello ti curi al massimo
+						p_energy_max: newEnMax,
+						p_energy_curr: newEnMax,
+						// Manteniamo il resto dell'equipaggiamento invariato
+						p_main_hand: charData.general.p_main_hand,
+						p_off_hand: charData.general.p_off_hand,
+						p_body: charData.general.p_body,
+						p_slot_1: charData.general.p_slot_1,
+						p_slot_2: charData.general.p_slot_2,
+						p_slot_3: charData.general.p_slot_3,
+						damage: charData.general.damage,
+						protection: charData.general.protection
+					},
+					// Inviamo il singolo talento/abilità scelto per l'appendRow
+					newTalent: levelUpState.newTalent,
+					newAbility: levelUpState.newAbility,
+					inventory: charData.inventory // Manteniamo l'inventario attuale
+				};
+
+				try {
+					// Usiamo POST
+					const response = await fetch(SCRIPT_URL, {
+						method: 'POST',
+						mode: 'no-cors', // Importante per Google Script
+						body: JSON.stringify(payload)
+					});
+					
+					alert("Livello acquisito con successo!");
+					window.location.href = "character_sheet.html?id=" + levelUpState.p_id;
+				} catch (e) {
+					console.error(e);
+					alert("Errore durante il salvataggio.");
+					btn.disabled = false;
+					btn.innerText = "CONFERMA LIVELLO";
+				}
+			}
+    </script>
+</body>
+</html>

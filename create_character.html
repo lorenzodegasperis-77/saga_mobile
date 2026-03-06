@@ -126,343 +126,376 @@
 				<div id="list-talents"></div>
 				<div class="nav-buttons">
 					<button class="btn-main secondary" onclick="navStep(8)">❮ INDIETRO</button>
-					<button class="btn-main primary" onclick="finishCreation()">CONCLUDI ❯</button>
+					<button class="btn-main primary" onclick="navStep(10)">ABILITA'</button>
+				</div>
+			</div>
+			<div id="step-10" class="step">
+				<h3>10. Abilità Speciali Istantanee</h3>
+				<div id="abilities-list"></div>
+				<div class="nav-buttons">
+					<button class="btn-main secondary" onclick="navStep(9)">❮ INDIETRO</button>
+					<button class="btn-main primary" id="btn-finish" onclick="finishCreation()">CONCLUDI ❯</button>
 				</div>
 			</div>
         </div>
     </div>
 
     <script>
-        // --- STATO GLOBALE DEL PERSONAGGIO ---
-        const charState = {
-            id: generateUUID(),
-            name: "",
-            sex: "",
-            baseStats: { vig: 5, ins: 5, min: 5 }, // Valori di partenza
-            origins: { lineage: null, childhood: null, profession: null },
-            credits: 0,
-            hasRolledCredits: false,
-            equipment: [], // Array di oggetti
-            talents: []    // Array di talenti scelti
-        };
+// --- STATO GLOBALE DEL PERSONAGGIO ---
+const charState = {
+    id: generateUUID(),
+    name: "",
+    sex: "",
+    baseStats: { vig: 5, ins: 5, min: 5 },
+    origins: { lineage: null, childhood: null, profession: null },
+    credits: 0,
+    hasRolledCredits: false,
+    equipment: [],
+    talents: [],
+    specialAbilities: []
+};
 
-        // Cache dei Database
-        let db = { heritage: [], equip: [], talents: [] };
+let db = { heritage: [], equip: [], talents: [], abilities: [] };
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQPcDC6OyP9n1RpZzK5CZ-cFyyWX_w0tKKyobU9D-AZ9CI1FzTGyiiUf1qNXxkZf9s8Q/exec";
+
+// --- INIZIALIZZAZIONE ---
+window.onload = async () => {
+    try {
+        const response = await fetch(`${SCRIPT_URL}?action=getCreationData`);
+        db = await response.json();
         
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCiwAvtAVpcT9BkMtVQQolyeWtSWFnBu3NCAtR9qKGg4f0uxfpQLfdmV5QYOH4Db-qGA/exec"; // <--- AGGIORNA QUESTO
+        document.getElementById('loading-msg').style.display = 'none';
+        document.getElementById('main-ui').style.display = 'flex';
+        
+        renderOriginLists();
+        updateUI();
+    } catch (error) {
+        document.getElementById('loading-msg').innerText = "Errore di connessione agli Archivi.";
+        console.error(error);
+    }
+};
 
-        // --- INIZIALIZZAZIONE ---
-        window.onload = async () => {
-            try {
-                const response = await fetch(`${SCRIPT_URL}?action=getCreationData`);
-                db = await response.json();
-                
-                document.getElementById('loading-msg').style.display = 'none';
-                document.getElementById('main-ui').style.display = 'flex';
-                
-                renderOriginLists();
-                updateUI();
-            } catch (error) {
-                document.getElementById('loading-msg').innerText = "Errore di connessione agli Archivi.";
-                console.error(error);
+function generateUUID() {
+    return 'PG-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+}
+
+// --- NAVIGAZIONE WIZARD ---
+function navStep(stepNum) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById(`step-${stepNum}`).classList.add('active');
+
+    if (stepNum >= 6 && stepNum <= 8) renderEquipList();
+    if (stepNum === 9) renderTalentList();
+    if (stepNum === 10) renderPsychicAbilities();
+    
+    window.scrollTo(0, 0);
+}
+
+// --- AGGIORNAMENTO STATISTICHE E UI ---
+function updateState() {
+    charState.name = document.getElementById('input_name').value;
+    charState.sex = document.getElementById('input_sex').value;
+    updateUI();
+}
+
+function getCalculatedStats() {
+    let vig = charState.baseStats.vig;
+    let ins = charState.baseStats.ins;
+    let min = charState.baseStats.min;
+
+    ['lineage', 'childhood', 'profession'].forEach(type => {
+        if (charState.origins[type]) {
+            vig += parseInt(charState.origins[type].vig) || 0;
+            ins += parseInt(charState.origins[type].ins) || 0;
+            min += parseInt(charState.origins[type].min) || 0;
+        }
+    });
+    return { vig, ins, min };
+}
+
+function updateUI() {
+    const stats = getCalculatedStats();
+    document.getElementById('disp_name').innerText = charState.name || "Eroe Ignoto";
+    document.getElementById('disp_sex').innerText = charState.sex;
+    document.getElementById('disp_vig').innerText = stats.vig;
+    document.getElementById('disp_ins').innerText = stats.ins;
+    document.getElementById('disp_min').innerText = stats.min;
+    document.getElementById('disp_hp').innerText = stats.vig * 2;
+    document.getElementById('disp_en').innerText = stats.min * 2;
+    document.getElementById('disp_slots').innerText = stats.vig * 2;
+    document.getElementById('disp_credits').innerText = charState.credits;
+    document.getElementById('disp_talents_count').innerText = `${charState.talents.length}/3`;
+
+    updateCardSelection('list-lineage', charState.origins.lineage);
+    updateCardSelection('list-childhood', charState.origins.childhood);
+    updateCardSelection('list-profession', charState.origins.profession);
+}
+
+function updateCardSelection(containerId, selectedItem) {
+    const container = document.getElementById(containerId);
+    if(!container) return;
+    Array.from(container.children).forEach(card => {
+        if (selectedItem && card.dataset.name === selectedItem.name) {
+            card.classList.add('selected');
+        } else {
+            card.classList.remove('selected');
+        }
+    });
+}
+
+// --- RENDER LISTE ---
+function renderOriginLists() {
+    const containers = {
+        'lignaggio': document.getElementById('list-lineage'),
+        'infanzia': document.getElementById('list-childhood'),
+        'professione': document.getElementById('list-profession')
+    };
+
+    db.heritage.forEach(item => {
+        const type = item.origin_type.toLowerCase();
+        let targetKey = "";
+        if (type.includes('lignaggio')) targetKey = 'lignaggio';
+        else if (type.includes('infanzia')) targetKey = 'infanzia';
+        else if (type.includes('professione')) targetKey = 'professione';
+
+        if (containers[targetKey]) {
+            const card = document.createElement('div');
+            card.className = 'choice-card';
+            card.dataset.name = item.name;
+            
+            let mods = [];
+            if (item.vig != 0) mods.push(`${item.vig > 0 ? '+' : ''}${item.vig} VIG`);
+            if (item.ins != 0) mods.push(`${item.ins > 0 ? '+' : ''}${item.ins} IST`);
+            if (item.min != 0) mods.push(`${item.min > 0 ? '+' : ''}${item.min} MEN`);
+            
+            card.innerHTML = `
+                <div class="card-title">${item.name}</div>
+                <div style="font-size: 0.85rem; margin: 5px 0;"><em>${item.setting}</em></div>
+                <div style="font-size: 0.9rem;">${item.description}</div>
+                ${mods.length > 0 ? `<div class="card-stats">${mods.join(', ')}</div>` : ''}
+            `;
+            card.onclick = () => { 
+                charState.origins[targetKey === 'lignaggio' ? 'lineage' : targetKey === 'infanzia' ? 'childhood' : 'profession'] = item; 
+                updateUI(); 
+            };
+            containers[targetKey].appendChild(card);
+        }
+    });
+}
+
+function executeCreditRoll() {
+    let roll = 0;
+    for(let i=0; i<4; i++) roll += Math.floor(Math.random() * 6) + 1;
+    charState.credits = roll * 10;
+    charState.hasRolledCredits = true;
+    document.getElementById('roll-area').style.display = 'none';
+    document.getElementById('result-area').style.display = 'block';
+    document.getElementById('dice-res-val').innerText = roll;
+    document.getElementById('total-credits-val').innerText = charState.credits;
+    updateUI();
+}
+
+function formatSlotValue(val) {
+    const num = parseFloat(val);
+    if (isNaN(num)) return val;
+    if (Math.abs(num - 0.5) < 0.01) return "1/2";
+    return num;
+}
+
+function renderEquipList() {
+    const categories = ['arma', 'prot', 'slot'];
+    categories.forEach(cat => {
+        const container = document.getElementById(`list-equip-${cat}`);
+        if(!container) return;
+        container.innerHTML = '';
+
+        db.equip.filter(e => e.equip_slot.toLowerCase() === cat).forEach(item => {
+            const count = charState.equipment.filter(e => e.equip_name === item.equip_name).length;
+            const cost = parseInt(item.equip_cost) || 0;
+            if (charState.credits < cost && count === 0) return;
+
+            const card = document.createElement('div');
+            card.className = 'choice-card';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <span class="card-title">${item.equip_name}</span> 
+                        <span class="card-stats">${cost} Cr. | Slot: ${formatSlotValue(item.equip_inventory)}</span>
+                        <div style="font-size: 0.9rem; margin-top: 5px;">${item.equip_bonus}</div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap: 10px;">
+                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', -1, ${cost})">-</button>
+                        <span style="font-weight:bold;">${count}</span>
+                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', 1, ${cost})" ${charState.credits < cost ? 'disabled' : ''}>+</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    });
+}
+
+function changeEquip(itemName, delta, cost) {
+    if (delta > 0 && charState.credits >= cost) {
+        const itemObj = db.equip.find(e => e.equip_name === itemName);
+        charState.equipment.push(itemObj);
+        charState.credits -= cost;
+    } else if (delta < 0) {
+        const idx = charState.equipment.findIndex(e => e.equip_name === itemName);
+        if (idx > -1) {
+            charState.equipment.splice(idx, 1);
+            charState.credits += cost;
+        }
+    }
+    updateUI();
+    renderEquipList();
+}
+
+function renderTalentList() {
+    const container = document.getElementById('list-talents');
+    container.innerHTML = '';
+    const stats = getCalculatedStats();
+
+    db.talents.forEach(talent => {
+        const count = charState.talents.filter(t => t.talent_name === talent.talent_name).length;
+        const tChar = (talent.talent_char || "").toUpperCase().trim();
+        let canPickBranch = true;
+        if (tChar === 'VIG' && stats.vig < 6) canPickBranch = false;
+        if (tChar === 'IST' && stats.ins < 6) canPickBranch = false;
+        if (tChar === 'MEN' && stats.min < 6) canPickBranch = false;
+        
+        let reqMet = checkTalentRequirements(talent.talent_requirements, stats);
+        if (!canPickBranch || !reqMet || (charState.talents.length >= 3 && count === 0)) return;
+
+        const card = document.createElement('div');
+        card.className = 'choice-card' + (count > 0 ? ' selected' : '');
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between;">
+                <div>
+                    <span class="card-title">${talent.talent_name}</span> 
+                    <div style="font-size: 0.85rem;">${talent.talent_description}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap: 10px;">
+                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', -1)">-</button>
+                    <span>${count}/${talent.max || 1}</span>
+                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', 1)" ${count >= (talent.max || 1) || charState.talents.length >= 3 ? 'disabled' : ''}>+</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// --- GESTIONE ABILITÀ SPECIALI ---
+function togglePsychicAbility(ability) {
+    if (!charState.specialAbilities) charState.specialAbilities = [];
+    
+    // 1. Verifica se ha il talento richiesto
+    const hasTalent = charState.talents.some(t => t.talent_name.toLowerCase() === "abile nella psiche");
+    
+    const index = charState.specialAbilities.findIndex(a => a.ability_name === ability.ability_name);
+    
+    if (index > -1) {
+        // Se è già selezionata, la rimuoviamo (sempre permesso)
+        charState.specialAbilities.splice(index, 1);
+    } else {
+        // Se la sta aggiungendo:
+        if (!hasTalent) {
+            alert("Devi possedere il talento 'Abile nella Psiche' per scegliere queste abilità!");
+            return;
+        }
+        if (charState.specialAbilities.length >= 3) {
+            alert("Puoi scegliere al massimo 3 abilità speciali.");
+            return;
+        }
+        charState.specialAbilities.push(ability);
+    }
+    renderPsychicAbilities();
+}
+
+function checkTalentRequirements(reqString, stats) {
+    if (!reqString || reqString.trim() === "") return true;
+    const reqs = reqString.split(',').map(r => r.trim().toUpperCase());
+    for (let req of reqs) {
+        if (req.includes("VIG")) { if (stats.vig < parseInt(req.replace(/[^0-9]/g, ''))) return false; }
+        else if (req.includes("IST")) { if (stats.ins < parseInt(req.replace(/[^0-9]/g, ''))) return false; }
+        else if (req.includes("MEN")) { if (stats.min < parseInt(req.replace(/[^0-9]/g, ''))) return false; }
+    }
+    return true;
+}
+
+function changeTalent(talentName, delta) {
+    if (delta > 0 && charState.talents.length < 3) {
+        charState.talents.push(db.talents.find(t => t.talent_name === talentName));
+    } else if (delta < 0) {
+        const idx = charState.talents.findIndex(t => t.talent_name === talentName);
+        if (idx > -1) charState.talents.splice(idx, 1);
+    }
+    updateUI();
+    renderTalentList();
+}
+
+function renderPsychicAbilities() {
+    const container = document.getElementById('abilities-list');
+    if(!container) return;
+    container.innerHTML = '';
+    
+    // Controlla se il talento "Abile nella Psiche" è presente nell'array dei talenti scelti
+    const hasTalent = charState.talents.some(t => t.talent_name.toLowerCase() === "abile nella psiche");
+
+    db.abilities.forEach(ability => {
+        const isSelected = charState.specialAbilities.some(a => a.ability_name === ability.ability_name);
+        
+        const card = document.createElement('div');
+        card.className = 'choice-card' + (isSelected ? ' selected' : '');
+        
+        // Se non ha il talento, rendiamo la card semitrasparente
+        if (!hasTalent) card.style.opacity = "0.5";
+
+        card.onclick = () => {
+            if (!hasTalent) {
+                alert("Devi possedere il talento 'Abile nella psiche' per scegliere queste abilità!");
+                return;
             }
+
+            const idx = charState.specialAbilities.findIndex(a => a.ability_name === ability.ability_name);
+            if (idx > -1) {
+                // Deselezione sempre ammessa
+                charState.specialAbilities.splice(idx, 1);
+            } else {
+                // Selezione: controllo limite massimo di 3
+                if (charState.specialAbilities.length >= 3) {
+                    alert("Massimo 3 abilità consentite!");
+                    return;
+                }
+                charState.specialAbilities.push(ability);
+            }
+            renderPsychicAbilities();
         };
 
-        // Generatore ID univoco alfanumerico
-        function generateUUID() {
-            return 'PG-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-        }
+        card.innerHTML = `
+            <div class="card-title">${ability.ability_name}</div>
+            <div>${ability.ability_description}</div>
+            <div class="card-stats">Costo: ${ability.ability_cost}</div>
+        `;
+        container.appendChild(card);
+    });
+}
 
-        // --- NAVIGAZIONE WIZARD ---
-		function navStep(stepNum) {
-			document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-			document.getElementById(`step-${stepNum}`).classList.add('active');
-			// Chiamiamo i render specifici in base allo step in cui entriamo
-				if (stepNum >= 6 && stepNum <= 8) {
-					renderEquipList(); // Aggiorna le liste equipaggiamento
-				}
-				if (stepNum === 9) {
-					renderTalentList(); // Aggiorna la lista talenti
-				}
-				
-				// Scroll in alto per comodità dell'utente
-				window.scrollTo(0, 0);
-			}
-
-        // --- AGGIORNAMENTO STATISTICHE E UI ---
-        function updateState() {
-            charState.name = document.getElementById('input_name').value;
-            charState.sex = document.getElementById('input_sex').value;
-            updateUI();
-        }
-
-        function getCalculatedStats() {
-            let vig = charState.baseStats.vig;
-            let ins = charState.baseStats.ins;
-            let min = charState.baseStats.min;
-
-            // Somma i bonus delle origini
-            ['lineage', 'childhood', 'profession'].forEach(type => {
-                if (charState.origins[type]) {
-                    vig += parseInt(charState.origins[type].vig) || 0;
-                    ins += parseInt(charState.origins[type].ins) || 0;
-                    min += parseInt(charState.origins[type].min) || 0;
-                }
-            });
-
-            return { vig, ins, min };
-        }
-
-        function updateUI() {
-            const stats = getCalculatedStats();
-            
-            // Aggiorna Pannello Sinistro
-            document.getElementById('disp_name').innerText = charState.name || "Eroe Ignoto";
-            document.getElementById('disp_sex').innerText = charState.sex;
-            
-            document.getElementById('disp_vig').innerText = stats.vig;
-            document.getElementById('disp_ins').innerText = stats.ins;
-            document.getElementById('disp_min').innerText = stats.min;
-
-            document.getElementById('disp_hp').innerText = stats.vig * 2;
-            document.getElementById('disp_en').innerText = stats.min * 2; // Come richiesto: 2 volte MIN
-            
-            document.getElementById('disp_slots').innerText = stats.vig * 2;
-            document.getElementById('disp_credits').innerText = charState.credits;
-            document.getElementById('disp_talents_count').innerText = `${charState.talents.length}/3`;
-
-            // Aggiorna lo stato visivo delle card (Origini)
-            updateCardSelection('list-lineage', charState.origins.lineage);
-            updateCardSelection('list-childhood', charState.origins.childhood);
-            updateCardSelection('list-profession', charState.origins.profession);
-        }
-
-        function updateCardSelection(containerId, selectedItem) {
-            const container = document.getElementById(containerId);
-            if(!container) return;
-            Array.from(container.children).forEach(card => {
-                if (selectedItem && card.dataset.name === selectedItem.name) {
-                    card.classList.add('selected');
-                } else {
-                    card.classList.remove('selected');
-                }
-            });
-        }
-
-        // --- RENDER ORIGINI ---
-        function renderOriginLists() {
-            const lineageDiv = document.getElementById('list-lineage');
-            const childDiv = document.getElementById('list-childhood');
-            const profDiv = document.getElementById('list-profession');
-
-            db.heritage.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'choice-card';
-                card.dataset.name = item.name;
-                
-                // Formatta stringa modificatori es. "+1 VIG, -1 MEN"
-                let mods = [];
-                if (item.vig != 0) mods.push(`${item.vig > 0 ? '+' : ''}${item.vig} VIG`);
-                if (item.ins != 0) mods.push(`${item.ins > 0 ? '+' : ''}${item.ins} IST`);
-                if (item.min != 0) mods.push(`${item.min > 0 ? '+' : ''}${item.min} MEN`);
-                const modStr = mods.length > 0 ? `<div class="card-stats">${mods.join(', ')}</div>` : '';
-
-                card.innerHTML = `
-                    <div class="card-title">${item.name}</div>
-                    <div style="font-size: 0.9rem; margin: 5px 0;"><em>${item.setting}</em></div>
-                    <div style="font-size: 0.9rem;">${item.description}</div>
-                    ${modStr}
-                `;
-
-                // Assegna onClick in base al tipo
-                if (item.origin_type.toLowerCase().includes('lignaggio')) {
-                    card.onclick = () => { charState.origins.lineage = item; updateUI(); };
-                    lineageDiv.appendChild(card);
-                } else if (item.origin_type.toLowerCase().includes('infanzia')) {
-                    card.onclick = () => { charState.origins.childhood = item; updateUI(); };
-                    childDiv.appendChild(card);
-                } else if (item.origin_type.toLowerCase().includes('professione')) {
-                    card.onclick = () => { charState.origins.profession = item; updateUI(); };
-                    profDiv.appendChild(card);
-                }
-            });
-        }
-
-        // --- LOGICA CREDITI E EQUIPAGGIAMENTO ---
-        function rollCredits() {
-            let roll = 0;
-            for(let i=0; i<4; i++) roll += Math.floor(Math.random() * 6) + 1; // 4d6
-            charState.credits = roll * 10;
-            charState.hasRolledCredits = true;
-            
-            document.getElementById('btn-roll-credits').style.display = 'none';
-            const res = document.getElementById('roll-result');
-            res.innerText = `Hai ottenuto ${roll} sul dado. I tuoi crediti iniziali sono: ${charState.credits}`;
-            res.style.display = 'block';
-            
-            document.getElementById('list-equip').style.display = 'block';
-            updateUI();
-            renderEquipList();
-        }
-
-        function renderEquipList() {
-            const container = document.getElementById('list-equip');
-            container.innerHTML = '';
-
-            db.equip.forEach(item => {
-                const count = charState.equipment.filter(e => e.equip_name === item.equip_name).length;
-                const cost = parseInt(item.equip_cost) || 0;
-                
-                const card = document.createElement('div');
-                card.className = 'choice-card';
-                // Disabilita se non hai soldi e non ne possiedi già per rivenderlo
-                if (charState.credits < cost && count === 0) card.classList.add('disabled');
-                
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <span class="card-title">${item.equip_name}</span> 
-                            <span class="card-stats">${cost} Cr. | ${item.equip_inventory} Slot | ${item.equip_slot}</span>
-                            <div style="font-size: 0.9rem; margin-top: 5px;">${item.equip_bonus}</div>
-                        </div>
-                        <div style="display:flex; align-items:center; gap: 10px;">
-                            <button onclick="changeEquip('${item.equip_name}', -1, ${cost})" ${count===0 ? 'disabled':''}>-</button>
-                            <span style="font-weight:bold; font-size:1.2rem;">${count}</span>
-                            <button onclick="changeEquip('${item.equip_name}', 1, ${cost})" ${charState.credits < cost ? 'disabled':''}>+</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function changeEquip(itemName, delta, cost) {
-            const itemObj = db.equip.find(e => e.equip_name === itemName);
-            if (delta > 0 && charState.credits >= cost) {
-                charState.equipment.push(itemObj);
-                charState.credits -= cost;
-            } else if (delta < 0) {
-                const idx = charState.equipment.findIndex(e => e.equip_name === itemName);
-                if (idx > -1) {
-                    charState.equipment.splice(idx, 1);
-                    charState.credits += cost;
-                }
-            }
-            updateUI();
-            renderEquipList(); // Ricarica la lista per disabilitare bottoni se finisci i soldi
-        }
-
-        // --- LOGICA TALENTI ---
-        function renderTalentList() {
-            const container = document.getElementById('list-talents');
-            container.innerHTML = '';
-            const stats = getCalculatedStats();
-
-            db.talents.forEach(talent => {
-                const card = document.createElement('div');
-                card.className = 'choice-card';
-                
-                const count = charState.talents.filter(t => t.talent_name === talent.talent_name).length;
-                if(count > 0) card.classList.add('selected');
-
-                // 1. Check Caratteristica Base per il ramo di talento (deve essere >= 6)
-                let canPickBranch = true;
-                const tChar = (talent.talent_char || "").toUpperCase().trim();
-                if (tChar === 'VIG' && stats.vig < 6) canPickBranch = false;
-                if (tChar === 'IST' && stats.ins < 6) canPickBranch = false; // DB usa IST per instinto
-                if (tChar === 'MEN' && stats.min < 6) canPickBranch = false;
-
-                // 2. Check Requisiti specifici
-                let reqMet = checkTalentRequirements(talent.talent_requirements, stats);
-                
-                // 3. Check massimi
-                const isMaxed = count >= (parseInt(talent.max) || 1);
-                const isFull = charState.talents.length >= 3;
-
-                // Disabilita card se: ramo chiuso, requisiti non soddisfatti, o hai 3 talenti e non hai questo.
-                if (!canPickBranch || !reqMet || (isFull && count === 0)) {
-                    card.classList.add('disabled');
-                }
-
-                card.innerHTML = `
-                    <div style="display:flex; justify-content:space-between;">
-                        <div>
-                            <span class="card-title">${talent.talent_name} (${tChar})</span> 
-                            <span class="card-stats">Costo Energia: ${talent.talent_cost || 0}</span>
-                            ${talent.talent_requirements ? `<div style="font-size: 0.8rem; color:#d32f2f;">Req: ${talent.talent_requirements}</div>` : ''}
-                            <div style="font-size: 0.9rem; margin-top: 5px;">${talent.talent_description}</div>
-                        </div>
-                        <div style="display:flex; align-items:center; gap: 10px;">
-                            <button onclick="changeTalent('${talent.talent_name}', -1)" ${count===0 ? 'disabled':''}>-</button>
-                            <span style="font-weight:bold; font-size:1.2rem;">${count}/${talent.max || 1}</span>
-                            <button onclick="changeTalent('${talent.talent_name}', 1)" ${isMaxed || isFull || !canPickBranch || !reqMet ? 'disabled':''}>+</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function checkTalentRequirements(reqString, stats) {
-            if (!reqString || reqString.trim() === "") return true; // Nessun requisito
-            
-            // Esempi da gestire: "Livello 2", "8 IST", "Immunità"
-            const reqs = reqString.split(',').map(r => r.trim().toUpperCase());
-            
-            for (let req of reqs) {
-                if (req.includes("LIVELLO")) {
-                    // Alla creazione il livello è sempre 1
-                    let lvl = parseInt(req.replace(/[^0-9]/g, ''));
-                    if (lvl > 1) return false; 
-                } 
-                else if (req.includes("VIG")) {
-                    let val = parseInt(req.replace(/[^0-9]/g, ''));
-                    if (stats.vig < val) return false;
-                }
-                else if (req.includes("IST")) {
-                    let val = parseInt(req.replace(/[^0-9]/g, ''));
-                    if (stats.ins < val) return false;
-                }
-                else if (req.includes("MEN")) {
-                    let val = parseInt(req.replace(/[^0-9]/g, ''));
-                    if (stats.min < val) return false;
-                }
-                else {
-                    // Assumiamo sia il nome di un altro talento
-                    const hasTalent = charState.talents.some(t => t.talent_name.toUpperCase() === req);
-                    if (!hasTalent) return false;
-                }
-            }
-            return true; // Tutti i requisiti soddisfatti
-        }
-
-        function changeTalent(talentName, delta) {
-            if (delta > 0 && charState.talents.length < 3) {
-                const tObj = db.talents.find(t => t.talent_name === talentName);
-                charState.talents.push(tObj);
-            } else if (delta < 0) {
-                const idx = charState.talents.findIndex(t => t.talent_name === talentName);
-                if (idx > -1) charState.talents.splice(idx, 1);
-            }
-            updateUI();
-            renderTalentList();
-        }
-
-        // --- CONCLUSIONE ---
+// --- CONCLUSIONE E SALVATAGGIO ---
 async function finishCreation() {
-    // Validazione base
     if (!charState.name || !charState.origins.lineage || !charState.origins.childhood || !charState.origins.profession) {
         alert("Per favore, completa tutti i passaggi dell'identità prima di salvare.");
         return;
     }
-
+	const btn = document.getElementById('btn-finish');
+	btn.disabled = true;
+	btn.innerText = "SALVATAGGIO...";
     const stats = getCalculatedStats();
     
-    // Preparazione pacchetto dati
     const payload = {
         action: 'saveNewCharacter',
-        p_id: charState.id,
-        // Dati per char_overview e ch_general
+        p_id: charState.id, // Codice alfanumerico (es. PG-X8Z2...)
         general: {
             p_id: charState.id,
             p_name: charState.name,
@@ -477,163 +510,52 @@ async function finishCreation() {
             p_energy_max: stats.min * 2,
             credits: charState.credits
         },
-        // Dati per ch_inventory (raggruppati per quantità)
-		inventory: Object.values(charState.equipment.reduce((acc, item) => {
-				if (!acc[item.equip_name]) {
-					acc[item.equip_name] = { 
-						p_id: charState.id, 
-						item: item.equip_name, 
-						desc: item.equip_bonus,     // Recuperiamo la descrizione
-						quantity: 1, 
-						slot_val: item.equip_inventory // Recuperiamo il valore slot
-					};
-				} else {
-					acc[item.equip_name].quantity += 1;
-				}
-				return acc;
-			}, {})),
-        // Dati per ch_talents
+        inventory: Object.values(charState.equipment.reduce((acc, item) => {
+            if (!acc[item.equip_name]) {
+                acc[item.equip_name] = { 
+                    p_id: charState.id, 
+                    item: item.equip_name, 
+                    desc: item.equip_bonus,
+                    quantity: 1, 
+                    slot_val: item.equip_inventory 
+                };
+            } else {
+                acc[item.equip_name].quantity += 1;
+            }
+            return acc;
+        }, {})),
         talents: charState.talents.map(t => ({
             p_id: charState.id,
             talent_name: t.talent_name,
             talent_description: t.talent_description,
             talent_cost: t.talent_cost
+        })),
+        // NUOVA SEZIONE: Invia le abilità al foglio ch_abilities
+        specialAbilities: (charState.specialAbilities || []).map(a => ({
+            p_id: charState.id,
+            ability_name: a.ability_name,
+            ability_description: a.ability_description,
+            ability_cost: a.ability_cost
         }))
     };
 
-    // Invio al database
     try {
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors', // Importante per Google Apps Script
+            mode: 'no-cors',
             cache: 'no-cache',
             body: JSON.stringify(payload)
         });
         
-        alert("Personaggio salvato con successo negli Archivi!");
-        window.location.href = "characters.html"; // Torna alla lista
+        alert("Complimenti " + charState.name + " è stato salvato con successo negli Archivi!");
+        window.location.href = "characters.html";
     } catch (error) {
         console.error("Errore nel salvataggio:", error);
-        alert("Errore durante la connessione al Grande Archivista.");
+        alert("Errore durante il salvataggio.");
+		btn.disabled = false;
+		btn.innerText = "CONFERMA LIVELLO";
     }
 }
-
-
-
-
-
-
-// --- 1. LANCIO DADI (NON RIPETIBILE) ---
-function executeCreditRoll() {
-    let roll = 0;
-    for(let i=0; i<4; i++) roll += Math.floor(Math.random() * 6) + 1;
-    
-    charState.credits = roll * 10;
-    charState.hasRolledCredits = true;
-
-    document.getElementById('roll-area').style.display = 'none';
-    document.getElementById('result-area').style.display = 'block';
-    document.getElementById('dice-res-val').innerText = roll;
-    document.getElementById('total-credits-val').innerText = charState.credits;
-    
-    updateUI();
-}
-
-// --- 2. FORMATTAZIONE FRAZIONARIA SLOT ---
-function formatSlotValue(val) {
-    const num = parseFloat(val);
-    if (isNaN(num)) return val;
-	if (Math.abs(num - 0.5) < 0.01) return "1/2";
-    if (Math.abs(num - 0.33) < 0.01) return "1/3";
-    if (Math.abs(num - 0.25) < 0.01) return "1/4";
-    if (Math.abs(num - 0.2) < 0.01) return "1/5";
-	return num;
-}
-
-// --- 3. RENDER EQUIPAGGIAMENTO FILTRATO ---
-function renderEquipList() {
-    const categories = ['arma', 'prot', 'slot'];
-    
-    categories.forEach(cat => {
-        const container = document.getElementById(`list-equip-${cat}`);
-        if(!container) return;
-        container.innerHTML = '';
-
-        db.equip.filter(e => e.equip_slot.toLowerCase() === cat).forEach(item => {
-            const count = charState.equipment.filter(e => e.equip_name === item.equip_name).length;
-            const cost = parseInt(item.equip_cost) || 0;
-
-            // REGOLA 4: Se non posso permettermelo e non lo possiedo, non lo mostro proprio
-            if (charState.credits < cost && count === 0) return;
-
-            const card = document.createElement('div');
-            card.className = 'choice-card';
-            
-            card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <span class="card-title">${item.equip_name}</span> 
-                        <span class="card-stats">${cost} Cr. | Slot: ${formatSlotValue(item.equip_inventory)}</span>
-                        <div style="font-size: 0.9rem; margin-top: 5px;">${item.equip_bonus}</div>
-                    </div>
-                    <div style="display:flex; align-items:center; gap: 10px;">
-                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', -1, ${cost})">-</button>
-                        <span style="font-weight:bold;">${count}</span>
-                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', 1, ${cost})">+</button>
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    });
-}
-
-// --- 4. RENDER TALENTI FILTRATI ---
-function renderTalentList() {
-    const container = document.getElementById('list-talents');
-    container.innerHTML = '';
-    const stats = getCalculatedStats();
-
-    db.talents.forEach(talent => {
-        const count = charState.talents.filter(t => t.talent_name === talent.talent_name).length;
-        
-        // Verifiche requisiti
-        let canPickBranch = true;
-        const tChar = (talent.talent_char || "").toUpperCase().trim();
-        if (tChar === 'VIG' && stats.vig < 6) canPickBranch = false;
-        if (tChar === 'IST' && stats.ins < 6) canPickBranch = false;
-        if (tChar === 'MEN' && stats.min < 6) canPickBranch = false;
-        
-        let reqMet = checkTalentRequirements(talent.talent_requirements, stats);
-        const isFull = charState.talents.length >= 3;
-
-        // REGOLA 5: Rimuovi se requisiti non soddisfatti o se pieno e non lo possiedi
-        if (!canPickBranch || !reqMet || (isFull && count === 0)) {
-            return; // Salta il rendering di questa card
-        }
-
-        const card = document.createElement('div');
-        card.className = 'choice-card' + (count > 0 ? ' selected' : '');
-        
-        card.innerHTML = `
-            <div style="display:flex; justify-content:space-between;">
-                <div>
-                    <span class="card-title">${talent.talent_name}</span> 
-                    <div style="font-size: 0.85rem;">${talent.talent_description}</div>
-                </div>
-                <div style="display:flex; align-items:center; gap: 10px;">
-                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', -1)">-</button>
-                    <span>${count}/${talent.max || 1}</span>
-                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', 1)" ${count >= (talent.max || 1) ? 'disabled' : ''}>+</button>
-                </div>
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
-
-
-
     </script>
 </body>
 </html>

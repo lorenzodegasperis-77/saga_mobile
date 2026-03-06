@@ -18,10 +18,16 @@
                     <div style="flex: 2;">
                         <input type="text" id="p_name" placeholder="Nome Eroe" class="input-blank name-field" readonly style="width: 100%;">
                     </div>
-                    <div class="level-exp-box" style="flex: 1;">
-                        <div class="small-input-box">LIV <input type="number" id="p_level"></div>
-                        <div class="small-input-box">EXP <input type="number" id="p_exp"></div>
-                    </div>
+					<div class="level-exp-box" style="flex: 1;">
+						<div class="small-input-box">
+							LIV 
+							<div class="level-container">
+								<input type="number" id="p_level" readonly class="readonly-field">
+								<a href="#" id="level-up-link" class="lvl-up-btn" title="Aumenta Livello">+</a>
+							</div>
+						</div>
+						<div class="small-input-box">EXP <input type="number" id="p_exp"></div>
+					</div>
                 </div>
             </div>
 
@@ -113,7 +119,6 @@
                                 Slot 3:<select id="p_slot_3" class="input-line" onchange="updateCombatStats()"><option value="">-- Slot 3 --</option></select>
                             </div>
                         </div>
-
                     </div>
 
                 </div>
@@ -121,23 +126,36 @@
 						<a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
 						<button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
 				</div>
-
             </div>
 
             <div id="inventario" class="tab-content">
                 <div class="stat-section"><h3>OGGETTI NELLO ZAINO</h3><div id="inventory-list"></div></div>
+				<div class="btn-grid" style="margin-top: 30px;">
+				<a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
+				<button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
+				</div>
+				
             </div>
             <div id="talenti" class="tab-content">
                 <div class="stat-section"><h3>TALENTI APPRESI</h3><div id="talents-list"></div></div>
+				<div class="btn-grid" style="margin-top: 30px;">
+				<a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
+				<button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
+				</div>
             </div>
             <div id="abilita" class="tab-content">
                 <div class="stat-section"><h3>ABILITÀ SPECIALI</h3><div id="abilities-list"></div></div>
+				<div class="btn-grid" style="margin-top: 30px;">
+					<a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
+					<button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
+				</div>
+
             </div>
         </div>
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCiwAvtAVpcT9BkMtVQQolyeWtSWFnBu3NCAtR9qKGg4f0uxfpQLfdmV5QYOH4Db-qGA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQPcDC6OyP9n1RpZzK5CZ-cFyyWX_w0tKKyobU9D-AZ9CI1FzTGyiiUf1qNXxkZf9s8Q/exec";
         let maxHP = 0;
         let maxEnergy = 0;
         let charData = null;
@@ -206,6 +224,7 @@
 
                 document.getElementById('loading-text').style.display = 'none';
                 document.getElementById('sheet-wrapper').style.display = 'block';
+				document.getElementById('level-up-link').href = `level_up.html?id=${pgId}`;
 
                 const gen = data.general;
                 charStats.vig.base = parseInt(gen.p_vig) || 0;
@@ -344,6 +363,8 @@
                 updates: {
                     p_hp_curr: document.getElementById('p_hp_curr').value,
                     p_energy_curr: document.getElementById('p_energy_curr').value,
+                    p_hp_max: maxHP,
+                    p_energy_max: maxEnergy,
                     c_vig: charStats.vig.cond,
                     c_ins: charStats.ins.cond,
                     c_min: charStats.min.cond,

@@ -17,23 +17,22 @@
             </svg>
         </div>
         
-        <h1>PERSONAGGI</h1>
-        <div class="subtitle">Il tuo cammino finora</div>
-
+        <h2>PERSONAGGI</h2>
+		<br>
         <div class="menu-container" id="characters-list">
             <p style="text-align: center; opacity: 0.6;">Caricamento personaggi...</p>
         </div>
 
         <div class="menu-container">
-		
-            <a href="create_character.html" class="btn-main secondary" style="border-style: dashed; opacity: 0.7;">+ NUOVO PERSONAGGIO</a>
+		<br>
+            <a href="create_character.html" class="btn-main secondary" style="border-style: dashed; opacity: 0.6;"> + </a>
             <a href="index.html" class="btn-main secondary" style="margin-top: 10px;">❮ TORNA AL MENU</a>
         </div>
     </div>
 
     <script>
         // INSERISCI QUI L'URL COPIATO DA GOOGLE APPS SCRIPT
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCiwAvtAVpcT9BkMtVQQolyeWtSWFnBu3NCAtR9qKGg4f0uxfpQLfdmV5QYOH4Db-qGA/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQPcDC6OyP9n1RpZzK5CZ-cFyyWX_w0tKKyobU9D-AZ9CI1FzTGyiiUf1qNXxkZf9s8Q/exec";
 
 		async function loadCharacters() {
 			const listContainer = document.getElementById('characters-list');
@@ -64,8 +63,7 @@
 								<h3 style="margin: 0;">${char.p_name || 'Senza nome'}</h3>
 								<span class="badge">HP: ${char.p_hp_curr}/${char.p_hp_max}</span>
 							</div>
-							<p><strong>Sesso:</strong> ${char.p_sex || '-'}</p>
-							<p><strong>Statistiche:</strong> V:${char.p_vig} I:${char.p_ins} M:${char.p_min}</p>
+							<p>VIG:<strong>${char.p_vig}</strong> IST:<strong>${char.p_ins}</strong> MEN:<strong>${char.p_min}</strong></p>
 							<a href="character_sheet.html?id=${char.p_id}" class="btn-main primary" style="padding: 8px; font-size: 0.8rem; margin-top: 10px;">CONTINUA</a>
 						</div>
 					`;
