@@ -156,7 +156,7 @@ const charState = {
 };
 
 let db = { heritage: [], equip: [], talents: [], abilities: [] };
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQPcDC6OyP9n1RpZzK5CZ-cFyyWX_w0tKKyobU9D-AZ9CI1FzTGyiiUf1qNXxkZf9s8Q/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKH8Cifjmt6FyiAB23ORNrGMGneSkR916xT0nH7HSRsRDRDoDb9WZ5jaHifvG93GKKxw/exec";
 
 // --- INIZIALIZZAZIONE ---
 window.onload = async () => {
@@ -306,27 +306,40 @@ function renderEquipList() {
     const categories = ['arma', 'prot', 'slot'];
     categories.forEach(cat => {
         const container = document.getElementById(`list-equip-${cat}`);
-        if(!container) return;
+        if (!container) return;
         container.innerHTML = '';
 
         db.equip.filter(e => e.equip_slot.toLowerCase() === cat).forEach(item => {
             const count = charState.equipment.filter(e => e.equip_name === item.equip_name).length;
             const cost = parseInt(item.equip_cost) || 0;
-            if (charState.credits < cost && count === 0) return;
+            
+            // Verifica se può comprare l'oggetto (se ha i soldi o se ne ha già uno da vendere)
+            const canAfford = charState.credits >= cost;
+            const isUnavailable = !canAfford && count === 0;
 
             const card = document.createElement('div');
             card.className = 'choice-card';
+            
+            // Applica lo stile semi-trasparente se non ha i crediti
+            if (isUnavailable) {
+                card.style.opacity = "0.5";
+            }
+
+            // Messaggio di errore in rosso
+            const errorMsg = isUnavailable ? `<div style="color: #d32f2f; font-weight: bold; font-size: 0.85rem; margin-bottom: 5px;">Crediti insufficienti</div>` : '';
+
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
+                        ${errorMsg}
                         <span class="card-title">${item.equip_name}</span> 
                         <span class="card-stats">${cost} Cr. | Slot: ${formatSlotValue(item.equip_inventory)}</span>
                         <div style="font-size: 0.9rem; margin-top: 5px;">${item.equip_bonus}</div>
                     </div>
                     <div style="display:flex; align-items:center; gap: 10px;">
-                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', -1, ${cost})">-</button>
+                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', -1, ${cost})" ${count === 0 ? 'disabled' : ''}>-</button>
                         <span style="font-weight:bold;">${count}</span>
-                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', 1, ${cost})" ${charState.credits < cost ? 'disabled' : ''}>+</button>
+                        <button class="btn-circle" onclick="changeEquip('${item.equip_name}', 1, ${cost})" ${!canAfford ? 'disabled' : ''}>+</button>
                     </div>
                 </div>
             `;
@@ -359,26 +372,49 @@ function renderTalentList() {
     db.talents.forEach(talent => {
         const count = charState.talents.filter(t => t.talent_name === talent.talent_name).length;
         const tChar = (talent.talent_char || "").toUpperCase().trim();
-        let canPickBranch = true;
-        if (tChar === 'VIG' && stats.vig < 6) canPickBranch = false;
-        if (tChar === 'IST' && stats.ins < 6) canPickBranch = false;
-        if (tChar === 'MEN' && stats.min < 6) canPickBranch = false;
         
+        let canPickBranch = true;
+        let missingReqs = [];
+
+        // Check Caratteristiche Base
+        if (tChar === 'VIG' && stats.vig < 6) { canPickBranch = false; missingReqs.push("VIG 6"); }
+        if (tChar === 'IST' && stats.ins < 6) { canPickBranch = false; missingReqs.push("IST 6"); }
+        if (tChar === 'MEN' && stats.min < 6) { canPickBranch = false; missingReqs.push("MEN 6"); }
+        
+        // Check Requisiti Specifici (sfruttando la stringa di testo se fallisce il controllo)
         let reqMet = checkTalentRequirements(talent.talent_requirements, stats);
-        if (!canPickBranch || !reqMet || (charState.talents.length >= 3 && count === 0)) return;
+        if (!reqMet) {
+            missingReqs.push(talent.talent_requirements);
+        }
+
+        const isFull = charState.talents.length >= 3;
+        const isMaxed = count >= (parseInt(talent.max) || 1);
+        
+        // È non disponibile se mancano requisiti o se il ramo base è chiuso
+        const isUnavailable = (!canPickBranch || !reqMet) && count === 0;
 
         const card = document.createElement('div');
         card.className = 'choice-card' + (count > 0 ? ' selected' : '');
+        
+        // Applica stile semi-trasparente
+        if (isUnavailable) {
+            card.style.opacity = "0.5";
+        }
+
+        // Crea il messaggio di errore in rosso se ci sono requisiti mancanti
+        const errorMsg = isUnavailable ? `<div style="color: #d32f2f; font-weight: bold; font-size: 0.85rem; margin-bottom: 5px;">Requisiti richiesti: ${missingReqs.join(', ')}</div>` : '';
+
         card.innerHTML = `
             <div style="display:flex; justify-content:space-between;">
                 <div>
+                    ${errorMsg}
                     <span class="card-title">${talent.talent_name}</span> 
                     <div style="font-size: 0.85rem;">${talent.talent_description}</div>
                 </div>
                 <div style="display:flex; align-items:center; gap: 10px;">
-                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', -1)">-</button>
+                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', -1)" ${count === 0 ? 'disabled' : ''}>-</button>
                     <span>${count}/${talent.max || 1}</span>
-                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', 1)" ${count >= (talent.max || 1) || charState.talents.length >= 3 ? 'disabled' : ''}>+</button>
+                    <button class="btn-circle" onclick="changeTalent('${talent.talent_name}', 1)" ${isUnavailable || isFull || isMaxed ? 'disabled' : ''}>+</button>
                 </div>
             </div>
         `;
@@ -438,9 +474,10 @@ function changeTalent(talentName, delta) {
 function renderPsychicAbilities() {
     const container = document.getElementById('abilities-list');
     if(!container) return;
+    
     container.innerHTML = '';
     
-    // Controlla se il talento "Abile nella Psiche" è presente nell'array dei talenti scelti
+    // 1. Definiamo PRIMA la costante per il controllo
     const hasTalent = charState.talents.some(t => t.talent_name.toLowerCase() === "abile nella psiche");
 
     db.abilities.forEach(ability => {
@@ -449,8 +486,12 @@ function renderPsychicAbilities() {
         const card = document.createElement('div');
         card.className = 'choice-card' + (isSelected ? ' selected' : '');
         
-        // Se non ha il talento, rendiamo la card semitrasparente
-        if (!hasTalent) card.style.opacity = "0.5";
+        // 2. Logica per il messaggio d'errore (dentro il ciclo)
+        let errorMsg = '';
+        if (!hasTalent) {
+            card.style.opacity = "0.5";
+            errorMsg = `<div style="color: #d32f2f; font-weight: bold; font-size: 0.85rem; margin-bottom: 5px;">Richiede il talento "Abile nella Psiche"</div>`;
+        }
 
         card.onclick = () => {
             if (!hasTalent) {
@@ -460,10 +501,8 @@ function renderPsychicAbilities() {
 
             const idx = charState.specialAbilities.findIndex(a => a.ability_name === ability.ability_name);
             if (idx > -1) {
-                // Deselezione sempre ammessa
                 charState.specialAbilities.splice(idx, 1);
             } else {
-                // Selezione: controllo limite massimo di 3
                 if (charState.specialAbilities.length >= 3) {
                     alert("Massimo 3 abilità consentite!");
                     return;
@@ -473,10 +512,14 @@ function renderPsychicAbilities() {
             renderPsychicAbilities();
         };
 
+        // 3. Inseriamo il messaggio nell'HTML della card
         card.innerHTML = `
-            <div class="card-title">${ability.ability_name}</div>
-            <div>${ability.ability_description}</div>
-            <div class="card-stats">Costo: ${ability.ability_cost}</div>
+            <div>
+                ${errorMsg}
+                <div class="card-title">${ability.ability_name}</div>
+                <div>${ability.ability_description}</div>
+                <div class="card-stats">Costo: ${ability.ability_cost}</div>
+            </div>
         `;
         container.appendChild(card);
     });

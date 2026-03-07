@@ -35,12 +35,13 @@
     background-color: var(--parchment);
     border: 3px solid var(--burgundy);
     border-radius: 12px;
-    padding: 80px 60px;
+    padding: 25px 60px;
     width: 650px;
-    max-width: 80%;
+    height: 85%;
     text-align: center;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
+
 
 
  /* su PC */
@@ -51,15 +52,13 @@ body::before {
     left: 0;
     width: 100%; 
     height: 100%;
-    background-image: url('../img/saga_2_16.9.png'); 
+    background-image: url('../img/saga_2_16.9_1.png'); 
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    opacity: 0.08; 
+    opacity: 0.2; 
     z-index: -1;
 }
-
-
 
 .logo-circle, .logo-image, h1, .subtitle, .menu-container, .version, .btn-grid, .btn-main{
     position: relative;
@@ -306,11 +305,9 @@ input:checked + .slider:before { transform: translateX(20px); }
 /* --- SPLASH SCREEN STYLES --- */
 #splash-screen {
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--burgundy); /* Usa il colore del tuo file CSS */
+    background-color: var(--burgundy);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -319,8 +316,8 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .splash-logo {
-    width: full;
-    height: auto;
+    width: auto;
+    height: 55%;
     transition: transform 1.5s ease-in-out, opacity 1s ease-in-out;
 }
 
@@ -345,7 +342,6 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 #main-menu.fade-in {
     opacity: 1;
-	background: transparent;
     transform: scale(1);
 }
 
@@ -356,7 +352,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     }
     .border-frame {
         width: 90%;
-        max-width: 80%;
     }
 	/*body { background: red !important; } 	utile per test*/ 
 	
@@ -416,7 +411,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         /* NUOVI STILI: Generali (Origine, Infanzia, Professione) */
         .info-row { display: flex; align-items: center; margin-bottom: 8px; }
         .info-row strong { width: 110px; color: var(--burgundy); }
-        .input-line-inline { flex: 1; background: transparent; border: none; border-bottom: 1px dashed var(--burgundy); font-family: inherit; font-size: 1.1rem; color: var(--text-dark); outline: none; padding: 2px 5px;}
+        .input-line-inline { flex: 1; background: transparent; border: none; border-bottom: 1px dashed var(--burgundy); font-family: inherit; font-size: 1rem; color: var(--text-dark); min-width: 0; outline: none; padding: 2px 5px;}
 
 		/* NUOVI STILI: Caratteristiche (Layout a Righe) */
 		.stats-container { 
@@ -557,7 +552,7 @@ input, select, button {
 }
 
 /* Fix per Mobile: la sidebar deve tornare normale e non sticky */
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 700px) {
     .creation-container {
         flex-direction: column;
     }
@@ -659,4 +654,48 @@ input, select, button {
 .readonly-field {
     pointer-events: none;
     background: transparent;
+}
+
+@media screen and (max-width: 700px) {
+    /* 1. Menu su due righe */
+    .sheet-tabs {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .tab-btn {
+        flex: 1 0 45%; /* Due bottoni per riga */
+        margin: 2px;
+        font-size: 0.9rem;
+        padding: 10px 5px;
+    }
+
+    /* 2. Header: Nome sopra, Liv/Exp sotto */
+    .header-flex {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .name-container {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    .name-field {
+        font-size: 1.5rem !important; /* Ridimensiona automaticamente il font */
+        text-align: center;
+    }
+    .level-exp-box {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Adattamento barre su mobile */
+    .bar-external-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .bar-controls {
+        align-self: flex-end;
+        margin-top: -35px; /* Sovrappone leggermente per risparmiare spazio */
+        z-index: 5;
+    }
 }

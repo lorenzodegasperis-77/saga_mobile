@@ -32,7 +32,7 @@
 
     <script>
         // INSERISCI QUI L'URL COPIATO DA GOOGLE APPS SCRIPT
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQPcDC6OyP9n1RpZzK5CZ-cFyyWX_w0tKKyobU9D-AZ9CI1FzTGyiiUf1qNXxkZf9s8Q/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKH8Cifjmt6FyiAB23ORNrGMGneSkR916xT0nH7HSRsRDRDoDb9WZ5jaHifvG93GKKxw/exec";
 
 		async function loadCharacters() {
 			const listContainer = document.getElementById('characters-list');
@@ -61,7 +61,7 @@
 						<div class="adventure-card">
 							<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
 								<h3 style="margin: 0;">${char.p_name || 'Senza nome'}</h3>
-								<span class="badge">HP: ${char.p_hp_curr}/${char.p_hp_max}</span>
+								<span class="badge">LVL: ${char.p_level}</span>
 							</div>
 							<p>VIG:<strong>${char.p_vig}</strong> IST:<strong>${char.p_ins}</strong> MEN:<strong>${char.p_min}</strong></p>
 							<a href="character_sheet.html?id=${char.p_id}" class="btn-main primary" style="padding: 8px; font-size: 0.8rem; margin-top: 10px;">CONTINUA</a>

@@ -14,11 +14,11 @@
 
         <div id="sheet-wrapper" style="display: none;">
             <div class="sheet-header">
-                <div class="header-flex">
-                    <div style="flex: 2;">
-                        <input type="text" id="p_name" placeholder="Nome Eroe" class="input-blank name-field" readonly style="width: 100%;">
-                    </div>
-					<div class="level-exp-box" style="flex: 1;">
+				<div class="header-flex">
+					<div class="name-container">
+						<input type="text" id="p_name" placeholder="Nome Eroe" class="input-blank name-field" readonly>
+					</div>
+					<div class="level-exp-box">
 						<div class="small-input-box">
 							LIV 
 							<div class="level-container">
@@ -28,7 +28,7 @@
 						</div>
 						<div class="small-input-box">EXP <input type="number" id="p_exp"></div>
 					</div>
-                </div>
+				</div>
             </div>
 
             <div class="sheet-tabs">
@@ -155,7 +155,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQPcDC6OyP9n1RpZzK5CZ-cFyyWX_w0tKKyobU9D-AZ9CI1FzTGyiiUf1qNXxkZf9s8Q/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKH8Cifjmt6FyiAB23ORNrGMGneSkR916xT0nH7HSRsRDRDoDb9WZ5jaHifvG93GKKxw/exec";
         let maxHP = 0;
         let maxEnergy = 0;
         let charData = null;
@@ -361,6 +361,9 @@
                 action: 'updateCharacter',
                 p_id: pgId,
                 updates: {
+					p_vig: charStats.vig.base,
+                    p_ins: charStats.ins.base,
+                    p_min: charStats.min.base,
                     p_hp_curr: document.getElementById('p_hp_curr').value,
                     p_energy_curr: document.getElementById('p_energy_curr').value,
                     p_hp_max: maxHP,
@@ -394,6 +397,21 @@
         }
 
         window.onload = loadSheetData;
+		
+		function changeStat(id, delta) {
+    const el = document.getElementById(id);
+    let val = parseInt(el.value) || 0;
+    const max = (id === 'p_hp_curr') ? maxHP : maxEnergy;
+    
+    val += delta;
+    
+    // Limiti: non scendere sotto 0 e non superare il max
+    if (val < 0) val = 0;
+    if (val > max) val = max;
+    
+    el.value = val;
+    updateBars(); // Aggiorna graficamente la barra
+}
     </script>
 </body>
 </html>
