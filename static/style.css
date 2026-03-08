@@ -369,33 +369,16 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 
 
-/* -----------------------------------------------------------------
-   2️⃣  QUICK‑HIDE SPLASH + DISABLE TRANSITIONS WHEN SPLASH IS SKIPPED
-   ----------------------------------------------------------------- */
-
-/* Se la pagina è già passata la fase splash, il nodo non è nemmeno
-   inserito nel layout – non si vede nemmeno per un fotogramma. */
 .splash-skipped #splash-screen {
     display: none !important;
 }
 
-/* Il menu principale (la .border‑frame con id="main-menu") è
-   animato solo nella prima visita.  Con la classe “splash‑skipped”,
-   eliminiamo la trasformazione e le transizioni per renderlo
-   subito visibile senza effetto di “fade‑in”. */
 .splash-skipped #main-menu {
     opacity: 1 !important;
     transform: scale(1) !important;
     transition: none !important;
 }
 
-/* -----------------------------------------------------------------
-   (Facoltativo) - Se non ti serve più il logo su altre pagine,
-   puoi rimuovere il nodo dal markup, ma il CSS sopra è
-   totalmente indifferente: se il nodo non esiste non succede
-   nulla.
-   ----------------------------------------------------------------- */
-   
    
            /* Stili per il Menu Toggle */
         .sheet-tabs { display: flex; flex-wrap: wrap; border-bottom: 2px solid var(--burgundy); margin-bottom: 20px; }

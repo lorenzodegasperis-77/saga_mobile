@@ -175,7 +175,6 @@
             updateStatDisplay();
         }
 
-        // UNIFICATA: Gestisce sia condizioni che malus armi
         function updateStatDisplay() {
             ['vig', 'ins', 'min'].forEach(s => {
                 const baseVal = charStats[s].base;
@@ -245,7 +244,7 @@
                 document.getElementById('p_energy_max_val').innerText = maxEnergy;
 
                 updateBars();
-                populateDropdowns(); // Corretto il nome qui
+                populateDropdowns(); 
                 updateCombatStats();
                 renderLists(data, gen.p_vig);
 
@@ -405,12 +404,11 @@
     
     val += delta;
     
-    // Limiti: non scendere sotto 0 e non superare il max
     if (val < 0) val = 0;
     if (val > max) val = max;
     
     el.value = val;
-    updateBars(); // Aggiorna graficamente la barra
+    updateBars(); 
 }
     </script>
 </body>
