@@ -143,20 +143,13 @@ h1 {
 
 .btn-main:hover {
     filter: brightness(1.2);
-    transform: scale(1.02);
+    transform: scale(1.05);
 }
 
 .btn-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-top: 12px;
-}
-
-.btn-grid .btn-main {
-    flex: 1;
-	padding: 10px;
-    font-size: 0.9rem;
 }
 
 .version {
