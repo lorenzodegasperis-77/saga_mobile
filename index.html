@@ -43,15 +43,48 @@
 		<div>
 		<h3>Partite salvate</h3>
 		</div>
-		<div class="saved-games" id="adventures-saved">
-		LOREM IPSUM
-		</div>
-    </div>
+<div class="saved-games" id="adventures-saved">
+            LOREM IPSUM
+        </div>
+
+        <div class="social-footer">
+            <a href="https://www.buymeacoffee.com/placeholder" target="_blank" class="btn-small" title="Offrimi un caffè">
+                ☕
+            </a>
+            
+            <a href="https://sito-manuale.it/placeholder" target="_blank" class="btn-small" title="Acquista il Manuale">
+                📖
+            </a>
+
+            <button onclick="shareApp()" class="btn-small" title="Condividi App">
+                🔗
+            </button>
+
+            <a href="https://api.whatsapp.com/send?text=Prova SAGA! Un'avventura interattiva epica: [LINK]" target="_blank" class="btn-small" title="Condividi su WhatsApp">
+                💬
+            </a>
+        </div>
+    </div> 
+
 	</div>
 	<br>
     <div class="version">Versione 1.0</div>
 
 	<script>
+	
+	
+	        function shareApp() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SAGA - Avventure Interattive',
+                    text: 'Inizia la tua avventura su SAGA!',
+                    url: 'https://play.google.com/store/apps/details?id=TUO_ID'
+                }).catch(console.error);
+            } else {
+                alert("Link copiato negli appunti!");
+                navigator.clipboard.writeText("https://play.google.com/store/apps/details?id=TUO_ID");
+            }
+        }
         document.addEventListener("DOMContentLoaded", function() {
             const splash = document.getElementById('splash-screen');
             const menu = document.getElementById('main-menu');

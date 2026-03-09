@@ -6,12 +6,52 @@
     <title>SAGA - Creazione Eroe</title>
     <link rel="icon" type="image/x-icon" href="img/favicon.ico">
     <link rel="stylesheet" href="static/style.css">
+    <style>
+        /* STILI PER IL POP-UP GUIDA E ICONA INFO */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: var(--parchment); border: 2px solid var(--burgundy);
+            padding: 30px; border-radius: 8px; max-width: 500px; width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .guide-text-container { font-size: 1rem; line-height: 1.5; color: var(--text-dark); }
+        .guide-text-container h4 { color: var(--burgundy); font-size: 1.2rem; margin-bottom: 10px; border-bottom: 1px solid var(--burgundy); }
+        
+        .top-controls {
+            position: absolute; top: 15px; right: 20px;
+            display: flex; gap: 15px; align-items: center; z-index: 10;
+        }
+        .info-btn {
+            width: 30px; height: 30px; border-radius: 50%; background: var(--burgundy);
+            color: white; font-weight: bold; font-family: 'Times New Roman', serif; font-size: 1.2rem;
+            border: none; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: 0.2s;
+        }
+        .info-btn:hover { background: var(--burgundy-light); transform: scale(1.1); }
+        .close-x {
+            text-decoration: none; color: var(--burgundy); font-size: 32px; font-weight: bold; line-height: 1;
+        }
+        .close-x:hover { color: black; }
+    </style>
 </head>
 <body>
 
     <h2 id="loading-msg" style="text-align: center; color: var(--burgundy);">Consultazione degli Archivi in corso...</h2>
 
-    <div class="creation-container" id="main-ui" style="display: none;">
+    <div id="guide-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div id="guide-text" class="guide-text-container"></div>
+            <div class="modal-buttons" style="margin-top: 25px; display: flex; justify-content: space-between; gap: 10px;">
+                <button class="btn-main secondary" onclick="skipGuide()">Salta guida</button>
+                <button class="btn-main primary" onclick="closeGuide()">Ho capito</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="creation-container" id="main-ui" style="display: none; position: relative;">
         
         <div class="summary-panel">
             <h3 style="margin-top:0; border-bottom: 1px solid var(--burgundy); padding-bottom:5px;" id="disp_name">Eroe Ignoto</h3>
@@ -31,10 +71,15 @@
             <div class="summary-stat"><span>Talenti:</span> <span id="disp_talents_count">0/3</span></div>
         </div>
 
-        <div class="wizard-panel">
+        <div class="wizard-panel" style="position: relative;">
             
+            <div class="top-controls">
+                <button class="info-btn" onclick="manualShowGuide()" title="Mostra Guida">i</button>
+                <a href="characters.html" class="close-x" title="Annulla creazione">&times;</a>
+            </div>
+
             <div id="step-1" class="step active">
-                <h3>1. Identità dell'Eroe</h3>
+                <h3>Il tuo Eroe</h3>
                 <input type="text" id="input_name" placeholder="Nome del Personaggio" class="input-line" oninput="updateState()">
                 <select id="input_sex" class="input-line" style="margin-top: 15px;" onchange="updateState()">
                     <option value="">Scegli il Sesso...</option>
@@ -44,32 +89,32 @@
                 </select>
                 <div class="btn-grid" style="margin-top: 30px;">
                 <a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
-                <button class="btn-main primary" onclick="navStep(2)">LIGNAGGIO</button>
+                <button class="btn-main primary" onclick="navStep(2)">ORIGINI ❯</button>
                 </div>
             </div>
 
             <div id="step-2" class="step">
-                <h3>2. Scegli il Lignaggio</h3>
+                <h3>Origini (1/3). Scegli il Lignaggio</h3>
                 <p>Le tue origini plasmano il tuo corpo e la tua mente.</p>
                 <div id="list-lineage"></div>
                 <div class="nav-buttons">
                     <button class="btn-main secondary" onclick="navStep(1)">❮ INDIETRO</button>
-                    <button class="btn-main primary" onclick="navStep(3)">INFANZIA ❯</button>
+                    <button class="btn-main primary" onclick="navStep(3)">AVANTI ❯</button>
                 </div>
             </div>
 
             <div id="step-3" class="step">
-                <h3>3. Scegli l'Infanzia</h3>
+                <h3>Origini (2/3). Scegli l'Infanzia</h3>
                 <p>Come sei cresciuto prima di prendere in mano il tuo destino?</p>
                 <div id="list-childhood"></div>
                 <div class="nav-buttons">
                     <button class="btn-main secondary" onclick="navStep(2)">❮ INDIETRO</button>
-                    <button class="btn-main primary" onclick="navStep(4)">PROFESSIONE ❯</button>
+                    <button class="btn-main primary" onclick="navStep(4)">AVANTI ❯</button>
                 </div>
             </div>
 
             <div id="step-4" class="step">
-                <h3>4. Scegli la Professione</h3>
+                <h3>Origini (3/3). Scegli la Professione</h3>
                 <p>Cosa facevi prima di diventare un avventuriero?</p>
                 <div id="list-profession"></div>
                 <div class="nav-buttons">
@@ -78,69 +123,116 @@
                 </div>
             </div>
 
-			<div id="step-5" class="step">
-				<h3>5. Risorse Iniziali</h3>
-				<div class="dice-roll-stage" id="roll-area">
-					<p>Tira 4d6 per determinare i tuoi crediti iniziali (Risultato x 10).</p>
-					<button class="btn-main primary" onclick="executeCreditRoll()">LANCIA I DADI</button>
-				</div>
-				<div class="dice-roll-stage" id="result-area" style="display:none;">
-					<p>Il destino ha parlato!</p>
-					<span class="dice-value" id="dice-res-val">0</span>
-					<p>Hai ottenuto <strong id="total-credits-val">0</strong> Crediti.</p>
-					<div class="nav-buttons">
-						<button class="btn-main primary" onclick="navStep(6)">ACQUISTA ARMI ❯</button>
-					</div>
-				</div>
-			</div>
+            <div id="step-5" class="step">
+                <h3>Crediti</h3>
+                <div class="dice-roll-stage" id="roll-area">
+                    <p>Tira 4d6 per determinare i tuoi crediti iniziali (Risultato x 10).</p>
+                    <button class="btn-main primary" onclick="executeCreditRoll()">LANCIA I DADI</button>
+                </div>
+                <div class="dice-roll-stage" id="result-area" style="display:none;">
+                    <p>Il destino ha parlato!</p>
+                    <span class="dice-value" id="dice-res-val">0</span>
+                    <p>Hai ottenuto <strong id="total-credits-val">0</strong> Crediti.</p>
+                    <div class="nav-buttons">
+                        <button class="btn-main primary" onclick="navStep(6)">EQUIPAGGIAMENTO ❯</button>
+                    </div>
+                </div>
+            </div>
 
-			<div id="step-6" class="step">
-				<h3>6. Armeria: Armi</h3>
-				<div id="list-equip-arma"></div>
-				<div class="nav-buttons">
-					<button class="btn-main secondary" onclick="navStep(4)">❮ INDIETRO</button>
-					<button class="btn-main primary" onclick="navStep(7)">PROTEZIONI ❯</button>
-				</div>
-			</div>
+            <div id="step-6" class="step">
+                <h3>Equipaggiamento (1/3). Armi</h3>
+                <div id="list-equip-arma"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(4)">❮ INDIETRO</button>
+                    <button class="btn-main primary" onclick="navStep(7)">AVANTI ❯</button>
+                </div>
+            </div>
 
-			<div id="step-7" class="step">
-				<h3>7. Armeria: Protezioni</h3>
-				<div id="list-equip-prot"></div>
-				<div class="nav-buttons">
-					<button class="btn-main secondary" onclick="navStep(6)">❮ INDIETRO</button>
-					<button class="btn-main primary" onclick="navStep(8)">OGGETTI E SLOT ❯</button>
-				</div>
-			</div>
+            <div id="step-7" class="step">
+                <h3>Equipaggiammento (2/3). Protezioni</h3>
+                <div id="list-equip-prot"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(6)">❮ INDIETRO</button>
+                    <button class="btn-main primary" onclick="navStep(8)">AVANTI ❯</button>
+                </div>
+            </div>
 
-			<div id="step-8" class="step">
-				<h3>8. Armeria: Altro</h3>
-				<div id="list-equip-slot"></div>
-				<div class="nav-buttons">
-					<button class="btn-main secondary" onclick="navStep(7)">❮ INDIETRO</button>
-					<button class="btn-main primary" onclick="navStep(9)">TALENTI ❯</button>
-				</div>
-			</div>
+            <div id="step-8" class="step">
+                <h3>Equipaggiamento (3/3). Dotazione</h3>
+                <div id="list-equip-slot"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(7)">❮ INDIETRO</button>
+                    <button class="btn-main primary" onclick="navStep(9)">TALENTI ❯</button>
+                </div>
+            </div>
 
-			<div id="step-9" class="step">
-				<h3>9. Talenti (Max 3)</h3>
-				<div id="list-talents"></div>
-				<div class="nav-buttons">
-					<button class="btn-main secondary" onclick="navStep(8)">❮ INDIETRO</button>
-					<button class="btn-main primary" onclick="navStep(10)">ABILITA'</button>
-				</div>
-			</div>
-			<div id="step-10" class="step">
-				<h3>10. Abilità Speciali Istantanee</h3>
-				<div id="abilities-list"></div>
-				<div class="nav-buttons">
-					<button class="btn-main secondary" onclick="navStep(9)">❮ INDIETRO</button>
-					<button class="btn-main primary" id="btn-finish" onclick="finishCreation()">CONCLUDI ❯</button>
-				</div>
-			</div>
+            <div id="step-9" class="step">
+                <h3>Talenti (Max 3)</h3>
+                <div id="list-talents"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(8)">❮ INDIETRO</button>
+                    <button class="btn-main primary" onclick="navStep(10)">ABILITA' ❯</button>
+                </div>
+            </div>
+            
+            <div id="step-10" class="step">
+                <h3>10. Abilità Speciali Istantanee</h3>
+                <div id="abilities-list"></div>
+                <div class="nav-buttons">
+                    <button class="btn-main secondary" onclick="navStep(9)">❮ INDIETRO</button>
+                    <button class="btn-main primary" id="btn-finish" onclick="finishCreation()">CONCLUDI ❯</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+// --- MESSAGGI DELLA GUIDA ---
+const guideMessages = {
+    1: "<h4>Creare un personaggio (1/5)</h4>Benvenuto! Questa breve guida ti aiuterà a generare un personaggio secondo le regole di SAGA. Se conosci già le regole e non vuoi usufruire di questa funzionalità fai click sul riquadro \"Salta guida\" per procedere in autonomia.<br><br>Ricorda che nel caso in cui non ricordassi come utilizzare uno dei menù, puoi sempre cliccare sulla icona informazioni \"i\" in alto per aprire la guida della pagina.<br><br><b>Procedi inserendo il nome e il sesso del tuo personaggio.</b>",
+    2: "<h4>Origini e Caratteristiche (2/5)</h4>Come potrai notare è possibile visualizzare una breve panoramica della tua scheda personaggio (a sinistra).<br><br>Ogni personaggio in SAGA ha tre caratteristiche base:<br>- <b>Vigore (VIG)</b>: forza fisica e resistenza.<br>- <b>Istinto (IST)</b>: agilità, riflessi e spirito di osservazione.<br>- <b>Mente (MEN)</b>: conoscenze, studio e persuasione.<br><br>In SAGA le tue Caratteristiche sono direttamente influenzate dalle tue Origini (Lignaggio, Infanzia e Professione). Scegli con attenzione perché una volta creato il personaggio non è possibile modificarle.",
+    6: "<h4>Equipaggiamento (3/5)</h4>[Placeholder Guida Equipaggiamento]<br><br>In questa fase spenderai i crediti ottenuti per acquistare armi, protezioni e dotazione base. Tieni d'occhio i crediti rimanenti e gli slot del tuo zaino!",
+    9: "<h4>Talenti (4/5)</h4>[Placeholder Guida Talenti]<br><br>I Talenti definiscono le capacità uniche del tuo Eroe. Alcuni richiedono statistiche specifiche (es. 6 VIG). Puoi sceglierne fino a un massimo di 3.",
+    10: "<h4>Abilità Speciali (5/5)</h4>[Placeholder Guida Abilità]<br><br>Le Abilità Speciali rappresentano poteri o manovre fuori dal comune. Ricorda che per acquisirle è obbligatorio possedere il talento 'Abile nella Psiche'."
+};
+
+let currentStepNum = 1;
+
+// --- FUNZIONI DELLA GUIDA ---
+function checkAndShowGuide(step) {
+    // Se l'utente ha silenziato la guida, non mostriamo nulla automaticamente
+    if (localStorage.getItem('saga_skip_guide') === 'true') return;
+    
+    if (guideMessages[step]) {
+        document.getElementById('guide-text').innerHTML = guideMessages[step];
+        document.getElementById('guide-modal').style.display = 'flex';
+    }
+}
+
+function manualShowGuide() {
+    // Togli il "silenzioso" se l'utente clicca volontariamente "i"
+    localStorage.removeItem('saga_skip_guide');
+    
+    // Cerca il messaggio associato allo step corrente (o al più recente precedente)
+    let tempStep = currentStepNum;
+    while(tempStep > 0 && !guideMessages[tempStep]) {
+        tempStep--;
+    }
+    
+    let msg = guideMessages[tempStep] || "Nessuna guida disponibile per questa sezione.";
+    document.getElementById('guide-text').innerHTML = msg;
+    document.getElementById('guide-modal').style.display = 'flex';
+}
+
+function closeGuide() {
+    document.getElementById('guide-modal').style.display = 'none';
+}
+
+function skipGuide() {
+    localStorage.setItem('saga_skip_guide', 'true');
+    closeGuide();
+}
+
 // --- STATO GLOBALE DEL PERSONAGGIO ---
 const charState = {
     id: generateUUID(),
@@ -169,6 +261,10 @@ window.onload = async () => {
         
         renderOriginLists();
         updateUI();
+        
+        // MOSTRA LA GUIDA PER IL PRIMO STEP APPENA CARICA
+        checkAndShowGuide(1);
+        
     } catch (error) {
         document.getElementById('loading-msg').innerText = "Errore di connessione agli Archivi.";
         console.error(error);
@@ -181,6 +277,7 @@ function generateUUID() {
 
 // --- NAVIGAZIONE WIZARD ---
 function navStep(stepNum) {
+    currentStepNum = stepNum;
     document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
     document.getElementById(`step-${stepNum}`).classList.add('active');
 
@@ -189,6 +286,9 @@ function navStep(stepNum) {
     if (stepNum === 10) renderPsychicAbilities();
     
     window.scrollTo(0, 0);
+    
+    // Controlla se c'è un messaggio guida per questo nuovo step
+    checkAndShowGuide(stepNum);
 }
 
 // --- AGGIORNAMENTO STATISTICHE E UI ---
@@ -313,19 +413,16 @@ function renderEquipList() {
             const count = charState.equipment.filter(e => e.equip_name === item.equip_name).length;
             const cost = parseInt(item.equip_cost) || 0;
             
-            // Verifica se può comprare l'oggetto (se ha i soldi o se ne ha già uno da vendere)
             const canAfford = charState.credits >= cost;
             const isUnavailable = !canAfford && count === 0;
 
             const card = document.createElement('div');
             card.className = 'choice-card';
             
-            // Applica lo stile semi-trasparente se non ha i crediti
             if (isUnavailable) {
                 card.style.opacity = "0.5";
             }
 
-            // Messaggio di errore in rosso
             const errorMsg = isUnavailable ? `<div style="color: #d32f2f; font-weight: bold; font-size: 0.85rem; margin-bottom: 5px;">Crediti insufficienti</div>` : '';
 
             card.innerHTML = `
@@ -376,12 +473,10 @@ function renderTalentList() {
         let canPickBranch = true;
         let missingReqs = [];
 
-        // Check Caratteristiche Base
-        if (tChar === 'VIG' && stats.vig < 6) { canPickBranch = false; missingReqs.push("VIG 6"); }
-        if (tChar === 'IST' && stats.ins < 6) { canPickBranch = false; missingReqs.push("IST 6"); }
-        if (tChar === 'MEN' && stats.min < 6) { canPickBranch = false; missingReqs.push("MEN 6"); }
+        if (tChar === 'VIG' && stats.vig < 6) { canPickBranch = false; missingReqs.push("6 VIG"); }
+        if (tChar === 'IST' && stats.ins < 6) { canPickBranch = false; missingReqs.push("6 IST"); }
+        if (tChar === 'MEN' && stats.min < 6) { canPickBranch = false; missingReqs.push("6 MEN"); }
         
-        // Check Requisiti Specifici (sfruttando la stringa di testo se fallisce il controllo)
         let reqMet = checkTalentRequirements(talent.talent_requirements, stats);
         if (!reqMet) {
             missingReqs.push(talent.talent_requirements);
@@ -390,18 +485,15 @@ function renderTalentList() {
         const isFull = charState.talents.length >= 3;
         const isMaxed = count >= (parseInt(talent.max) || 1);
         
-        // È non disponibile se mancano requisiti o se il ramo base è chiuso
         const isUnavailable = (!canPickBranch || !reqMet) && count === 0;
 
         const card = document.createElement('div');
         card.className = 'choice-card' + (count > 0 ? ' selected' : '');
         
-        // Applica stile semi-trasparente
         if (isUnavailable) {
             card.style.opacity = "0.5";
         }
 
-        // Crea il messaggio di errore in rosso se ci sono requisiti mancanti
         const errorMsg = isUnavailable ? `<div style="color: #d32f2f; font-weight: bold; font-size: 0.85rem; margin-bottom: 5px;">Requisiti richiesti: ${missingReqs.join(', ')}</div>` : '';
 
         card.innerHTML = `
@@ -426,16 +518,12 @@ function renderTalentList() {
 function togglePsychicAbility(ability) {
     if (!charState.specialAbilities) charState.specialAbilities = [];
     
-    // 1. Verifica se ha il talento richiesto
     const hasTalent = charState.talents.some(t => t.talent_name.toLowerCase() === "abile nella psiche");
-    
     const index = charState.specialAbilities.findIndex(a => a.ability_name === ability.ability_name);
     
     if (index > -1) {
-        // Se è già selezionata, la rimuoviamo (sempre permesso)
         charState.specialAbilities.splice(index, 1);
     } else {
-        // Se la sta aggiungendo:
         if (!hasTalent) {
             alert("Devi possedere il talento 'Abile nella Psiche' per scegliere queste abilità!");
             return;
@@ -477,7 +565,6 @@ function renderPsychicAbilities() {
     
     container.innerHTML = '';
     
-    // 1. Definiamo PRIMA la costante per il controllo
     const hasTalent = charState.talents.some(t => t.talent_name.toLowerCase() === "abile nella psiche");
 
     db.abilities.forEach(ability => {
@@ -486,7 +573,6 @@ function renderPsychicAbilities() {
         const card = document.createElement('div');
         card.className = 'choice-card' + (isSelected ? ' selected' : '');
         
-        // 2. Logica per il messaggio d'errore (dentro il ciclo)
         let errorMsg = '';
         if (!hasTalent) {
             card.style.opacity = "0.5";
@@ -512,7 +598,6 @@ function renderPsychicAbilities() {
             renderPsychicAbilities();
         };
 
-        // 3. Inseriamo il messaggio nell'HTML della card
         card.innerHTML = `
             <div>
                 ${errorMsg}
@@ -531,14 +616,14 @@ async function finishCreation() {
         alert("Per favore, completa tutti i passaggi dell'identità prima di salvare.");
         return;
     }
-	const btn = document.getElementById('btn-finish');
-	btn.disabled = true;
-	btn.innerText = "SALVATAGGIO...";
+    const btn = document.getElementById('btn-finish');
+    btn.disabled = true;
+    btn.innerText = "SALVATAGGIO...";
     const stats = getCalculatedStats();
     
     const payload = {
         action: 'saveNewCharacter',
-        p_id: charState.id, // Codice alfanumerico (es. PG-X8Z2...)
+        p_id: charState.id, 
         general: {
             p_id: charState.id,
             p_name: charState.name,
@@ -573,7 +658,6 @@ async function finishCreation() {
             talent_description: t.talent_description,
             talent_cost: t.talent_cost
         })),
-        // NUOVA SEZIONE: Invia le abilità al foglio ch_abilities
         specialAbilities: (charState.specialAbilities || []).map(a => ({
             p_id: charState.id,
             ability_name: a.ability_name,
@@ -595,8 +679,8 @@ async function finishCreation() {
     } catch (error) {
         console.error("Errore nel salvataggio:", error);
         alert("Errore durante il salvataggio.");
-		btn.disabled = false;
-		btn.innerText = "CONFERMA LIVELLO";
+        btn.disabled = false;
+        btn.innerText = "CONFERMA LIVELLO";
     }
 }
     </script>

@@ -358,6 +358,11 @@ input:checked + .slider:before { transform: translateX(20px); }
 
     .sheet-grid { grid-template-columns: 1fr; }
     .sheet-header { flex-direction: column; text-align: center; }
+	
+	.splash-logo {
+    width: 80%;
+    height: auto;
+}
 }
 
 
@@ -674,4 +679,55 @@ input, select, button {
         margin-top: -35px; /* Sovrappone leggermente per risparmiare spazio */
         z-index: 5;
     }
+}
+
+.close-x {
+	display: block;
+	width: 30px;
+    font-size: 30px;
+	text-decoration: none;
+    color: white;
+	border: 2px;
+	border-radius: 5px;
+	background-color: var(--burgundy);
+    font-weight: bold;
+	text-align: center;
+    z-index: 10;
+}
+.close-x:hover { color: black; }
+
+
+/* Container per i bottoni piccoli */
+.social-footer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(115, 24, 31, 0.3);
+}
+
+/* Stile bottone piccolo */
+.btn-small {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--burgundy);
+    color: white;
+    text-decoration: none;
+    border-radius: 50%; /* Tondi */
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+*/
+
+.btn-small:hover {
+    transform: translateY(-3px);
+    background: var(--burgundy-light);
+    color: white;
 }
