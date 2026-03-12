@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SAGA — Avventure Interattive</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{min-height:100vh;background:#D8C7A1;font-family:'Times New Roman',Georgia,serif;color:#1a1007;}
@@ -86,9 +87,9 @@ function genId(){return 'PG-'+Math.random().toString(36).substr(2,9).toUpperCase
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const DB={
   heritage:[
-    {name:'Nomade',description:'Sei abituato a viaggiare continuamente vivendo di ciò che la natura o le rotte commerciali offrono. Sei cresciuto con un forte senso di adattabilità e libertà.',vig:1,ins:0,min:0},
-    {name:'Popolare',description:'Fai parte di una comunità semplice e laboriosa, senza ambizioni ma con una grande resilienza. Sei cresciuto con i valori della perseveranza e della solidarietà.',vig:0,ins:1,min:0},
-    {name:'Discendente',description:'Discendi da una famiglia che ha o aveva grande potere. Porti con te l\'orgoglio di ciò che essa rappresenta e forse l\'ambizione di renderla grande.',vig:0,ins:0,min:1},
+    {name:'Nomade',description:'Sei abituato a viaggiare continuamente vivendo di ciò che la natura o le rotte commerciali offrono. Sei cresciuto con un forte senso di adattabilità e libertà.',vig:1,ins:0,min:-1},
+    {name:'Popolare',description:'Fai parte di una comunità semplice e laboriosa, senza ambizioni ma con una grande resilienza. Sei cresciuto con i valori della perseveranza e della solidarietà.',vig:-1,ins:1,min:0},
+    {name:'Discendente',description:'Discendi da una famiglia che ha o aveva grande potere. Porti con te l\'orgoglio di ciò che essa rappresenta e forse l\'ambizione di renderla grande.',vig:0,ins:-1,min:1},
   ],
   childhood:[
     {name:'Rigorosa',description:'Sei stato cresciuto con una disciplina ferrea, che ti ha insegnato a rispettare le regole e a saper controllare i tuoi istinti. Anche se può averti tolto una parte della tua libertà, ora sei in grado di gestire situazioni difficili senza perdere il controllo.',vig:0,ins:-1,min:2},
@@ -297,8 +298,8 @@ let S={
   sh:null,
   // level up
   lu:null,
-  // dice roller
-  dr:null,
+  // 3D dice overlay
+  diceOv:null,
 };
 
 function initCC(){
@@ -315,7 +316,7 @@ function initCC(){
   };
 }
 function initSH(char){
-  return{local:JSON.parse(JSON.stringify(char)),tab:'generale',diceTarget:null,deleteModal:false,deleteInput:''};
+  return{local:JSON.parse(JSON.stringify(char)),tab:'generale',deleteModal:false,deleteInput:''};
 }
 function initLU(){
   return{step:1,attrBoost:null,newTalent:null,newAbility:null,extraAbilities:[],openCats:{VIG:false,IST:false,MEN:false}};
@@ -341,6 +342,8 @@ function load(){
 
 // ─── NAVIGATION ───────────────────────────────────────────────────────────────
 function nav(page,params={}){
+  // close 3D dice overlay if open
+  if(S.diceOv){const ov=document.getElementById('dice-overlay');if(ov)ov.style.display='none';S.diceOv=null;_destroyDiceThree();}
   S.page=page;S.params=params;
   if(page==='create')S.cc=initCC();
   else if(page==='sheet'){const ch=S.chars.find(c=>c.id===params.charId);S.sh=ch?initSH(ch):null;}
@@ -409,7 +412,7 @@ function renderHome(){
     <div style="display:flex;justify-content:center;align-items:center;gap:14px;margin-top:22px;padding-top:16px;border-top:1px dashed rgba(115,24,31,.3);width:100%">
       ${['☕','📖','🔗','💬'].map(ic=>`<button onclick="void(0)" style="width:40px;height:40px;border-radius:50%;background:#73181F;color:white;border:none;cursor:pointer;font-size:1.1rem;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">${ic}</button>`).join('')}
     </div>
-    <div style="font-size:.78rem;opacity:.55;color:#73181F;margin-top:14px">Versione 1.0</div>
+    <div style="font-size:.78rem;opacity:.55;color:#73181F;margin-top:14px">Versione 1.1</div>
   </div>`;
 }
 
@@ -570,7 +573,9 @@ function renderCCStep1(cs){
     <option value="Femmina" ${cs.sex==='Femmina'?'selected':''}>Femmina</option>
     <option value="Altro" ${cs.sex==='Altro'?'selected':''}>Altro / Non specificato</option>
   </select>
-  ${navBtns(null,()=>'ccGoStep(2)','ORIGINI ❯')}`;
+  <div style="display:flex;justify-content:flex-end;margin-top:20px;border-top:1px solid #84785E;padding-top:14px">
+    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.name.trim()){alert('Inserisci il nome del personaggio!');return;}if(!S.cc.cs.sex){alert('Scegli il sesso!');return;}ccGoStep(2)">ORIGINI ❯</button>
+  </div>`;
 }
 
 function renderCCOrigins(title,subtitle,items,type,selected,nextLabel='AVANTI ❯'){
@@ -767,8 +772,9 @@ function ccSelectOrigin(type,i){
   render();
 }
 function ccRollCredits(){
-  const total=[0,0,0,0].reduce(s=>s+Math.ceil(Math.random()*6),0)*10;
-  S.cc.cs.credits=total;S.cc.cs.hasRolled=true;render();
+  openDiceOv(4,'CREDITI INIZIALI','Lancia 4d6 × 10 per i tuoi Crediti di partenza','credits',null,(vals,total)=>{
+    S.cc.cs.credits=total*10;S.cc.cs.hasRolled=true;render();
+  });
 }
 function ccAddEquip(name,dbIdx){
   // find item in all equip arrays
@@ -857,8 +863,6 @@ function renderSheet(){
   const eqNames=[L.mainHand,L.offHand,L.body,L.slot1,L.slot2,L.slot3].filter(Boolean);
   const{dmg,prot}=calcCombat(eqNames);
 
-  // Dice modal
-  const diceModal=S.sh.diceTarget?renderDiceModal():'';
   // Delete modal
   const delModal=S.sh.deleteModal?`
   <div class="overlay">
@@ -880,7 +884,7 @@ function renderSheet(){
   else if(S.sh.tab==='abilità')tabContent=renderSheetAbilita(L);
 
   return`
-  ${diceModal}${delModal}
+  ${delModal}
   <div class="frame" style="width:min(820px,97vw);text-align:left;padding:22px 28px">
     <div style="border-bottom:2px solid #73181F;padding-bottom:14px;margin-bottom:16px">
       <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
@@ -1008,39 +1012,7 @@ function renderSheetAbilita(L){
   </div>`).join('')}`;
 }
 
-// ─── DICE ROLLER ──────────────────────────────────────────────────────────────
-const DICE_FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
-let _diceInterval=null;
-
-function renderDiceModal(){
-  const dt=S.sh.diceTarget;
-  const dr=S.dr||{d1:null,d2:null,rolling:false,result:null};
-  return`
-  <div class="overlay" style="z-index:9998">
-    <div class="modal" style="text-align:center;max-width:360px">
-      <h3 style="color:#73181F;letter-spacing:3px;margin-bottom:4px;font-size:1rem">TIRO 2d6</h3>
-      <p style="font-size:.85rem;opacity:.7;margin-bottom:20px">${esc(dt.statName)} <strong style="color:#73181F">${dt.statValue}</strong> — supera con ≤ ${dt.statValue}</p>
-      <div style="display:flex;justify-content:center;gap:20px;margin-bottom:22px;min-height:72px" id="dice-display">
-        ${[dr.d1,dr.d2].map(d=>`
-        <div id="die-${d===dr.d1?1:2}" style="width:68px;height:68px;border:3px solid #73181F;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:2.6rem;box-shadow:0 4px 14px rgba(0,0,0,.18)">
-          ${d?DICE_FACES[d-1]:'<span style="color:#ccc;font-size:1.8rem">?</span>'}
-        </div>`).join('')}
-      </div>
-      ${dr.result?`
-      <div style="margin-bottom:20px">
-        <div style="font-size:2.2rem;font-weight:bold;color:#73181F;line-height:1">${dr.result.total}</div>
-        <div style="font-size:.78rem;opacity:.6;margin:4px 0 10px">${dr.d1} + ${dr.d2} = ${dr.result.total} vs ${esc(dt.statName)} ${dt.statValue}</div>
-        <div style="display:inline-block;padding:7px 22px;border-radius:8px;font-weight:bold;font-size:1rem;letter-spacing:2px;background:${dr.result.success?'#18732D':'#d32f2f'};color:white;box-shadow:0 0 16px ${dr.result.success?'rgba(24,115,45,.4)':'rgba(211,47,47,.4)'}">
-          ${dr.result.success?'✓ SUCCESSO':'✗ FALLIMENTO'}
-        </div>
-      </div>`:''}
-      <div style="display:flex;gap:10px">
-        <button class="btn btn-secondary" style="flex:1;padding:10px" onclick="shCloseDice()">Chiudi</button>
-        <button class="btn btn-primary" style="flex:2;padding:10px" ${dr.rolling?'disabled':''} onclick="shRoll()">${dr.rolling?'⏳ ...':dr.result?'🎲 Ritira':'🎲 Lancia'}</button>
-      </div>
-    </div>
-  </div>`;
-}
+// ─── DICE SYSTEM (3D) ─────────────────────────────────────────────────────────
 
 // ─── SHEET EVENT HANDLERS ─────────────────────────────────────────────────────
 function shSetTab(t){S.sh.tab=t;render();}
@@ -1059,38 +1031,8 @@ function shToggleCond(k,g){
   render();
 }
 function shSetEquip(slot,val){S.sh.local[slot]=val;render();}
-function shOpenDice(name,val){S.sh.diceTarget={statName:name,statValue:val};S.dr={d1:null,d2:null,rolling:false,result:null};render();}
-function shCloseDice(){S.sh.diceTarget=null;S.dr=null;if(_diceInterval)clearInterval(_diceInterval);render();}
-function shRoll(){
-  if(!S.dr||S.dr.rolling)return;
-  S.dr.result=null;S.dr.rolling=true;
-  const final1=Math.ceil(Math.random()*6);
-  const final2=Math.ceil(Math.random()*6);
-  if(S.settings.diceAnim){
-    let tick=0;
-    _diceInterval=setInterval(()=>{
-      S.dr.d1=Math.ceil(Math.random()*6);
-      S.dr.d2=Math.ceil(Math.random()*6);
-      // update dice faces directly without full re-render
-      const d1el=document.getElementById('die-1');
-      const d2el=document.getElementById('die-2');
-      if(d1el)d1el.textContent=DICE_FACES[S.dr.d1-1];
-      if(d2el)d2el.textContent=DICE_FACES[S.dr.d2-1];
-      tick++;
-      if(tick>=16){
-        clearInterval(_diceInterval);
-        S.dr.d1=final1;S.dr.d2=final2;
-        S.dr.rolling=false;
-        S.dr.result={total:final1+final2,success:final1+final2<=S.sh.diceTarget.statValue};
-        render();
-      }
-    },70);
-  } else {
-    S.dr.d1=final1;S.dr.d2=final2;
-    S.dr.rolling=false;
-    S.dr.result={total:final1+final2,success:final1+final2<=S.sh.diceTarget.statValue};
-    render();
-  }
+function shOpenDice(name,val){
+  openDiceOv(2,'TIRO CARATTERISTICA',`${name} ${val} — successo con 2d6 ≤ ${val}`,'stat',val,()=>{render();});
 }
 function shUseItem(idx){
   const inv=S.sh.local.inventory;
@@ -1285,6 +1227,290 @@ function luFinish(){
   nav('sheet',{charId:char.id});
 }
 
+// ─── 3D DICE OVERLAY ──────────────────────────────────────────────────────────
+let _diceThree=null;
+
+// BoxGeometry material face order: [+X,-X,+Y,-Y,+Z,-Z] = die faces [3,4,1,6,2,5]
+// Euler to land face N on top (+Y axis up):
+const _FACE_EULER={
+  1:[0,0,0],            // 1 already at +Y
+  2:[-Math.PI/2,0,0],   // +Z → +Y
+  3:[0,0,Math.PI/2],    // +X → +Y
+  4:[0,0,-Math.PI/2],   // -X → +Y
+  5:[Math.PI/2,0,0],    // -Z → +Y
+  6:[Math.PI,0,0],      // -Y → +Y
+};
+const _FACE_Q={};
+function _buildFaceQ(){
+  if(_FACE_Q[1])return;
+  for(let v=1;v<=6;v++){
+    _FACE_Q[v]=new THREE.Quaternion().setFromEuler(new THREE.Euler(..._FACE_EULER[v]));
+  }
+}
+
+function _pipPositions(v){
+  const lo=0.27,hi=0.73,c=0.5;
+  return{1:[[c,c]],2:[[lo,hi],[hi,lo]],3:[[lo,hi],[c,c],[hi,lo]],
+    4:[[lo,lo],[hi,lo],[lo,hi],[hi,hi]],
+    5:[[lo,lo],[hi,lo],[c,c],[lo,hi],[hi,hi]],
+    6:[[lo,lo],[hi,lo],[lo,c],[hi,c],[lo,hi],[hi,hi]]}[v];
+}
+
+function _makeFaceTex(v){
+  const sz=128;
+  const cv=document.createElement('canvas');cv.width=cv.height=sz;
+  const ctx=cv.getContext('2d');
+  // Parchment gradient background
+  const g=ctx.createLinearGradient(0,0,sz,sz);
+  g.addColorStop(0,'#F8F2E2');g.addColorStop(1,'#EBD9B8');
+  ctx.fillStyle=g;
+  ctx.beginPath();ctx.roundRect(3,3,sz-6,sz-6,14);ctx.fill();
+  // Border
+  ctx.strokeStyle='#73181F';ctx.lineWidth=6;
+  ctx.beginPath();ctx.roundRect(5,5,sz-10,sz-10,11);ctx.stroke();
+  // Pips
+  const pips=_pipPositions(v);
+  pips.forEach(([px,py])=>{
+    ctx.beginPath();
+    ctx.arc(px*sz,py*sz,sz*0.09,0,Math.PI*2);
+    ctx.fillStyle=v===1?'#73181F':'#1a1007';
+    ctx.fill();
+  });
+  return new THREE.CanvasTexture(cv);
+}
+
+function openDiceOv(numDice,title,subtitle,mode,statValue,onClose){
+  if(_diceThree)_destroyDiceThree();
+  S.diceOv={numDice,mode,statValue,rolling:false,settled:false,values:null,total:null,onClose};
+  const ov=document.getElementById('dice-overlay');
+  ov.style.display='flex';
+  document.getElementById('dice-ov-title').textContent=title;
+  document.getElementById('dice-ov-sub').textContent=subtitle;
+  document.getElementById('dice-ov-result').innerHTML='<p style="opacity:.5;font-style:italic;font-size:.88rem">Premi il pulsante per lanciare.</p>';
+  const btn=document.getElementById('dice-ov-btn');
+  btn.textContent='🎲 Lancia '+numDice+'d6';btn.disabled=false;
+  requestAnimationFrame(()=>_initDice3D(numDice));
+}
+
+function closeDiceOv(){
+  const diceOv=S.diceOv;
+  if(diceOv&&diceOv.settled&&diceOv.onClose)diceOv.onClose(diceOv.values,diceOv.total);
+  S.diceOv=null;
+  _destroyDiceThree();
+  const ov=document.getElementById('dice-overlay');
+  if(ov)ov.style.display='none';
+}
+
+function _destroyDiceThree(){
+  if(_diceThree){
+    if(_diceThree.animId)cancelAnimationFrame(_diceThree.animId);
+    try{if(_diceThree.renderer&&_diceThree.renderer.dispose)_diceThree.renderer.dispose();}catch(e){}
+    _diceThree=null;
+  }
+}
+
+function _initDice3D(numDice){
+  if(typeof THREE==='undefined'){_init2DFallback(numDice);return;}
+  _buildFaceQ();
+  const canvas=document.getElementById('dice-canvas');
+  if(!canvas)return;
+  const W=Math.min(canvas.parentElement.offsetWidth-32,500)||460;
+  const H=260;
+  canvas.width=W;canvas.height=H;
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+  renderer.setSize(W,H);
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  const scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x120801);
+  const camera=new THREE.PerspectiveCamera(38,W/H,0.1,100);
+  camera.position.set(0,10,12);camera.lookAt(0,0,0);
+  // Lighting
+  scene.add(new THREE.AmbientLight(0xffeedd,0.3));
+  const sun=new THREE.DirectionalLight(0xfffaf0,1.5);
+  sun.position.set(5,14,8);sun.castShadow=true;
+  sun.shadow.mapSize.set(1024,1024);
+  sun.shadow.camera.near=0.5;sun.shadow.camera.far=50;
+  sun.shadow.camera.left=sun.shadow.camera.bottom=-8;
+  sun.shadow.camera.right=sun.shadow.camera.top=8;
+  scene.add(sun);
+  const fill=new THREE.PointLight(0x73181F,0.5,20);fill.position.set(-5,3,5);scene.add(fill);
+  // Table plane
+  const tbl=new THREE.Mesh(new THREE.PlaneGeometry(30,30),new THREE.MeshLambertMaterial({color:0x150901}));
+  tbl.rotation.x=-Math.PI/2;tbl.receiveShadow=true;scene.add(tbl);
+  // Felt texture ring
+  const ring=new THREE.Mesh(new THREE.RingGeometry(4,6,64),new THREE.MeshLambertMaterial({color:0x1e0d03,side:THREE.DoubleSide}));
+  ring.rotation.x=-Math.PI/2;ring.position.y=0.01;scene.add(ring);
+  // Die face material order for BoxGeometry: +X,-X,+Y,-Y,+Z,-Z = faces 3,4,1,6,2,5
+  const FACE_ORDER=[3,4,1,6,2,5];
+  const dice=[];
+  const maxSpread=Math.min(2.2,7/numDice);
+  for(let i=0;i<numDice;i++){
+    const mats=FACE_ORDER.map(v=>new THREE.MeshStandardMaterial({map:_makeFaceTex(v),roughness:0.22,metalness:0.0}));
+    const mesh=new THREE.Mesh(new THREE.BoxGeometry(1.35,1.35,1.35),mats);
+    mesh.castShadow=true;
+    const xFinal=(i-(numDice-1)/2)*maxSpread*2;
+    mesh.position.set(xFinal+(Math.random()-0.5)*0.5,6+i*0.8,(Math.random()-0.5)*1.2);
+    mesh.rotation.set(Math.random()*Math.PI*2,Math.random()*Math.PI*2,Math.random()*Math.PI*2);
+    scene.add(mesh);
+    dice.push({mesh,xFinal,targetQuat:null,targetPos:null,spinVel:null,fallStart:null,phaseQuat:null});
+  }
+  _diceThree={scene,camera,renderer,dice,animId:null,rolling:false,W,H};
+  renderer.render(scene,camera);
+  // Idle gentle spin
+  (function idle(){
+    if(!_diceThree||_diceThree.rolling)return;
+    dice.forEach(d=>{d.mesh.rotation.y+=0.004;});
+    renderer.render(scene,camera);
+    _diceThree.animId=requestAnimationFrame(idle);
+  })();
+}
+
+function _init2DFallback(numDice){
+  const canvas=document.getElementById('dice-canvas');if(!canvas)return;
+  canvas.width=460;canvas.height=220;
+  const ctx=canvas.getContext('2d');
+  _draw2DPlaceholder(ctx,canvas.width,canvas.height,numDice,[]);
+  _diceThree={scene:null,camera:null,renderer:{render:()=>{}},dice:[],animId:null,rolling:false,fallback2D:true,ctx,W:460,H:220,numDice};
+}
+
+function _draw2DPlaceholder(ctx,W,H,numDice,vals){
+  const F=['⚀','⚁','⚂','⚃','⚄','⚅'];
+  ctx.fillStyle='#120801';ctx.fillRect(0,0,W,H);
+  for(let i=0;i<numDice;i++){
+    const x=(i+0.5)*(W/numDice);
+    const face=vals[i]?F[vals[i]-1]:'?';
+    const sz=Math.min(W/numDice*0.55,H*0.55);
+    ctx.font=`bold ${sz}px serif`;ctx.textAlign='center';
+    ctx.fillStyle=vals.length?'#F5EDD8':'rgba(245,237,216,.4)';
+    ctx.fillText(face,x,H*0.62);
+  }
+}
+
+function startDiceRoll(){
+  if(!_diceThree||_diceThree.rolling)return;
+  const diceOv=S.diceOv;if(!diceOv)return;
+  _diceThree.rolling=true;
+  if(_diceThree.animId)cancelAnimationFrame(_diceThree.animId);
+  // Pre-determine values
+  const numDice=diceOv.numDice;
+  const values=Array.from({length:numDice},()=>Math.ceil(Math.random()*6));
+  diceOv.values=values;
+  diceOv.total=values.reduce((s,v)=>s+v,0);
+  const btn=document.getElementById('dice-ov-btn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ ...';}
+  document.getElementById('dice-ov-result').innerHTML='';
+  if(_diceThree.fallback2D){_start2DRoll(values,diceOv);return;}
+  // Setup target for each die
+  const {dice}=_diceThree;
+  dice.forEach((d,i)=>{
+    const val=values[i];
+    // Final quaternion = Y-random spin then face alignment
+    const qBase=_FACE_Q[val].clone();
+    const qY=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),Math.random()*Math.PI*2);
+    d.targetQuat=new THREE.Quaternion().multiplyQuaternions(qY,qBase);
+    d.targetPos=new THREE.Vector3(d.xFinal+(Math.random()-0.5)*0.3,0.68,(Math.random()-0.5)*0.9);
+    d.spinVel=new THREE.Vector3((Math.random()-0.5)*28,(Math.random()-0.5)*28,(Math.random()-0.5)*28);
+    d.fallStart=d.mesh.position.clone();
+    d.phaseQuat=null;
+  });
+  const FALL=1500,SETTLE=1000,TOTAL=FALL+SETTLE,t0=performance.now();
+  function frame(now){
+    const el=Math.min(now-t0,TOTAL);
+    dice.forEach(d=>{
+      if(el<=FALL){
+        const tp=el/FALL;
+        // Fall with arc and slight bounce near landing
+        const fe=tp<0.82?tp/0.82:1-Math.sin((tp-0.82)/0.18*Math.PI)*0.10;
+        d.mesh.position.lerpVectors(d.fallStart,d.targetPos,fe);
+        d.mesh.position.y=d.fallStart.y*(1-fe)+d.targetPos.y*fe+Math.sin(tp*Math.PI)*1.2*(1-tp*0.4);
+        const sd=Math.pow(1-tp,1.2);
+        const st=el*0.001;
+        d.mesh.rotation.set(d.spinVel.x*st*sd,d.spinVel.y*st*sd,d.spinVel.z*st*sd);
+        d.phaseQuat=null;
+      }else{
+        const sp=(el-FALL)/SETTLE;
+        const ease=1-Math.pow(1-sp,3);
+        d.mesh.position.copy(d.targetPos);
+        if(!d.phaseQuat)d.phaseQuat=d.mesh.quaternion.clone();
+        d.mesh.quaternion.slerpQuaternions(d.phaseQuat,d.targetQuat,ease);
+      }
+    });
+    _diceThree.renderer.render(_diceThree.scene,_diceThree.camera);
+    if(el<TOTAL){_diceThree.animId=requestAnimationFrame(frame);}
+    else{
+      dice.forEach(d=>{d.mesh.position.copy(d.targetPos);d.mesh.quaternion.copy(d.targetQuat);});
+      _diceThree.renderer.render(_diceThree.scene,_diceThree.camera);
+      _diceThree.rolling=false;
+      diceOv.settled=true;
+      _showDiceOvResult(diceOv);
+      // Gentle idle rock after settling
+      const t1=performance.now();
+      (function rock(now){
+        if(!_diceThree||_diceThree.rolling)return;
+        const rt=(now-t1)*0.001;
+        dice.forEach((d,i)=>{
+          const ph=i*1.1;
+          const rq=new THREE.Quaternion().setFromEuler(new THREE.Euler(
+            Math.sin(rt*0.7+ph)*0.012,0,Math.sin(rt*0.5+ph*1.4)*0.012
+          ));
+          d.mesh.quaternion.multiplyQuaternions(d.targetQuat,rq);
+        });
+        _diceThree.renderer.render(_diceThree.scene,_diceThree.camera);
+        _diceThree.animId=requestAnimationFrame(rock);
+      })(performance.now());
+    }
+  }
+  _diceThree.animId=requestAnimationFrame(frame);
+}
+
+function _start2DRoll(values,diceOv){
+  const {ctx,W,H,numDice}=_diceThree;
+  const F=['⚀','⚁','⚂','⚃','⚄','⚅'];
+  let tick=0,MAX=22;
+  const iv=setInterval(()=>{
+    ctx.fillStyle='#120801';ctx.fillRect(0,0,W,H);
+    const sz=Math.min(W/numDice*0.55,H*0.55);
+    ctx.font=`bold ${sz}px serif`;ctx.textAlign='center';
+    for(let i=0;i<numDice;i++){
+      const x=(i+0.5)*(W/numDice);
+      ctx.fillStyle='rgba(245,237,216,.8)';
+      ctx.fillText(F[Math.floor(Math.random()*6)],x,H*0.62);
+    }
+    tick++;
+    if(tick>=MAX){
+      clearInterval(iv);
+      _draw2DPlaceholder(ctx,W,H,numDice,values);
+      _diceThree.rolling=false;diceOv.settled=true;_showDiceOvResult(diceOv);
+    }
+  },70);
+}
+
+function _showDiceOvResult(diceOv){
+  const{values,total,mode,statValue}=diceOv;
+  const rd=document.getElementById('dice-ov-result');
+  const btn=document.getElementById('dice-ov-btn');
+  if(!rd||!btn)return;
+  let html='';
+  if(mode==='credits'){
+    const cr=total*10;
+    html=`<div style="opacity:.7;font-size:.83rem;margin-bottom:2px">${values.join(' + ')} = ${total} × 10</div>
+    <div style="font-size:3rem;font-weight:bold;color:#73181F;line-height:1.15">${cr}</div>
+    <div style="font-size:.82rem;opacity:.65">Crediti iniziali</div>`;
+  }else if(mode==='stat'){
+    const ok=total<=statValue;
+    html=`<div style="font-size:1.1rem;font-weight:bold;color:#73181F;margin-bottom:6px">${values.join(' + ')} = <span style="font-size:1.6rem">${total}</span> vs target ${statValue}</div>
+    <div style="display:inline-block;padding:7px 26px;border-radius:8px;font-weight:bold;font-size:1rem;letter-spacing:2px;background:${ok?'#18732D':'#d32f2f'};color:white;box-shadow:0 0 18px ${ok?'rgba(24,115,45,.45)':'rgba(211,47,47,.45)'}">
+      ${ok?'✓ SUCCESSO':'✗ FALLIMENTO'}
+    </div>`;
+  }else{
+    html=`<div style="font-size:2rem;font-weight:bold;color:#73181F">${values.join(' + ')} = ${total}</div>`;
+  }
+  rd.innerHTML=html;
+  btn.textContent='🎲 Rilancia';btn.disabled=false;
+}
+
+// ─── RENDER: SETTINGS ─────────────────────────────────────────────────────────
 // ─── RENDER: SETTINGS ─────────────────────────────────────────────────────────
 function renderSettings(){
   const{music,diceAnim}=S.settings;
@@ -1320,6 +1546,7 @@ function renderSettings(){
 }
 function settingsToggle(key){S.settings[key]=!S.settings[key];persist();render();}
 
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 load();
 
@@ -1332,6 +1559,22 @@ setTimeout(()=>{
 },3100);
 
 render();
+
 </script>
+<!-- 3D DICE OVERLAY -->
+<div id="dice-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:20000;align-items:center;justify-content:center;font-family:'Times New Roman',Georgia,serif;padding:12px">
+  <div style="background:#D8C7A1;border:3px solid #73181F;border-radius:14px;padding:22px 24px;max-width:520px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.6)">
+    <h3 id="dice-ov-title" style="color:#73181F;letter-spacing:3px;font-size:1rem;margin:0 0 3px">LANCIA I DADI</h3>
+    <p id="dice-ov-sub" style="font-size:.83rem;opacity:.68;margin:0 0 14px"></p>
+    <div style="border-radius:10px;overflow:hidden;background:#120801;line-height:0">
+      <canvas id="dice-canvas" style="width:100%;display:block"></canvas>
+    </div>
+    <div id="dice-ov-result" style="min-height:72px;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:10px 0 4px"></div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button onclick="closeDiceOv()" style="flex:1;padding:11px;border-radius:8px;font-weight:bold;font-size:.88rem;cursor:pointer;font-family:inherit;letter-spacing:1px;background:transparent;color:#1a1007;border:2px solid #73181F;transition:filter .2s" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">Chiudi</button>
+      <button id="dice-ov-btn" onclick="startDiceRoll()" style="flex:2;padding:11px;border-radius:8px;font-weight:bold;font-size:.88rem;cursor:pointer;font-family:inherit;letter-spacing:1px;background:#73181F;color:white;border:2px solid #73181F;transition:filter .2s" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter='none'">🎲 Lancia</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
