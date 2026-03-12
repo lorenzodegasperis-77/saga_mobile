@@ -13,22 +13,28 @@
         <h2 id="loading-text" style="text-align: center;">Caricamento pergamena...</h2>
 
         <div id="sheet-wrapper" style="display: none;">
-            <div class="sheet-header">
-				<div class="header-flex">
-					<div class="name-container">
-						<input type="text" id="p_name" placeholder="Nome Eroe" class="input-blank name-field" readonly>
-					</div>
-					<div class="level-exp-box">
-						<div class="small-input-box">
-							LIV 
-							<div class="level-container">
-								<input type="number" id="p_level" readonly class="readonly-field">
-								<a href="#" id="level-up-link" class="lvl-up-btn" title="Aumenta Livello">+</a>
-							</div>
-						</div>
-						<div class="small-input-box">EXP <input type="number" id="p_exp"></div>
-					</div>
-				</div>
+            <div class="sheet-header" style="flex-direction: column; align-items: flex-start;">
+                <div class="header-flex" style="width: 100%;">
+                    <div class="name-container">
+                        <input type="text" id="p_name" class="input-blank name-field" readonly>
+                    </div>
+                    <div class="level-exp-box">
+                        <div class="small-input-box">LIV 
+                            <div class="level-container">
+                                <input type="number" id="p_level" readonly>
+                                <a href="#" id="level-up-link" class="lvl-up-btn">+</a>
+                            </div>
+                        </div>
+                        <div class="small-input-box">EXP <input type="number" id="p_exp"></div>
+                    </div>
+                    <button class="btn-delete" onclick="deleteCharacter()">✕ Elimina</button>
+                </div>
+                
+                <div class="info-row-header" style="font-size: 0.9rem; display: flex; gap: 15px; margin-top: 5px; opacity: 0.8;">
+                    <span><strong>Lignaggio:</strong> <span id="txt_heritage"></span></span>
+                    <span><strong>Infanzia:</strong> <span id="txt_childhood"></span></span>
+                    <span><strong>Professione:</strong> <span id="txt_profession"></span></span>
+                </div>
             </div>
 
             <div class="sheet-tabs">
@@ -39,70 +45,66 @@
             </div>
 
             <div id="generale" class="tab-content active">
-                <div class="info-stack" style="margin-bottom: 25px;">
-                    <div class="info-row"><strong>Lignaggio:</strong> <input type="text" id="heritage" class="input-line-inline"></div>
-                    <div class="info-row"><strong>Infanzia:</strong> <input type="text" id="childhood" class="input-line-inline"></div>
-                    <div class="info-row"><strong>Professione:</strong> <input type="text" id="profession" class="input-line-inline"></div>
-                </div>
-                
                 <div class="sheet-grid">
                     <div class="sheet-column">
                         <div class="stat-section">
                             <h3>CARATTERISTICHE</h3>
-							<div class="stats-container">
-								<div class="stat-box">
-									<span>VIG</span> 
-									<div class="stat-value-box">
-										<input type="number" id="display_vig" readonly>
-									</div>
-									<div class="condition-selectors">
-										<div class="cond-dot" id="dot_vig_1" onclick="toggleCond('vig', 1)" title="Grado 1"></div>
-										<div class="cond-dot" id="dot_vig_2" onclick="toggleCond('vig', 2)" title="Grado 2"></div>
-									</div>
-								</div>
-
-								<div class="stat-box">
-									<span>IST</span> 
-									<div class="stat-value-box">
-										<input type="number" id="display_ins" readonly>
-									</div>
-									<div class="condition-selectors">
-										<div class="cond-dot" id="dot_ins_1" onclick="toggleCond('ins', 1)" title="Grado 1"></div>
-										<div class="cond-dot" id="dot_ins_2" onclick="toggleCond('ins', 2)" title="Grado 2"></div>
-									</div>
-								</div>
-
-								<div class="stat-box">
-									<span>MEN</span> 
-									<div class="stat-value-box">
-										<input type="number" id="display_min" readonly>
-									</div>
-									<div class="condition-selectors">
-										<div class="cond-dot" id="dot_min_1" onclick="toggleCond('min', 1)" title="Grado 1"></div>
-										<div class="cond-dot" id="dot_min_2" onclick="toggleCond('min', 2)" title="Grado 2"></div>
-									</div>
-								</div>
-							</div>
+                            <div class="stats-container">
+                                <div class="stat-box">
+                                    <span>VIG</span> 
+                                    <div class="stat-value-box"><input type="number" id="display_vig" readonly></div>
+                                    <div class="condition-selectors">
+                                        <div class="cond-dot" id="dot_vig_1" onclick="toggleCond('vig', 1)"></div>
+                                        <div class="cond-dot" id="dot_vig_2" onclick="toggleCond('vig', 2)"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <span>IST</span> 
+                                    <div class="stat-value-box"><input type="number" id="display_ins" readonly></div>
+                                    <div class="condition-selectors">
+                                        <div class="cond-dot" id="dot_ins_1" onclick="toggleCond('ins', 1)"></div>
+                                        <div class="cond-dot" id="dot_ins_2" onclick="toggleCond('ins', 2)"></div>
+                                    </div>
+                                </div>
+                                <div class="stat-box">
+                                    <span>MEN</span> 
+                                    <div class="stat-value-box"><input type="number" id="display_min" readonly></div>
+                                    <div class="condition-selectors">
+                                        <div class="cond-dot" id="dot_min_1" onclick="toggleCond('min', 1)"></div>
+                                        <div class="cond-dot" id="dot_min_2" onclick="toggleCond('min', 2)"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="stat-section">
                             <h3>COMBATTIMENTO</h3>
                             <div style="margin-top: 15px;">
-                                <div class="bar-container health-bar-bg">
-                                    <div class="bar-fill health-bar-fill" id="health-fill"></div>
-                                    <span class="bar-text">
-                                        SALUTE: <input type="number" id="p_hp_curr" class="bar-input" oninput="updateBars()"> / <span id="p_hp_max_val">0</span>
-                                    </span>
+                                <div style="align-items: center; margin-bottom: 12px;">
+                                    <div class="bar-container health-bar-bg" style="margin-bottom: 0; flex: 1;">
+                                        <div class="bar-fill health-bar-fill" id="health-fill"></div>
+                                        <span class="bar-text">SALUTE: <input type="number" id="p_hp_curr" class="bar-input" oninput="updateBars()"> / <span id="p_hp_max_val">0</span></span>
+                                    </div>
+                                    <div class="stat-controls">
+                                        <button class="btn-stat" onclick="changeStat('p_hp_curr', -1)">-</button>
+                                        <button class="btn-stat" onclick="changeStat('p_hp_curr', 1)">+</button>
+                                    </div>
                                 </div>
-                                <div class="bar-container energy-bar-bg">
-                                    <div class="bar-fill energy-bar-fill" id="energy-fill"></div>
-                                    <span class="bar-text">
-                                        ENERGIA: <input type="number" id="p_energy_curr" class="bar-input" oninput="updateBars()"> / <span id="p_energy_max_val">0</span>
-                                    </span>
+
+                                <div style="align-items: center;">
+                                    <div class="bar-container energy-bar-bg" style="margin-bottom: 0; flex: 1;">
+                                        <div class="bar-fill energy-bar-fill" id="energy-fill"></div>
+                                        <span class="bar-text">ENERGIA: <input type="number" id="p_energy_curr" class="bar-input" oninput="updateBars()"> / <span id="p_energy_max_val">0</span></span>
+                                    </div>
+                                    <div class="stat-controls">
+                                        <button class="btn-stat" onclick="changeStat('p_energy_curr', -1)">-</button>
+                                        <button class="btn-stat" onclick="changeStat('p_energy_curr', 1)">+</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="combat-stats-mini">
-                                <div>DANNO<br><strong id="damage" style="font-size: 1.2rem;">1</strong></div>
-                                <div>PROT.<br><strong id="protection" style="font-size: 1.2rem;">0</strong></div>
+                                <div>DANNO<br><strong id="damage">1</strong></div>
+                                <div>PROT.<br><strong id="protection">0</strong></div>
                             </div>
                         </div>
                     </div>
@@ -111,109 +113,119 @@
                         <div class="stat-section">
                             <h3>EQUIP. PRINCIPALE</h3>
                             <div style="margin-top: 15px;">
-                                Mano principale:<select id="p_main_hand" class="input-line" onchange="updateCombatStats()"><option value="">-- Mano Principale --</option></select>
-                                Mano secondaria:<select id="p_off_hand" class="input-line" onchange="updateCombatStats()"><option value="">-- Mano Secondaria --</option></select>
-                                Corpo:<select id="p_body" class="input-line" onchange="updateCombatStats()"><option value="">-- Corpo --</option></select>
-                                Slot 1:<select id="p_slot_1" class="input-line" onchange="updateCombatStats()"><option value="">-- Slot 1 --</option></select>
-                                Slot 2:<select id="p_slot_2" class="input-line" onchange="updateCombatStats()"><option value="">-- Slot 2 --</option></select>
-                                Slot 3:<select id="p_slot_3" class="input-line" onchange="updateCombatStats()"><option value="">-- Slot 3 --</option></select>
+                                Mano principale:<select id="p_main_hand" class="input-line" onchange="updateCombatStats()"></select>
+                                Mano secondaria:<select id="p_off_hand" class="input-line" onchange="updateCombatStats()"></select>
+                                Corpo:<select id="p_body" class="input-line" onchange="updateCombatStats()"></select>
+                                Slot 1:<select id="p_slot_1" class="input-line" onchange="updateCombatStats()"></select>
+                                Slot 2:<select id="p_slot_2" class="input-line" onchange="updateCombatStats()"></select>
+                                Slot 3:<select id="p_slot_3" class="input-line" onchange="updateCombatStats()"></select>
                             </div>
                         </div>
                     </div>
-
                 </div>
-				<div class="btn-grid" style="margin-top: 30px;">
-						<a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
-						<button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
-				</div>
+                <div class="btn-grid">
+                    <a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
+                    <button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
+                </div>
             </div>
 
             <div id="inventario" class="tab-content">
-                <div class="stat-section"><h3>OGGETTI NELLO ZAINO</h3><div id="inventory-list"></div></div>
-				<div class="btn-grid" style="margin-top: 30px;">
-				<a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
-				<button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
-				</div>
-				
+                <div class="stat-section">
+                    <h3>OGGETTI NELLO ZAINO</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 80px 100px; padding: 5px 10px; font-weight: bold; border-bottom: 2px solid var(--burgundy); font-size: 0.8rem;">
+                        <div>OGGETTO</div>
+                        <div style="text-align: center;">SLOT/CAD</div>
+                        <div style="text-align: right;">AZIONI</div>
+                    </div>
+                    <div id="inventory-list"></div>
+                </div>
+                <div class="btn-grid">
+                    <a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
+                    <button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
+                </div>
             </div>
+
             <div id="talenti" class="tab-content">
                 <div class="stat-section"><h3>TALENTI APPRESI</h3><div id="talents-list"></div></div>
-				<div class="btn-grid" style="margin-top: 30px;">
-				<a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
-				<button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
-				</div>
+                <div class="btn-grid">
+                    <a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
+                    <button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
+                </div>
             </div>
-            <div id="abilita" class="tab-content">
-                <div class="stat-section"><h3>ABILITÀ SPECIALI</h3><div id="abilities-list"></div></div>
-				<div class="btn-grid" style="margin-top: 30px;">
-					<a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
-					<button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
-				</div>
 
+            <div id="abilita" class="tab-content">
+                <div class="stat-section">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <h3>ABILITÀ SPECIALI</h3>
+                        <button onclick="document.getElementById('ability-modal').style.display='block'" style="background: var(--burgundy); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer;">?</button>
+                    </div>
+                    <div id="abilities-list"></div>
+                </div>
+                <div class="btn-grid">
+                    <a href="characters.html" class="btn-main secondary">❮ INDIETRO</a>
+                    <button class="btn-main primary" onclick="saveCharacterUpdates()">SALVA SCHEDA</button>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div id="ability-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="this.parentElement.parentElement.style.display='none'">&times;</span>
+            <h3 style="color: var(--burgundy);">Guida Abilità Speciali</h3>
+            <table class="ability-table">
+                <tr><th>Lv Abilità</th><th>Danno</th><th>Costo</th></tr>
+                <tr><td>Lv 1</td><td>2</td><td>2 Energia</td></tr>
+                <tr><td>Lv 2</td><td>3</td><td>4 Energia</td></tr>
+                <tr><td>Lv 3</td><td>4</td><td>6 Energia</td></tr>
+            </table>
+            <p style="font-size: 0.85rem; line-height: 1.4;">
+                Il livello massimo lanciabile è pari a 1. Diventa <strong>2</strong> al livello 4 e <strong>3</strong> al livello 8.<br><br>
+                <strong>Colpire più bersagli:</strong> Spendere Energia pari a <strong>2 volte il livello dell'abilità</strong> per ogni bersaglio extra.
+            </p>
         </div>
     </div>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKH8Cifjmt6FyiAB23ORNrGMGneSkR916xT0nH7HSRsRDRDoDb9WZ5jaHifvG93GKKxw/exec";
-        let maxHP = 0;
-        let maxEnergy = 0;
-        let charData = null;
+        let maxHP = 0, maxEnergy = 0, charData = null;
+        let charStats = { vig: { base: 0, cond: 0, equipPenalty: 0 }, ins: { base: 0, cond: 0, equipPenalty: 0 }, min: { base: 0, cond: 0, equipPenalty: 0 } };
 
-        let charStats = {
-            vig: { base: 0, cond: 0, equipPenalty: 0 },
-            ins: { base: 0, cond: 0, equipPenalty: 0 },
-            min: { base: 0, cond: 0, equipPenalty: 0 }
-        };
-
-        function toggleCond(stat, grade) {
-            if (charStats[stat].cond === grade) {
-                charStats[stat].cond = 0;
-            } else {
-                charStats[stat].cond = grade;
+        // PUNTO 1: Cancellazione personaggio
+        async function deleteCharacter() {
+            const confirmName = prompt(`Per confermare la cancellazione, digita il nome dell'eroe (${charData.general.p_name}):`);
+            if (confirmName !== charData.general.p_name) {
+                alert("Nome errato. Cancellazione annullata.");
+                return;
             }
-            updateStatDisplay();
+
+            if (!confirm("Sei assolutamente sicuro? Questa azione è irreversibile.")) return;
+
+            try {
+                const pgId = new URLSearchParams(window.location.search).get('id');
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ action: 'deleteCharacter', p_id: pgId })
+                });
+                alert("Personaggio eliminato.");
+                window.location.href = "characters.html";
+            } catch (e) {
+                alert("Errore durante l'eliminazione.");
+            }
         }
 
-        function updateStatDisplay() {
-            ['vig', 'ins', 'min'].forEach(s => {
-                const baseVal = charStats[s].base;
-                const condVal = charStats[s].cond;
-                const penVal = charStats[s].equipPenalty || 0;
-                const finalVal = baseVal - condVal - penVal;
-                
-                const inputEl = document.getElementById(`display_${s}`);
-                inputEl.value = finalVal;
-
-                document.getElementById(`dot_${s}_1`).classList.remove('active');
-                document.getElementById(`dot_${s}_2`).classList.remove('active');
-
-                if (condVal > 0 || penVal > 0) {
-                    inputEl.classList.add('stat-malus');
-                    if (condVal > 0) document.getElementById(`dot_${s}_${condVal}`).classList.add('active');
-                } else {
-                    inputEl.classList.remove('stat-malus');
-                }
-            });
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        function updateBars() {
-            const currHP = document.getElementById('p_hp_curr').value;
-            const currEN = document.getElementById('p_energy_curr').value;
-            document.getElementById('health-fill').style.width = maxHP > 0 ? `${(currHP / maxHP) * 100}%` : '0%';
-            document.getElementById('energy-fill').style.width = maxEnergy > 0 ? `${(currEN / maxEnergy) * 100}%` : '0%';
+        function changeStat(id, delta) {
+            const el = document.getElementById(id);
+            let val = parseInt(el.value) || 0;
+            const max = (id === 'p_hp_curr') ? maxHP : maxEnergy;
+            val = Math.min(max, Math.max(0, val + delta));
+            el.value = val;
+            updateBars();
         }
 
         async function loadSheetData() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const pgId = urlParams.get('id');
+            const pgId = new URLSearchParams(window.location.search).get('id');
             if (!pgId) return;
 
             try {
@@ -223,193 +235,178 @@
 
                 document.getElementById('loading-text').style.display = 'none';
                 document.getElementById('sheet-wrapper').style.display = 'block';
-				document.getElementById('level-up-link').href = `level_up.html?id=${pgId}`;
+                document.getElementById('level-up-link').href = `level_up.html?id=${pgId}`;
 
                 const gen = data.general;
-                charStats.vig.base = parseInt(gen.p_vig) || 0;
-                charStats.ins.base = parseInt(gen.p_ins) || 0;
-                charStats.min.base = parseInt(gen.p_min) || 0;
-                charStats.vig.cond = parseInt(gen.c_vig) || 0;
-                charStats.ins.cond = parseInt(gen.c_ins) || 0;
-                charStats.min.cond = parseInt(gen.c_min) || 0;
+                // Riempimento campi header
+                document.getElementById('p_name').value = gen.p_name;
+                document.getElementById('txt_heritage').innerText = gen.heritage;
+                document.getElementById('txt_childhood').innerText = gen.childhood;
+                document.getElementById('txt_profession').innerText = gen.profession;
+                document.getElementById('p_level').value = gen.p_level;
+                document.getElementById('p_exp').value = gen.p_exp;
+                document.getElementById('p_hp_curr').value = gen.p_hp_curr;
+                document.getElementById('p_energy_curr').value = gen.p_energy_curr;
 
-                const campi = ['p_name', 'heritage', 'profession', 'childhood', 'p_level', 'p_exp', 'p_hp_curr', 'p_energy_curr'];
-                campi.forEach(id => {
-                    if(document.getElementById(id) && gen[id] !== undefined) document.getElementById(id).value = gen[id];
-                });
-
-                maxHP = parseInt(gen.p_hp_max) || 0;
-                maxEnergy = parseInt(gen.p_energy_max) || 0;
+                maxHP = parseInt(gen.p_hp_max);
+                maxEnergy = parseInt(gen.p_energy_max);
                 document.getElementById('p_hp_max_val').innerText = maxHP;
                 document.getElementById('p_energy_max_val').innerText = maxEnergy;
 
+                charStats.vig.base = parseInt(gen.p_vig);
+                charStats.ins.base = parseInt(gen.p_ins);
+                charStats.min.base = parseInt(gen.p_min);
+                charStats.vig.cond = parseInt(gen.c_vig);
+                charStats.ins.cond = parseInt(gen.c_ins);
+                charStats.min.cond = parseInt(gen.c_min);
+
                 updateBars();
-                populateDropdowns(); 
+                populateDropdowns();
                 updateCombatStats();
                 renderLists(data, gen.p_vig);
+            } catch (e) { console.error(e); }
+        }
 
-            } catch (error) {
-                console.error(error);
-            }
+        // RENDER LISTE AGGIORNATO (Punti 4 & 5)
+        function renderLists(data, p_vig) {
+            // Inventario Tabellare
+            const invList = document.getElementById('inventory-list');
+            let totalSlots = 0;
+            invList.innerHTML = '';
+            data.inventory.forEach((item, index) => {
+                const qty = parseInt(item.quantity) || 1;
+                const slotPerItem = parseFloat(item.slot) || 0;
+                totalSlots += (qty * slotPerItem);
+                
+                invList.innerHTML += `
+                    <div class="list-item" style="display: grid; grid-template-columns: 1fr 80px 100px; align-items: center; padding: 10px;">
+                        <div>
+                            <strong>${item.item}</strong> (x${qty})<br>
+                            <small style="opacity:0.7">${item.description}</small>
+                        </div>
+                        <div style="text-align: center; font-weight: bold; color: var(--burgundy);">${slotPerItem}</div>
+                        <div style="text-align: right;">
+                            <button onclick="consumeItem(${index})" style="background:var(--burgundy); color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Usa</button>
+                        </div>
+                    </div>`;
+            });
+            const maxS = p_vig * 2;
+            invList.innerHTML += `<div class="inventory-footer">Slot Occupati: ${totalSlots.toFixed(1)} / ${maxS}</div>`;
+
+            // Talenti con TAG
+            const tList = document.getElementById('talents-list');
+            tList.innerHTML = '';
+            data.talents.forEach(t => {
+                // Esempio logica tag: cerca VIG, IST o MEN nella descrizione o nome (o potresti aggiungerlo nel DB)
+                const statTag = t.talent_description.includes("VIG") ? "VIG" : (t.talent_description.includes("IST") ? "IST" : "MEN");
+                tList.innerHTML += `
+                    <div class="list-item">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong>${t.talent_name}</strong>
+                            <div>
+                                <span class="tag tag-stat">${statTag}</span>
+                                <span class="tag tag-cost">Costo: ${t.talent_cost}</span>
+                            </div>
+                        </div>
+                        <small>${t.talent_description}</small>
+                    </div>`;
+            });
+
+            // Abilità (Senza costo come richiesto)
+            const aList = document.getElementById('abilities-list');
+            aList.innerHTML = '';
+            data.abilities.forEach(a => {
+                aList.innerHTML += `
+                    <div class="list-item">
+                        <strong>${a.ability_name}</strong><br>
+                        <small>${a.ability_description}</small>
+                    </div>`;
+            });
+        }
+
+        // Funzioni di supporto esistenti...
+        function toggleCond(stat, grade) {
+            charStats[stat].cond = (charStats[stat].cond === grade) ? 0 : grade;
+            updateStatDisplay();
+        }
+
+        function updateStatDisplay() {
+            ['vig', 'ins', 'min'].forEach(s => {
+                const final = charStats[s].base - charStats[s].cond - (charStats[s].equipPenalty || 0);
+                const el = document.getElementById(`display_${s}`);
+                el.value = final;
+                document.getElementById(`dot_${s}_1`).classList.toggle('active', charStats[s].cond >= 1);
+                document.getElementById(`dot_${s}_2`).classList.toggle('active', charStats[s].cond >= 2);
+                el.classList.toggle('stat-malus', charStats[s].cond > 0 || charStats[s].equipPenalty > 0);
+            });
+        }
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function updateBars() {
+            const h = document.getElementById('p_hp_curr').value;
+            const e = document.getElementById('p_energy_curr').value;
+            document.getElementById('health-fill').style.width = `${(h / maxHP) * 100}%`;
+            document.getElementById('energy-fill').style.width = `${(e / maxEnergy) * 100}%`;
         }
 
         function populateDropdowns() {
             const selects = ['p_main_hand', 'p_off_hand', 'p_body', 'p_slot_1', 'p_slot_2', 'p_slot_3'];
-            const inventoryItems = charData.inventory.map(i => i.item);
-            
-            selects.forEach(selectId => {
-                const sel = document.getElementById(selectId);
-                const currentValue = charData.general[selectId] || ""; 
-                sel.innerHTML = `<option value="">-- Seleziona --</option>`;
-                inventoryItems.forEach(item => {
-                    const isSelected = (item === currentValue) ? "selected" : "";
-                    sel.innerHTML += `<option value="${item}" ${isSelected}>${item}</option>`;
-                });
+            const items = charData.inventory.map(i => i.item);
+            selects.forEach(id => {
+                const sel = document.getElementById(id);
+                const cur = charData.general[id] || "";
+                sel.innerHTML = '<option value="">-- Seleziona --</option>' + 
+                    items.map(i => `<option value="${i}" ${i===cur?'selected':''}>${i}</option>`).join('');
             });
         }
 
         function updateCombatStats() {
-            let dmgBonus = 0;
-            let protBonus = 0;
-            let dualWieldPenalty = 0;
-
-            const main = document.getElementById('p_main_hand').value;
-            const off = document.getElementById('p_off_hand').value;
-            const body = document.getElementById('p_body').value;
-
-            if(main === "Arma semplice") dmgBonus += 2;
-            else if(main === "Arma letale") dmgBonus += 3;
-            else if(main === "Armi a distanza leggere") dmgBonus += 1;
-            else if(main === "Armi a distanza medie") dmgBonus += 2;
-            else if(main === "Armi a distanza pesanti") dmgBonus += 4;
-
-            if(off === "Arma semplice") dmgBonus += 2;
-            else if(off === "Protezione a mano") protBonus += 1;
-
-            if(body === "Protezione leggera") protBonus += 1;
-            else if(body === "Protezione media") protBonus += 2;
-            else if(body === "Protezione pesante") protBonus += 3;
-
-            if(main && off) {
-                const hasTalent = charData.talents.some(t => t.talent_name === "Combattere con due armi");
-                if(hasTalent) dmgBonus += 1;
-                else dualWieldPenalty = 1;
-            }
-
-            document.getElementById('damage').innerText = `${1 + dmgBonus}`;
-            document.getElementById('protection').innerText = protBonus;
-            charStats.vig.equipPenalty = dualWieldPenalty; 
+            let d = 1, p = 0, pen = 0;
+            const m = document.getElementById('p_main_hand').value, o = document.getElementById('p_off_hand').value, b = document.getElementById('p_body').value;
+            if(m.includes("semplice") || m.includes("medie")) d += 2; else if(m.includes("letale")) d += 3; else if(m.includes("pesanti")) d += 4;
+            if(o.includes("semplice")) d += 2; else if(o.includes("Protezione")) p += 1;
+            if(b.includes("leggera")) p += 1; else if(b.includes("media")) p += 2; else if(b.includes("pesante")) p += 3;
+            if(m && o) { if(charData.talents.some(t => t.talent_name.includes("due armi"))) d += 1; else pen = 1; }
+            document.getElementById('damage').innerText = d;
+            document.getElementById('protection').innerText = p;
+            charStats.vig.equipPenalty = pen;
             updateStatDisplay();
         }
 
-        function consumeItem(index) {
-            if(charData.inventory[index].quantity > 1) {
-                charData.inventory[index].quantity -= 1;
-            } else {
-                charData.inventory.splice(index, 1);
-            }
-            renderLists(charData, charStats.vig.base);
-            populateDropdowns();
-            updateCombatStats();
-        }
-
-        function renderLists(data, p_vig) {
-            const invList = document.getElementById('inventory-list');
-            let totalSlotsUsed = 0;
-            const maxSlots = (parseInt(p_vig) || 0) * 2;
-
-            invList.innerHTML = '';
-            data.inventory.forEach((item, index) => {
-                const qty = parseInt(item.quantity) || 1;
-                totalSlotsUsed += (qty * (parseFloat(item.slot) || 0));
-                invList.innerHTML += `
-                    <div class="list-item">
-                        <div class="inventory-header">
-                            <strong>${item.item}</strong>
-                            <div>
-                                <span class="inventory-quantity">x ${qty}</span>
-                                <button onclick="consumeItem(${index})" style="margin-left:10px; padding: 2px 8px; background:var(--burgundy); color:white; border:none; border-radius:4px; cursor:pointer;">Usa</button>
-                            </div>
-                        </div>
-                        <div class="inventory-desc">${item.description}</div>
-                    </div>`;
-            });
-
-            let statusColor = totalSlotsUsed > maxSlots ? "#d32f2f" : (totalSlotsUsed === maxSlots ? "#f57c00" : "var(--text-dark)");
-            invList.innerHTML += `<div class="inventory-footer" style="color: ${statusColor}">Slot Occupati: ${totalSlotsUsed.toFixed(1)} / ${maxSlots}</div>`;
-
-            ['talents', 'abilities'].forEach(type => {
-                const list = document.getElementById(`${type}-list`);
-                list.innerHTML = '';
-                data[type].forEach(item => {
-                    const name = item.talent_name || item.ability_name;
-                    const desc = item.talent_description || item.ability_description;
-                    const cost = item.talent_cost || item.ability_cost;
-                    list.innerHTML += `<div class="list-item"><strong>${name}</strong> <span style="float:right">Costo: ${cost}</span><br><small>${desc}</small></div>`;
-                });
-            });
-        }
-
         async function saveCharacterUpdates() {
-            const pgId = new URLSearchParams(window.location.search).get('id');
             const btn = document.querySelector('.btn-main.primary');
-            btn.innerText = "SALVATAGGIO...";
-            btn.disabled = true;
-
+            btn.innerText = "SALVATAGGIO..."; btn.disabled = true;
             const payload = {
                 action: 'updateCharacter',
-                p_id: pgId,
+                p_id: new URLSearchParams(window.location.search).get('id'),
                 updates: {
-					p_vig: charStats.vig.base,
-                    p_ins: charStats.ins.base,
-                    p_min: charStats.min.base,
+                    p_vig: charStats.vig.base, p_ins: charStats.ins.base, p_min: charStats.min.base,
+                    c_vig: charStats.vig.cond, c_ins: charStats.ins.cond, c_min: charStats.min.cond,
                     p_hp_curr: document.getElementById('p_hp_curr').value,
                     p_energy_curr: document.getElementById('p_energy_curr').value,
-                    p_hp_max: maxHP,
-                    p_energy_max: maxEnergy,
-                    c_vig: charStats.vig.cond,
-                    c_ins: charStats.ins.cond,
-                    c_min: charStats.min.cond,
-                    p_level: document.getElementById('p_level').value,
                     p_exp: document.getElementById('p_exp').value,
                     p_main_hand: document.getElementById('p_main_hand').value,
                     p_off_hand: document.getElementById('p_off_hand').value,
                     p_body: document.getElementById('p_body').value,
                     p_slot_1: document.getElementById('p_slot_1').value,
                     p_slot_2: document.getElementById('p_slot_2').value,
-                    p_slot_3: document.getElementById('p_slot_3').value,
-                    damage: document.getElementById('damage').innerText,
-                    protection: document.getElementById('protection').innerText
+                    p_slot_3: document.getElementById('p_slot_3').value
                 },
                 inventory: charData.inventory
             };
-
             try {
                 await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                 alert("Scheda salvata!");
-            } catch (error) {
-                alert("Errore salvataggio.");
-            } finally {
-                btn.innerText = "SALVA SCHEDA";
-                btn.disabled = false;
-            }
+            } catch (e) { alert("Errore."); }
+            btn.innerText = "SALVA SCHEDA"; btn.disabled = false;
         }
 
         window.onload = loadSheetData;
-		
-		function changeStat(id, delta) {
-    const el = document.getElementById(id);
-    let val = parseInt(el.value) || 0;
-    const max = (id === 'p_hp_curr') ? maxHP : maxEnergy;
-    
-    val += delta;
-    
-    if (val < 0) val = 0;
-    if (val > max) val = max;
-    
-    el.value = val;
-    updateBars(); 
-}
     </script>
 </body>
 </html>

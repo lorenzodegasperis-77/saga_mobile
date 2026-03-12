@@ -731,3 +731,94 @@ input, select, button {
     background: var(--burgundy-light);
     color: white;
 }
+
+/* STILI PER IL POP-UP GUIDA E ICONA INFO */
+.modal-overlay {
+	position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+	background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000;
+}
+
+.guide-text-container { font-size: 1rem; line-height: 1.5; color: var(--text-dark); }
+.guide-text-container h4 { color: var(--burgundy); font-size: 1.2rem; margin-bottom: 10px; border-bottom: 1px solid var(--burgundy); }
+
+.top-controls {
+	position: absolute; top: 15px; right: 20px;
+	display: flex; gap: 15px; align-items: center; z-index: 10;
+}
+.info-btn {
+	width: 30px; height: 30px; border-radius: 50%; background: var(--burgundy);
+	color: white; font-weight: bold; font-family: 'Times New Roman', serif; font-size: 1.2rem;
+	border: none; cursor: pointer; display: flex; justify-content: center; align-items: center;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: 0.2s;
+}
+.info-btn:hover { background: var(--burgundy-light); transform: scale(1.1); }
+.close-x {
+	text-decoration: none; color: white; font-size: 28px; font-weight: bold; line-height: 1;
+}
+.close-x:hover { color: black; }
+
+
+
+
+/* Bottoni +/- per Salute ed Energia */
+.stat-controls {
+    display: flex;
+    gap: 5px;
+    margin-left: 10px;
+}
+.btn-stat {
+    background-color: var(--burgundy);
+    color: white;
+    border: 1px solid var(--burgundy-light);
+    border-radius: 4px;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tag per i Talenti */
+.tag {
+    display: inline-block;
+    padding: 2px 8px;
+    margin-left: 5px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.tag-stat { background: #e0e0e0; color: var(--burgundy); border: 1px solid var(--burgundy); }
+.tag-cost { background: var(--burgundy); color: white; }
+
+/* Modal/Pop-up per Abilità */
+
+.modal-content {
+    background-color: var(--parchment);
+    margin: 10% auto;
+    padding: 20px;
+    border: 3px solid var(--burgundy);
+    width: 80%;
+    max-width: 500px;
+    border-radius: 12px;
+    position: relative;
+}
+.close-modal { float: right; cursor: pointer; font-size: 1.5rem; font-weight: bold; }
+.ability-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+.ability-table td, .ability-table th { border: 1px solid var(--burgundy); padding: 8px; text-align: center; }
+
+/* Bottone Elimina */
+.btn-delete {
+    background-color: transparent;
+    color: var(--burgundy);
+    border: 1px solid var(--burgundy);
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-left: auto;
+    transition: 0.3s;
+}
+.btn-delete:hover { background: var(--burgundy); color: white; }

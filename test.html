@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAGA — Avventure Interattive</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100vh;background:#D8C7A1;font-family:'Times New Roman',Georgia,serif;color:#1a1007;}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:rgba(115,24,31,.08)}::-webkit-scrollbar-thumb{background:#73181F;border-radius:3px}
+#app{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 0;position:relative;}
+.bg-overlay{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(115,24,31,.07) 0%,transparent 65%),repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(0,0,0,.012) 40px,rgba(0,0,0,.012) 80px);pointer-events:none;z-index:0;}
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:9999;background:#0c0805;display:flex;align-items:center;justify-content:center;transition:opacity 1.2s ease;}
+#splash.fade{opacity:0;pointer-events:none;}
+/* FRAME */
+.frame{background:#D8C7A1;border:3px solid #73181F;border-radius:12px;padding:28px 46px;width:min(620px,95vw);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18),inset 0 0 50px rgba(115,24,31,.03);position:relative;z-index:1;}
+/* BTN */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 18px;border-radius:8px;font-weight:bold;font-size:.9rem;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:all .2s;border:2px solid #73181F;}
+.btn:hover:not(:disabled){filter:brightness(1.15);transform:scale(1.02);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn-primary{background:#73181F;color:white;}
+.btn-secondary{background:transparent;color:#1a1007;}
+/* BADGE */
+.badge{background:#73181F;color:white;padding:2px 8px;border-radius:5px;font-size:.7rem;font-weight:bold;}
+/* CHOICE CARD */
+.cc-card{border:1.5px solid #84785E;background:rgba(255,255,255,.3);padding:13px;margin-bottom:8px;border-radius:6px;cursor:pointer;transition:all .2s;}
+.cc-card:hover{background:rgba(115,24,31,.06);}
+.cc-card.sel{border:2px solid #73181F;background:rgba(115,24,31,.1);}
+.cc-card.dis{opacity:.4;cursor:not-allowed;}
+/* INPUT */
+.input-line{width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:9px 10px;font-family:'Times New Roman',serif;font-size:1rem;color:#1a1007;outline:none;margin-bottom:8px;}
+/* MENU CONTAINER */
+.menu-c{display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;margin:0 auto;}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.modal{background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:26px;max-width:460px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,.5);}
+/* BAR */
+.bar-outer{position:relative;height:26px;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,.25);box-shadow:inset 0 2px 4px rgba(0,0,0,.35);margin-bottom:8px;}
+.bar-inner{height:100%;transition:width .5s ease-out;}
+.bar-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:.88rem;text-shadow:1px 1px 2px #000;letter-spacing:1px;}
+/* DOT */
+.dot{width:13px;height:13px;border-radius:50%;cursor:pointer;border:1.5px solid #73181F;transition:all .2s;flex-shrink:0;display:inline-block;background:transparent;}
+.dot.on{background:#73181F;box-shadow:0 0 5px #73181F;}
+/* TOGGLE */
+.toggle-wrap{position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;flex-shrink:0;}
+.toggle-wrap input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-track{position:absolute;inset:0;border-radius:24px;transition:.3s;background:#ccc;}
+.toggle-wrap input:checked+.toggle-track{background:#73181F;}
+.toggle-knob{position:absolute;height:18px;width:18px;bottom:3px;left:3px;border-radius:50%;background:white;transition:.3s;}
+.toggle-wrap input:checked~.toggle-knob{left:23px;}
+/* CHAR CARD */
+.char-card{background:rgba(196,176,138,.3);border:2px solid #73181F;border-radius:10px;padding:14px 18px;cursor:pointer;transition:all .18s;margin-bottom:10px;}
+.char-card:hover{background:rgba(196,176,138,.6);transform:translateX(3px);}
+/* EQUIP CARD */
+.equip-card{padding:13px;margin-bottom:8px;border-radius:6px;border:1.5px solid #84785E;background:rgba(255,255,255,.3);}
+.equip-card.sel{border:2px solid #73181F;background:rgba(115,24,31,.1);}
+/* SMALL BTN */
+.sm-btn{border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-weight:bold;font-size:1.1rem;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:#73181F;color:white;}
+.sm-btn:disabled{background:#ccc;cursor:not-allowed;}
+/* SECTION HDR */
+.sec-hdr{font-weight:bold;color:#73181F;letter-spacing:2px;font-size:.8rem;margin:14px 0 5px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
+/* SHEET tab btn */
+.tab-btn{padding:7px 15px;border:2px solid #73181F;border-radius:6px;background:transparent;color:#1a1007;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.82rem;letter-spacing:1px;transition:all .2s;}
+.tab-btn.active{background:#73181F;color:white;}
+/* CARD INFO */
+.card{background:rgba(196,176,138,.45);border:2px solid #73181F;border-radius:10px;padding:15px;margin-bottom:12px;text-align:left;}
+</style>
+</head>
+<body>
+<div class="bg-overlay"></div>
+<div id="splash">
+  <div style="text-align:center">
+    <div style="font-size:5rem;letter-spacing:16px;color:#D8C7A1;font-family:'Times New Roman',serif;font-weight:bold;text-shadow:0 0 40px #73181F,0 0 80px rgba(115,24,31,.4)">SAGA</div>
+    <div style="color:#73181F;font-style:italic;margin-top:8px;opacity:.7">Avventure Interattive</div>
+  </div>
+</div>
+<div id="app"></div>
+<audio id="bgMusic" src="Whisper_in_the_Shadows_1.mp3" loop></audio>
+<script>
+'use strict';
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function genId(){return 'PG-'+Math.random().toString(36).substr(2,9).toUpperCase();}
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const DB={
+  heritage:[
+    {name:'Nomade',description:'Sei abituato a viaggiare continuamente vivendo di ciò che la natura o le rotte commerciali offrono. Sei cresciuto con un forte senso di adattabilità e libertà.',vig:1,ins:0,min:0},
+    {name:'Popolare',description:'Fai parte di una comunità semplice e laboriosa, senza ambizioni ma con una grande resilienza. Sei cresciuto con i valori della perseveranza e della solidarietà.',vig:0,ins:1,min:0},
+    {name:'Discendente',description:'Discendi da una famiglia che ha o aveva grande potere. Porti con te l\'orgoglio di ciò che essa rappresenta e forse l\'ambizione di renderla grande.',vig:0,ins:0,min:1},
+  ],
+  childhood:[
+    {name:'Rigorosa',description:'Sei stato cresciuto con una disciplina ferrea, che ti ha insegnato a rispettare le regole e a saper controllare i tuoi istinti. Anche se può averti tolto una parte della tua libertà, ora sei in grado di gestire situazioni difficili senza perdere il controllo.',vig:0,ins:-1,min:2},
+    {name:'Vita di strada',description:'La tua infanzia è segnata dalla sopravvivenza. Crescendo in un ambiente ostile, hai imparato a destreggiarti tra pericoli, rubare, e affrontare il mondo con astuzia. La tua vita è stata una lotta, ma ti ha reso pronto alle sfide.',vig:-1,ins:2,min:0},
+    {name:'Adottato',description:'Sei stato accolto in una famiglia o da comunità diversa da quella di tua origine, imparando nuovi usi e costumi. Questa esperienza ti ha permesso di vedere il mondo da prospettive differenti e di adattarti rapidamente a nuove situazioni.',vig:0,ins:2,min:-1},
+    {name:'Isolato',description:'Sei cresciuto lontano dagli altri, forse in una zona remota o in un contesto isolato. La tua solitudine ti ha reso indipendente e introspettivo, ma potrebbe averti anche privato della capacità di relazionarti facilmente con gli altri.',vig:2,ins:0,min:-1},
+    {name:'Protetto',description:'Hai avuto un mentore o una figura influente che ha plasmato la tua infanzia. Grazie ai suoi insegnamenti, hai sviluppato una visione del mondo unica e forse possiedi delle competenze rare.',vig:-1,ins:0,min:2},
+    {name:'Cresciuto in guerra',description:'Il conflitto ha segnato la tua infanzia, sia che tu fossi parte di esso o lo osservassi da vicino. Sai come reagire sotto pressione e come prendere decisioni difficili in situazioni di vita o di morte.',vig:2,ins:-1,min:0},
+  ],
+  profession:[
+    {name:'Esploratore',description:'Viaggi in terre sconosciute o regioni inesplorate, spingendoti dove pochi osano. Che tu esplori antiche rovine, nuovi pianeti o terre selvagge, la tua professione richiede resistenza e spirito d\'avventura.',vig:0,ins:2,min:0},
+    {name:'Mercenario',description:'Offri i tuoi servizi a chi paga meglio. Che tu combatta per oro, crediti o una ricompensa personale, il tuo lavoro non prevede lealtà a nessuno tranne che a te stesso.',vig:2,ins:0,min:0},
+    {name:'Erudito',description:'La tua vita è dedicata allo studio. Potresti essere un accademico, uno scienziato o un mago. La tua sete di conoscenza ti spinge sempre a cercare nuove informazioni e scoperte.',vig:0,ins:0,min:2},
+    {name:'Furfante',description:'Sei un esperto nel raggiro, furto e inganno. Vivi ai margini della società, muovendoti tra le ombre e sfruttando le tue abilità per sopravvivere.',vig:0,ins:1,min:1},
+    {name:'Guaritore',description:'Il tuo compito è alleviare il dolore e curare le ferite, che tu lo faccia con erbe, tecnologia avanzata o magia. Spesso ti trovi in prima linea in situazioni pericolose, a salvare vite.',vig:1,ins:1,min:0},
+    {name:'Artigiano/Inventore',description:'Sei abile nel creare e migliorare oggetti. Potresti fabbricare armi, armature o tecnologia. Hai talento nel creare ciò che altri usano per sopravvivere o combattere.',vig:1,ins:0,min:1},
+  ],
+  equip_weapons:[
+    {equip_name:'Arma semplice',equip_bonus:'+2 Danno',equip_cost:15,equip_inventory:'1 slot'},
+    {equip_name:'Arma letale',equip_bonus:'+3 Danno',equip_cost:25,equip_inventory:'2 slot'},
+    {equip_name:'Armi a distanza leggere',equip_bonus:'+1 Danno, Gittata corta',equip_cost:20,equip_inventory:'1 slot'},
+    {equip_name:'Armi a distanza medie',equip_bonus:'+2 Danno, Gittata media',equip_cost:35,equip_inventory:'2 slot'},
+    {equip_name:'Armi a distanza pesanti',equip_bonus:'+4 Danno, Gittata lunga',equip_cost:70,equip_inventory:'3 slot'},
+  ],
+  equip_protection:[
+    {equip_name:'Protezione leggera',equip_bonus:'+1 Protezione',equip_cost:20,equip_inventory:'1 slot'},
+    {equip_name:'Protezione media',equip_bonus:'+2 Protezione',equip_cost:50,equip_inventory:'2 slot'},
+    {equip_name:'Protezione pesante',equip_bonus:'+3 Protezione',equip_cost:100,equip_inventory:'3 slot'},
+    {equip_name:'Protezione a mano',equip_bonus:'+1 Prot (mano secondaria)',equip_cost:40,equip_inventory:'1 slot'},
+  ],
+  equip_slots:[
+    {equip_name:'Ampolla incendiaria',equip_bonus:'Con 2 azioni, infliggi 3 Danno e Condizione di Grado 1 a VIG e IST a un bersaglio.',equip_cost:70,equip_inventory:'2 = 1 slot'},
+    {equip_name:'Antitossina',equip_bonus:'Con 1 azione, rimuove 1 Grado di condizione negativa sul VIG.',equip_cost:10,equip_inventory:'2 = 1 slot'},
+    {equip_name:'Calmante',equip_bonus:'Con 1 azione, rimuove 1 Grado di condizione su MEN.',equip_cost:20,equip_inventory:'2 = 1 slot'},
+    {equip_name:'Calzari silenziosi',equip_bonus:'Hai vantaggio nelle prove di IST per rimanere nascosto.',equip_cost:60,equip_inventory:'1 slot'},
+    {equip_name:'Catena',equip_bonus:'Con 1 prova di IST impone la Condizione di Grado 2 al VIG di una creatura (dura 1 turno).',equip_cost:20,equip_inventory:'1 slot'},
+    {equip_name:'Corda di canapa (10m)',equip_bonus:'Una corda resistente può essere usata per legare. Ha 5 Salute.',equip_cost:10,equip_inventory:'1 slot'},
+    {equip_name:'Corno',equip_bonus:'Suono udibile a circa 1 km di distanza.',equip_cost:5,equip_inventory:'1 slot'},
+    {equip_name:'Fischietto acuto',equip_bonus:'Udibile fino a 2 km, gli animali sensibili devono superare una prova IST o si agitano.',equip_cost:5,equip_inventory:'1 slot'},
+    {equip_name:'Grimaldello',equip_bonus:'Consente di scassinare una serratura, si rompe con l\'uso.',equip_cost:5,equip_inventory:'3 = 1 slot'},
+    {equip_name:'Kit da scrittura',equip_bonus:'Permette di redigere documenti ufficiali, falsificare scritture con prove MEN con vantaggio.',equip_cost:35,equip_inventory:'1 slot'},
+    {equip_name:'Lanterna',equip_bonus:'Luce stabile che dura circa 6 ore.',equip_cost:30,equip_inventory:'1 slot'},
+    {equip_name:'Mantice (1 uso)',equip_bonus:'Soffio d\'aria che può ravvivare un fuoco o spegnere piccole fiamme.',equip_cost:5,equip_inventory:'1 slot'},
+    {equip_name:'Mantello cerato',equip_bonus:'+1 VIG contro condizioni dovute a freddo/pioggia, riduce i malus ambientali.',equip_cost:20,equip_inventory:'1 slot'},
+    {equip_name:'Olio per lanterna (1 dose)',equip_bonus:'Combustibile per lanterna.',equip_cost:5,equip_inventory:'5 = 1 slot'},
+    {equip_name:'Piede di porco',equip_bonus:'+1 al VIG per forzare oggetti o sfondare porte.',equip_cost:10,equip_inventory:'1 slot'},
+    {equip_name:'Polvere fluorescente',equip_bonus:'Lanciata con 1 azione rivela creature invisibili o tracce nascoste.',equip_cost:40,equip_inventory:'2 = 1 slot'},
+    {equip_name:'Polvere irritante',equip_bonus:'Con 1 azione di IST impone la Condizione di Grado 2 a MEN di una creatura (dura 1 turno).',equip_cost:35,equip_inventory:'2 = 1 slot'},
+    {equip_name:'Rampino',equip_bonus:'Vantaggio alle prove di VIG per scalata.',equip_cost:25,equip_inventory:'1 slot'},
+    {equip_name:'Razione',equip_bonus:'Fornisce un giorno di razioni.',equip_cost:5,equip_inventory:'0'},
+    {equip_name:'Rete',equip_bonus:'Con 1 prova di IST impone la Condizione di Grado 2 a IST di una creatura (dura 1 turno).',equip_cost:20,equip_inventory:'1 slot'},
+    {equip_name:'Sabbia del sonno',equip_bonus:'Con 1 azione, se il bersaglio fallisce prova su MEN, salta il prossimo turno.',equip_cost:80,equip_inventory:'2 = 1 slot'},
+    {equip_name:'Sacco',equip_bonus:'+1 Slot inventario.',equip_cost:15,equip_inventory:'0'},
+    {equip_name:'Sacchetto di biglie',equip_bonus:'Può essere sparso sul terreno (azione): i nemici devono superare una prova di IST per muoversi nel prossimo turno.',equip_cost:15,equip_inventory:'3 = 1 slot'},
+    {equip_name:'Specchio d\'acciaio',equip_bonus:'Permette di guardare dietro gli angoli o riflettere un segnale luminoso.',equip_cost:10,equip_inventory:'1 slot'},
+    {equip_name:'Talismano protettivo',equip_bonus:'Una volta al giorno, riduce di 2 il Danno subito.',equip_cost:70,equip_inventory:'1 slot'},
+    {equip_name:'Tenda (1 uso)',equip_bonus:'Permette di effettuare riposi all\'esterno senza effettuare prove di VIG.',equip_cost:30,equip_inventory:'2 slot'},
+    {equip_name:'Tonico',equip_bonus:'Rimuove 1 grado di una condizione a scelta.',equip_cost:35,equip_inventory:'2 = 1 slot'},
+    {equip_name:'Torcia',equip_bonus:'Emette luce intensa nell\'area circostante per circa 1 ora.',equip_cost:5,equip_inventory:'3 = 1 slot'},
+    {equip_name:'Unguento curativo',equip_bonus:'Un\'applicazione ripristina 5 Salute.',equip_cost:40,equip_inventory:'2 = 1 slot'},
+    {equip_name:'Zaino',equip_bonus:'+4 Slot inventario.',equip_cost:60,equip_inventory:'0'},
+  ],
+  talents:[
+    // VIG
+    {cat:'VIG',talent_name:'Combattente esperto',talent_description:'Ottieni un bonus di Danno pari a n quando attacchi con un\'arma. (Prendibile fino a 3 volte)',talent_cost:'Passivo',talent_req:{},talent_max:3},
+    {cat:'VIG',talent_name:'Salute ferrea',talent_description:'La tua Salute aumenta permanentemente di un ammontare pari a due volte il tuo livello. Si applica anche ai successivi aumenti di livello.',talent_cost:'Passivo',talent_req:{talent:'Immunità'},talent_max:1},
+    {cat:'VIG',talent_name:'Maestro di protezioni',talent_description:'Puoi equipaggiare protezioni pesanti.',talent_cost:'Passivo',talent_req:{talent:'Protezioni agili'},talent_max:1},
+    {cat:'VIG',talent_name:'Combattente brutale',talent_description:'Puoi equipaggiare armi letali.',talent_cost:'Passivo',talent_req:{},talent_max:1},
+    {cat:'VIG',talent_name:'Immunità',talent_description:'Hai sviluppato un fisico avvezzo alla resistenza. Vantaggio alle prove per resistere a veleni e malattie.',talent_cost:'Passivo',talent_req:{level:2},talent_max:1},
+    {cat:'VIG',talent_name:'Presenza minacciosa',talent_description:'Nel tuo turno scegli un PNG che vedi. Finché non supera una prova di IST, subisce una condizione di grado 2 al VIG se attacca bersagli diversi da te.',talent_cost:'2 Energia',talent_req:{},talent_max:1},
+    {cat:'VIG',talent_name:'Scudo di carne',talent_description:'Nel tuo turno aumenti per due turni la Protezione di un valore pari a metà del VIG (arr. per difetto). Poi il tuo VIG è ridotto dello stesso valore per due turni.',talent_cost:'2 Energia',talent_req:{},talent_max:1},
+    {cat:'VIG',talent_name:'Colpo devastante',talent_description:'Quando colpisci con un\'arma semplice o letale, puoi aumentare il Danno di n + 2. Se lo fai, subisci una condizione di grado n al VIG fino alla fine del prossimo turno. (Prendibile fino a 2 volte)',talent_cost:'2 Energia',talent_req:{level:4},talent_max:2},
+    {cat:'VIG',talent_name:'Resilienza Feroce',talent_description:'Quando subisci Danno, puoi ridurlo di metà del tuo VIG (arr. per difetto). Nel tuo prossimo turno non puoi muoverti né attaccare.',talent_cost:'2 Energia',talent_req:{level:4},talent_max:1},
+    {cat:'VIG',talent_name:'Difesa impenetrabile',talent_description:'Quando subisci Danno da un attacco mentre usi uno scudo, puoi aumentare la tua Protezione di 2. L\'effetto termina dopo aver subito Danno.',talent_cost:'2 Energia',talent_req:{},talent_max:1},
+    {cat:'VIG',talent_name:'Rigenerazione rapida',talent_description:'Una volta per combattimento, puoi recuperare punti Salute pari a metà del tuo VIG (arr. per difetto).',talent_cost:'2 Energia',talent_req:{level:4},talent_max:1},
+    {cat:'VIG',talent_name:'Furia cieca',talent_description:'Quando hai meno di metà Salute, puoi aumentare il tuo VIG di 2 fino alla fine del combattimento riducendo la tua Protezione a 0. Non puoi usare abilità speciali.',talent_cost:'4 Energia',talent_req:{vig:8},talent_max:1},
+    {cat:'VIG',talent_name:'Combattimento con armi letali',talent_description:'Quando attacchi con un\'arma letale puoi aumentare il tuo VIG di 1 per il tiro per colpire. Se lo fai il Danno inflitto aumenta di 2.',talent_cost:'4 Energia',talent_req:{vig:8},talent_max:1},
+    {cat:'VIG',talent_name:'Colpo multiplo',talent_description:'Quando attacchi con un\'arma semplice o letale puoi rinunciare alla seconda azione per attaccare più nemici: scegli fino a 5 bersagli vicini ed effettua un attacco per ognuno.',talent_cost:'4 Energia',talent_req:{level:6},talent_max:1},
+    {cat:'VIG',talent_name:'Colpo stordente',talent_description:'Quando attacchi con un\'arma semplice o letale, puoi sottrarre 2 al tuo VIG. Se l\'attacco va a segno infligge 3 danni aggiuntivi e una condizione di grado 2 a VIG o IST del PNG colpito per un turno.',talent_cost:'4 Energia',talent_req:{},talent_max:1},
+    // IST
+    {cat:'IST',talent_name:'Maestro artigiano',talent_description:'Sei abituato a sapertela cavare con poco. Hai vantaggio alla prova di IST quando tenti di riparare un oggetto o capirne il funzionamento.',talent_cost:'Passivo',talent_req:{},talent_max:1},
+    {cat:'IST',talent_name:'Combattere con due armi',talent_description:'Sai combattere bene con due armi. Quando attacchi con un\'arma semplice per mano, aggiungi 1 al tuo VIG e al Danno.',talent_cost:'Passivo',talent_req:{ist:8},talent_max:1},
+    {cat:'IST',talent_name:'Tiratore scelto',talent_description:'Puoi equipaggiare armi a distanza medie. Con n pari a 2 puoi equipaggiare anche armi a distanza pesanti. (Prendibile fino a 2 volte)',talent_cost:'Passivo',talent_req:{},talent_max:2},
+    {cat:'IST',talent_name:'Esperto di armi a distanza',talent_description:'Sei un esperto nell\'utilizzo di armi a lunga gittata. Puoi utilizzare armi a distanza pesanti senza subire la diminuzione all\'IST.',talent_cost:'Passivo',talent_req:{level:6},talent_max:1},
+    {cat:'IST',talent_name:'Sopravvivenza',talent_description:'Quando tenti di avvistare oggetti lontani, cercare cibo, acqua o luoghi nascosti hai vantaggio alla tua prova di IST.',talent_cost:'Passivo',talent_req:{},talent_max:1},
+    {cat:'IST',talent_name:'Protezioni agili',talent_description:'Puoi equipaggiare protezioni medie.',talent_cost:'Passivo',talent_req:{},talent_max:1},
+    {cat:'IST',talent_name:'Acrobata',talent_description:'Puoi eseguire acrobazie ardite (camminare su una corda, saltare da un tetto) senza la necessità di effettuare un tiro di IST.',talent_cost:'2 Energia',talent_req:{},talent_max:1},
+    {cat:'IST',talent_name:'Colpo mirato',talent_description:'Una volta per turno puoi avere vantaggio a tutti i tuoi tiri per colpire durante il tuo turno. (Non richiede un\'azione)',talent_cost:'2 Energia',talent_req:{level:6},talent_max:1},
+    {cat:'IST',talent_name:'Escapista',talent_description:'Una volta per round quando un PNG ti colpisce puoi effettuare un tiro di IST. Se lo superi, neghi totalmente il danno ricevuto.',talent_cost:'2 Energia',talent_req:{level:6},talent_max:1},
+    {cat:'IST',talent_name:'Mani veloci',talent_description:'Sai eseguire azioni manuali complesse con maggiore rapidità. Hai vantaggio alla prova di IST quando tenti di borseggiare o manipolare piccoli oggetti.',talent_cost:'2 Energia',talent_req:{},talent_max:1},
+    {cat:'IST',talent_name:'Passare inosservato',talent_description:'Quando effettui una prova per agire furtivamente, il tuo IST aumenta temporaneamente di 1.',talent_cost:'2 Energia',talent_req:{},talent_max:1},
+    {cat:'IST',talent_name:'Assassino delle ombre',talent_description:'Quando sei nascosto e colpisci un bersaglio con un\'arma semplice o armi a distanza leggera/media, raddoppia i danni inflitti dall\'attacco.',talent_cost:'4 Energia',talent_req:{level:6},talent_max:1},
+    {cat:'IST',talent_name:'Esperto duelista',talent_description:'Quando usi un\'arma per mano puoi gettarti a capofitto sul nemico. In questo turno infliggi Danno aggiuntivo pari a metà del tuo IST (arr. per difetto). Se il bersaglio è già ferito, aggiungi 1 al Danno di ogni attacco.',talent_cost:'4 Energia',talent_req:{level:8},talent_max:1},
+    {cat:'IST',talent_name:'Riflessi rapidi',talent_description:'Reagisci prontamente alle minacce: ottieni un bonus di +1 alla tua IST quando è necessario determinare l\'ordine di combattimento.',talent_cost:'4 Energia',talent_req:{ist:8},talent_max:1},
+    {cat:'IST',talent_name:'Tiro Preciso',talent_description:'Migliora la precisione con armi a distanza. Quando attacchi con armi a distanza hai vantaggio alla prova IST.',talent_cost:'4 Energia',talent_req:{},talent_max:1},
+    // MEN
+    {cat:'MEN',talent_name:'Abile nella psiche',talent_description:'Scegli 3 abilità speciali istantanee dalla lista. Può essere scelto più volte.',talent_cost:'Passivo',talent_req:{},talent_max:99},
+    {cat:'MEN',talent_name:'Abilità temporale - Primordiale',talent_description:'Puoi eseguire abilità speciali temporali i cui effetti rientrino nella disciplina di Primordiale.',talent_cost:'Passivo',talent_req:{},talent_max:1},
+    {cat:'MEN',talent_name:'Abilità temporale - Materiale',talent_description:'Puoi eseguire abilità speciali temporali i cui effetti rientrino nella disciplina di Materiale.',talent_cost:'Passivo',talent_req:{},talent_max:1},
+    {cat:'MEN',talent_name:'Abilità temporale - Spirituale',talent_description:'Puoi eseguire abilità speciali temporali i cui effetti rientrino nella disciplina di Spirituale.',talent_cost:'Passivo',talent_req:{},talent_max:1},
+    {cat:'MEN',talent_name:'Meditazione profonda',talent_description:'Permette di recuperare 3×n punti Energia extra durante un Riposo Giornaliero. (Prendibile fino a 3 volte)',talent_cost:'Passivo',talent_req:{level:4},talent_max:3},
+    {cat:'MEN',talent_name:'Poliglotta',talent_description:'Consente di apprendere nuove lingue più facilmente. Hai vantaggio alla prova di MEN quando tenti di comprendere o parlare lingue sconosciute.',talent_cost:'Passivo',talent_req:{},talent_max:1},
+    {cat:'MEN',talent_name:'Riserva di Energia',talent_description:'La tua Energia aumenta permanentemente di un ammontare pari a due volte il tuo livello. Si applica anche ai successivi aumenti di livello.',talent_cost:'Passivo',talent_req:{level:6},talent_max:1},
+    {cat:'MEN',talent_name:'Abilità sottile',talent_description:'Quando lanci un\'abilità speciale, effettua una prova di IST. Se riesce, puoi lanciarla senza pronunciare parole o compiere gesti vistosi, passando inosservato.',talent_cost:'2 Energia',talent_req:{men:8},talent_max:1},
+    {cat:'MEN',talent_name:'Esperienza diplomatica',talent_description:'Riesci facilmente a farti degli amici con il tuo carisma. Hai vantaggio alla prova di MEN quando provi a persuadere o capire le emozioni altrui.',talent_cost:'2 Energia',talent_req:{},talent_max:1},
+    {cat:'MEN',talent_name:'Intuizione Tattica',talent_description:'Effettua una prova di MEN. Se la superi, un alleato che vedi ottiene vantaggio alla prossima prova di IST o VIG. Non puoi applicarlo a te stesso.',talent_cost:'2 Energia',talent_req:{},talent_max:1},
+    {cat:'MEN',talent_name:'Individuazione psichica',talent_description:'Individui tracce di energia nell\'ambiente circostante entro 30 metri per 10 minuti. Bloccato da pareti in roccia e metallo sottile.',talent_cost:'2 Energia',talent_req:{level:4},talent_max:1},
+    {cat:'MEN',talent_name:'Memoria fotografica',talent_description:'Ricordi perfettamente i dettagli di ciò che hai visto o sentito senza il bisogno di effettuare una prova di MEN.',talent_cost:'2 Energia',talent_req:{level:4},talent_max:1},
+    {cat:'MEN',talent_name:'Mente affilata',talent_description:'Interpreti schemi e indovinelli più facilmente. Hai vantaggio alla prova di MEN quando provi a decifrare codici e crittogrammi.',talent_cost:'2 Energia',talent_req:{},talent_max:1},
+    {cat:'MEN',talent_name:'Concentrazione profonda',talent_description:'Quando vieni colpito durante il lancio di un\'Abilità Temporale, ottieni vantaggio alla prova di VIG.',talent_cost:'4 Energia',talent_req:{},talent_max:1},
+    {cat:'MEN',talent_name:'Focalizzazione mentale',talent_description:'Una volta al giorno, permette di ripetere una prova di MEN fallita.',talent_cost:'4 Energia',talent_req:{level:6},talent_max:1},
+  ],
+  abilities:[
+    {ability_name:'Arma potenziata',ability_description:'Richiede Attacco speciale. Potenzia un\'arma toccata: il Danno aumenta del livello abilità per 2 turni.',ability_cost:'2-6 Energia'},
+    {ability_name:'Attacco speciale',ability_description:'Effettua una prova di MEN. Se superata, infliggi un Danno pari a 2 + lv abilità a un bersaglio visibile.',ability_cost:'2-6 Energia'},
+    {ability_name:'Blocco',ability_description:'Un ostacolo fisico bersaglia una creatura. Il suo VIG è ridotto in base al lv abilità o finché non supera una prova di IST.',ability_cost:'2-6 Energia'},
+    {ability_name:'Comando',ability_description:'Fino a lv abilità bersagli effettuano una prova di MEN. Se falliscono obbediscono a un tuo comando di tre parole non dannoso.',ability_cost:'2-6 Energia'},
+    {ability_name:'Confusione',ability_description:'Una creatura è frastornata. Il suo VIG è ridotto in base al lv abilità o finché non supera una prova di MEN.',ability_cost:'2-6 Energia'},
+    {ability_name:'Cura Ferite',ability_description:'Ristora (1d6 + 1)*lv abilità Salute a una creatura che puoi toccare.',ability_cost:'2-6 Energia'},
+    {ability_name:'Groviglio',ability_description:'Un groviglio o corda costringe un bersaglio a rallentare. La sua IST è ridotta in base al lv abilità o finché non supera una prova di VIG.',ability_cost:'2-6 Energia'},
+    {ability_name:'Illusione minore',ability_description:'Crei un\'immagine, suono o odore (max dimensione sedia). Una prova di MEN permette di riconoscerla come falsa.',ability_cost:'2-6 Energia'},
+    {ability_name:'Immagine speculare',ability_description:'Crei lv abilità duplicati. I nemici devono superare prova MEN o colpire un\'illusione che svanisce se colpita.',ability_cost:'2-6 Energia'},
+    {ability_name:'Ingrandire o ridurre',ability_description:'Ingrandire: VIG aumenta di lv abilità, riduce IST. Ridurre: IST aumenta di lv abilità, riduce VIG.',ability_cost:'2-6 Energia'},
+    {ability_name:'Invisibilità',ability_description:'Una creatura che tocchi è invisibile finché non compie un\'azione.',ability_cost:'2-6 Energia'},
+    {ability_name:'Levitazione',ability_description:'Un oggetto fino a 50kg*lv si libra a 60cm dal suolo. Il bersaglio può resistere con prova di VIG.',ability_cost:'2-6 Energia'},
+    {ability_name:'Luce',ability_description:'Un oggetto toccato emette luce intensa in un raggio di 3m * lv abilità. Può essere attivata senza azioni.',ability_cost:'2-6 Energia'},
+    {ability_name:'Muro Elementale',ability_description:'Un muro (lato 3m*lv) di ghiaccio, fuoco o terra si innalza per 3 round senza infliggere danni.',ability_cost:'2-6 Energia'},
+    {ability_name:'Nube di Nebbia',ability_description:'Un cubo di nebbia denso (lato 3*lv metri) si diffonde rendendo difficile la visibilità.',ability_cost:'2-6 Energia'},
+    {ability_name:'Pacificare',ability_description:'Una creatura vicina prova avversione per la violenza e non combatte per lv abilità turni.',ability_cost:'2-6 Energia'},
+    {ability_name:'Paura',ability_description:'Una creatura vicina diventa terrorizzata. La sua MEN è ridotta in base al lv abilità o finché non supera una prova di VIG.',ability_cost:'2-6 Energia'},
+    {ability_name:'Ragnatela',ability_description:'Lanci ragnatele dai polsi. Il bersaglio riduce IST in base al lv abilità o finché non supera una prova di MEN.',ability_cost:'2-6 Energia'},
+    {ability_name:'Scudo',ability_description:'Lanci una protezione verso un alleato. La sua Protezione aumenta del livello abilità per 1 round (non cumulabile).',ability_cost:'2-6 Energia'},
+    {ability_name:'Sonno',ability_description:'Una creatura cade in un sonno leggero. La sua MEN è ridotta in base al lv abilità o finché non supera prova di IST.',ability_cost:'2-6 Energia'},
+    {ability_name:'Telecinesi',ability_description:'Muovi un oggetto (max 20kg * lv) entro un raggio di 10 metri per lv abilità.',ability_cost:'2-6 Energia'},
+    {ability_name:'Telepatia',ability_description:'Due creature condividono i pensieri per 1 minuto per lv abilità (max distanza 30m * lv).',ability_cost:'2-6 Energia'},
+    {ability_name:'Teletrasporto',ability_description:'Un oggetto o persona viene trasportato in un raggio di 5 metri * lv abilità.',ability_cost:'2-6 Energia'},
+    {ability_name:'Trauma',ability_description:'Un bersaglio toccato subisce Danno pari al lv abilità all\'inizio di ogni turno per lv abilità + 1 turni.',ability_cost:'2-6 Energia'},
+    {ability_name:'Velocità',ability_description:'Tocchi una creatura. Per i prossimi lv abilità turni possiede un\'azione in più.',ability_cost:'2-6 Energia'},
+  ],
+};
+
+const ADVENTURES=[
+  {id:1,title:'Le Ombre di Eldoria',desc:'Un villaggio isolato, un segreto antico e una notte eterna.',difficulty:'Facile',color:'#18732D'},
+  {id:2,title:'Il Trono di Ossa',desc:'La scalata verso il potere richiede grandi sacrifici.',difficulty:'Medio',color:'#8a6000'},
+  {id:3,title:'Il Tesoro di Khal-Dun',desc:'Una mappa strappata e una cripta dimenticata.',difficulty:'Difficile',color:'#73181F'},
+];
+
+const GUIDE={
+  1:{title:'Creare un personaggio (1/5)',text:'Benvenuto! Questa breve guida ti aiuterà a generare un personaggio secondo le regole di SAGA. Se conosci già le regole e non vuoi usufruire di questa funzionalità fai click su "Salta guida" per procedere in autonomia.\n\nRicorda che puoi sempre riaprire la guida cliccando sulla icona "i" in alto.\n\nProcedi inserendo il nome e il sesso del tuo personaggio.'},
+  2:{title:'Origini e Caratteristiche (2/5)',text:'Ogni personaggio in SAGA ha tre caratteristiche base:\n- Vigore (VIG): forza fisica e resistenza.\n- Istinto (IST): agilità, riflessi e spirito di osservazione.\n- Mente (MEN): conoscenze, studio e persuasione.\n\nLe tue Caratteristiche sono influenzate dalle tue Origini (Lignaggio, Infanzia e Professione). Scegli con attenzione perché non è possibile modificarle una volta creato il personaggio.'},
+  6:{title:'Equipaggiamento (3/5)',text:'In questa fase spenderai i crediti ottenuti per acquistare armi, protezioni e dotazione base.\n\nUsa i pulsanti + e − per acquistare più copie dello stesso oggetto. Tieni d\'occhio i crediti rimanenti e gli slot del tuo zaino!'},
+  9:{title:'Talenti (4/5)',text:'I Talenti definiscono le capacità uniche del tuo Eroe. Puoi sceglierne fino a 3. Alcuni richiedono statistiche minime specifiche.\n\nLe categorie bloccate si aprono con il tasto "mostra" se vuoi comunque visualizzarle.'},
+  10:{title:'Abilità speciali (5/5)',text:'Le Abilità Speciali rappresentano poteri o manovre fuori dal comune.\n\nRicorda che per acquisirle è obbligatorio possedere il talento "Abile nella Psiche". Ogni istanza di quel talento garantisce 3 abilità.'},
+};
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function calcStats(o){
+  let v=5,i=5,m=5;
+  ['lineage','childhood','profession'].forEach(k=>{
+    if(o[k]){v+=o[k].vig||0;i+=o[k].ins||0;m+=o[k].min||0;}
+  });
+  return{vig:v,ins:i,min:m};
+}
+function calcCombat(names=[]){
+  let d=1,p=0;
+  if(names.includes('Arma semplice'))d+=2;
+  if(names.includes('Arma letale'))d+=3;
+  if(names.includes('Armi a distanza leggere'))d+=1;
+  if(names.includes('Armi a distanza medie'))d+=2;
+  if(names.includes('Armi a distanza pesanti'))d+=4;
+  if(names.includes('Protezione a mano'))p+=1;
+  if(names.includes('Protezione leggera'))p+=1;
+  if(names.includes('Protezione media'))p+=2;
+  if(names.includes('Protezione pesante'))p+=3;
+  return{dmg:d,prot:p};
+}
+function parseSlotCost(str){
+  if(!str||String(str)==='0')return 0;
+  const m1=String(str).match(/^(\d+)\s*=\s*1\s*slot/i);
+  if(m1)return 1/parseInt(m1[1]);
+  const m2=String(str).match(/^([\d.]+)\s*slot/i);
+  if(m2)return parseFloat(m2[1]);
+  if(!isNaN(parseFloat(str)))return parseFloat(str);
+  return 0;
+}
+function checkTalentReqs(t,stats,level,talentsList){
+  const r=t.talent_req||{};
+  if(r.level&&level<r.level)return`Richiede Livello ${r.level}`;
+  if(r.vig&&stats.vig<r.vig)return`Richiede VIG ${r.vig} (hai ${stats.vig})`;
+  if(r.ist&&stats.ins<r.ist)return`Richiede IST ${r.ist} (hai ${stats.ins})`;
+  if(r.men&&stats.min<r.men)return`Richiede MEN ${r.men} (hai ${stats.min})`;
+  if(r.talent&&!talentsList.some(x=>x.talent_name===r.talent))return`Richiede "${r.talent}"`;
+  return null;
+}
+function fmtSlots(n){return n%1===0?String(n):n.toFixed(2).replace(/0+$/,'');}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let S={
+  page:'home',params:{},
+  chars:[],sessions:[],
+  settings:{music:true,diceAnim:true},
+  loaded:false,
+  // create character
+  cc:null,
+  // sheet
+  sh:null,
+  // level up
+  lu:null,
+  // dice roller
+  dr:null,
+};
+
+function initCC(){
+  return{
+    step:1,guide:true,guideDismissed:false,
+    openCats:{VIG:false,IST:false,MEN:false},
+    abilityOpen:false,
+    cs:{
+      id:genId(),name:'',sex:'',
+      origins:{lineage:null,childhood:null,profession:null},
+      credits:0,hasRolled:false,
+      equipment:[],talents:[],abilities:[],
+    }
+  };
+}
+function initSH(char){
+  return{local:JSON.parse(JSON.stringify(char)),tab:'generale',diceTarget:null,deleteModal:false,deleteInput:''};
+}
+function initLU(){
+  return{step:1,attrBoost:null,newTalent:null,newAbility:null,extraAbilities:[],openCats:{VIG:false,IST:false,MEN:false}};
+}
+
+// save/load
+function persist(){
+  if(!S.loaded)return;
+  try{
+    localStorage.setItem('saga-characters',JSON.stringify(S.chars));
+    localStorage.setItem('saga-sessions',JSON.stringify(S.sessions));
+    localStorage.setItem('saga-settings',JSON.stringify(S.settings));
+  }catch(e){}
+}
+function load(){
+  try{
+    const c=localStorage.getItem('saga-characters');if(c)S.chars=JSON.parse(c);
+    const s=localStorage.getItem('saga-sessions');if(s)S.sessions=JSON.parse(s);
+    const st=localStorage.getItem('saga-settings');if(st)S.settings=JSON.parse(st);
+  }catch(e){}
+  S.loaded=true;
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function nav(page,params={}){
+  S.page=page;S.params=params;
+  if(page==='create')S.cc=initCC();
+  else if(page==='sheet'){const ch=S.chars.find(c=>c.id===params.charId);S.sh=ch?initSH(ch):null;}
+  else if(page==='levelup')S.lu=initLU();
+  window.scrollTo(0,0);
+  render();
+}
+
+// ─── MUSIC ────────────────────────────────────────────────────────────────────
+function applyMusic(){
+  const a=document.getElementById('bgMusic');if(!a)return;
+  if(S.settings.music)a.play().catch(()=>{});
+  else a.pause();
+}
+
+// ─── RENDER ROOT ──────────────────────────────────────────────────────────────
+function render(){
+  const app=document.getElementById('app');
+  const focusId=document.activeElement?.id||null;
+  const focusSel=document.activeElement?.dataset?.focusKey||null;
+
+  let html='';
+  if(S.page==='home')html=renderHome();
+  else if(S.page==='adventures')html=renderAdventures();
+  else if(S.page==='characters')html=renderCharacters();
+  else if(S.page==='create')html=renderCreate();
+  else if(S.page==='sheet')html=renderSheet();
+  else if(S.page==='levelup')html=renderLevelUp();
+  else if(S.page==='settings')html=renderSettings();
+
+  app.innerHTML=html;
+
+  // restore focus
+  if(focusId){const el=document.getElementById(focusId);if(el){el.focus();if(el.setSelectionRange&&el.value)try{el.setSelectionRange(el.value.length,el.value.length);}catch(e){}}}
+  else if(focusSel){const el=document.querySelector(`[data-focus-key="${focusSel}"]`);if(el)el.focus();}
+
+  applyMusic();
+}
+
+// ─── RENDER: HOME ─────────────────────────────────────────────────────────────
+function renderHome(){
+  const sessionRows=S.sessions.length===0
+    ?`<p style="font-size:.84rem;opacity:.55;font-style:italic;text-align:center;padding:10px 0">Nessuna partita in corso.</p>`
+    :S.sessions.map(s=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 2px;font-size:.87rem;border-bottom:1px solid rgba(0,0,0,.07)">
+        <div><span style="font-weight:bold;color:#73181F">${esc(s.adventureName)}</span><span style="opacity:.55;font-size:.75rem;margin-left:8px">Par.${esc(s.currentParagraph)}</span></div>
+        <div style="display:flex;gap:6px;align-items:center"><span style="opacity:.7;font-size:.78rem">${esc(s.charName)}</span><span class="badge">Lv.${esc(s.charLevel)}</span></div>
+      </div>`).join('');
+  return`
+  <div class="frame" style="z-index:1">
+    <h1 style="font-size:3.2rem;letter-spacing:8px;color:#1a1007;margin:0 0 4px">SAGA</h1>
+    <div style="color:#73181F;font-style:italic;margin-bottom:32px">Avventure Interattive</div>
+    <div class="menu-c">
+      <button class="btn btn-primary" onclick="nav('adventures')">► Nuova Avventura</button>
+      <button class="btn btn-secondary" onclick="nav('characters')">I miei personaggi</button>
+      <button class="btn btn-secondary" onclick="alert('Funzione in arrivo — scarica avventure create dalla community!')">Scarica Avventura</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn btn-secondary" onclick="nav('settings')">Impostazioni</button>
+        <button class="btn btn-secondary" onclick="alert('SAGA v1.0\\nRPG Interattivo — Avventure Epiche')">Crediti</button>
+      </div>
+    </div>
+    <div style="margin-top:24px;width:100%">
+      <h3 style="color:#73181F;font-size:.95rem;letter-spacing:2px;margin-bottom:10px">Partite salvate</h3>
+      <div style="border-radius:8px;border:1px dashed #73181F;padding:10px 14px;max-height:150px;overflow-y:auto">${sessionRows}</div>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center;gap:14px;margin-top:22px;padding-top:16px;border-top:1px dashed rgba(115,24,31,.3);width:100%">
+      ${['☕','📖','🔗','💬'].map(ic=>`<button onclick="void(0)" style="width:40px;height:40px;border-radius:50%;background:#73181F;color:white;border:none;cursor:pointer;font-size:1.1rem;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">${ic}</button>`).join('')}
+    </div>
+    <div style="font-size:.78rem;opacity:.55;color:#73181F;margin-top:14px">Versione 1.0</div>
+  </div>`;
+}
+
+// ─── RENDER: ADVENTURES ───────────────────────────────────────────────────────
+function renderAdventures(){
+  return`
+  <div class="frame">
+    <div style="font-size:44px;margin-bottom:8px">📖</div>
+    <h2 style="font-size:1.7rem;letter-spacing:4px;margin:0 0 4px">AVVENTURE</h2>
+    <div style="color:#73181F;font-style:italic;margin-bottom:24px">Scegli il tuo destino</div>
+    <div class="menu-c">
+      ${ADVENTURES.map(a=>`
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <h3 style="margin:0;font-size:1.05rem">${esc(a.title)}</h3>
+          <span class="badge" style="background:${a.color}">${esc(a.difficulty)}</span>
+        </div>
+        <p style="font-size:.84rem;margin:0 0 10px;opacity:.8;line-height:1.4">${esc(a.desc)}</p>
+        <button class="btn btn-primary" style="padding:7px 14px;font-size:.8rem" onclick="alert('${esc(a.title).replace(/'/g,'&#39;')} in arrivo nelle prossime versioni!')">INIZIA</button>
+      </div>`).join('')}
+      <button class="btn btn-secondary" onclick="nav('home')">❮ TORNA AL MENU</button>
+    </div>
+    <div style="font-size:.78rem;opacity:.55;color:#73181F;margin-top:14px">Nuove avventure in arrivo ogni mese</div>
+  </div>`;
+}
+
+// ─── RENDER: CHARACTERS ───────────────────────────────────────────────────────
+function renderCharacters(){
+  const charCards=S.chars.length===0
+    ?`<div style="text-align:center;padding:30px 0;opacity:.55"><div style="font-size:3rem;margin-bottom:10px">🧙</div><p style="font-style:italic">Nessun personaggio trovato.</p></div>`
+    :S.chars.map(c=>`
+      <div class="char-card" onclick="nav('sheet',{charId:'${esc(c.id)}'})">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <div style="font-weight:bold;font-size:1.1rem;color:#73181F">${esc(c.name)}</div>
+            <div style="font-size:.76rem;opacity:.6;margin-top:2px">${[c.heritage,c.childhood,c.profession].filter(Boolean).map(esc).join(' · ')}</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+            <span class="badge" style="padding:4px 10px;font-size:.75rem">Lv. ${c.level}</span>
+            <span class="badge" style="background:${c.sex==='Femmina'?'#9A2727':'#5a1010'};font-size:.68rem">${esc(c.sex||'—')}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          ${[['⚔','VIG',c.vig],['👁','IST',c.ins],['🧠','MEN',c.min]].map(([ic,lb,v])=>`
+          <div style="display:flex;align-items:center;gap:4px;background:rgba(115,24,31,.08);border-radius:6px;padding:3px 8px;font-size:.83rem">
+            <span>${ic}</span><span style="font-weight:bold;color:#73181F">${lb}</span><span style="font-weight:bold">${v}</span>
+          </div>`).join('')}
+          <div style="margin-left:auto;font-size:.76rem;opacity:.65;display:flex;gap:8px">
+            <span>❤ ${c.hpCurr}/${c.hpMax}</span><span>⚡ ${c.enCurr}/${c.enMax}</span>
+          </div>
+        </div>
+      </div>`).join('');
+  return`
+  <div class="frame" style="width:min(640px,95vw);text-align:left;padding:24px 32px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid #73181F">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" style="flex-shrink:0"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div>
+        <h2 style="font-size:1.5rem;letter-spacing:4px;margin:0">PERSONAGGI</h2>
+        <div style="font-size:.78rem;opacity:.55;margin-top:2px">${S.chars.length} ${S.chars.length===1?'eroe':'eroi'} creati</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0;margin-bottom:16px">${charCards}</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn btn-secondary" style="border:2px dashed #73181F;opacity:.85" onclick="nav('create')">+ Nuovo personaggio</button>
+      <button class="btn btn-secondary" onclick="nav('home')">❮ TORNA AL MENU</button>
+    </div>
+  </div>`;
+}
+
+// ─── RENDER: CREATE CHARACTER ─────────────────────────────────────────────────
+function ccStats(){return calcStats(S.cc.cs.origins);}
+function ccSpent(){return S.cc.cs.equipment.reduce((s,e)=>s+e.equip_cost*(e.qty||1),0);}
+function ccSlots(){return S.cc.cs.equipment.reduce((s,e)=>s+parseSlotCost(e.equip_inventory)*(e.qty||1),0);}
+
+function renderCreate(){
+  const cc=S.cc,cs=cc.cs;
+  const stats=ccStats();
+  const spent=ccSpent();
+  const remaining=cs.credits-spent;
+  const slotsUsed=ccSlots();
+  const slotsMax=stats.vig*2;
+
+  // Guide modal
+  const guideKey=Object.keys(GUIDE).map(Number).sort((a,b)=>b-a).find(k=>k<=cc.step);
+  const gi=GUIDE[guideKey];
+  const guideModal=cc.guide&&gi?`
+  <div class="overlay" style="z-index:9999">
+    <div class="modal">
+      <h4 style="color:#73181F;margin-bottom:10px;border-bottom:1px solid #73181F;padding-bottom:8px">${esc(gi.title)}</h4>
+      <p style="white-space:pre-line;line-height:1.65;font-size:.94rem">${esc(gi.text)}</p>
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn btn-secondary" style="flex:1" onclick="ccDismissGuide()">Salta guida</button>
+        <button class="btn btn-primary" style="flex:1" onclick="ccCloseGuide()">Ho capito</button>
+      </div>
+    </div>
+  </div>`:'';
+
+  // Sidebar
+  const sidebar=`
+  <div style="width:230px;flex-shrink:0;background:#D8C7A1;border:2px solid #73181F;border-radius:8px;padding:16px;position:sticky;top:20px;font-size:.88rem;color:#1a1007">
+    <h3 style="margin:0 0 6px;border-bottom:1px solid #73181F;padding-bottom:6px;color:#73181F;font-size:1rem">${esc(cs.name||'Eroe Ignoto')}</h3>
+    ${cs.sex?`<p style="font-style:italic;opacity:.65;margin-bottom:10px;font-size:.82rem">${esc(cs.sex)}</p>`:''}
+    ${[['VIG',stats.vig],['IST',stats.ins],['MEN',stats.min]].map(([k,v])=>`
+    <div style="display:flex;justify-content:space-between;font-weight:bold;margin-bottom:4px"><span>${k}:</span><span>${v}</span></div>`).join('')}
+    <hr style="margin:8px 0;border-color:rgba(115,24,31,.2)">
+    <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Salute Max:</span><strong>${stats.vig*2}</strong></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Energia Max:</span><strong>${stats.min*2}</strong></div>
+    <hr style="margin:8px 0;border-color:rgba(115,24,31,.2)">
+    <div style="display:flex;justify-content:space-between;margin-bottom:3px;color:#18732D;font-weight:bold"><span>Crediti:</span><span>${remaining}</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Talenti:</span><strong>${cs.talents.length}/3</strong></div>
+    <div style="display:flex;justify-content:space-between;color:${slotsUsed>slotsMax?'#d32f2f':'inherit'}">
+      <span>Slot zaino:</span><strong>${fmtSlots(slotsUsed)}/${slotsMax}</strong>
+    </div>
+  </div>`;
+
+  // Step content
+  const stepContent=renderCCStep(cc,cs,stats,remaining);
+
+  return`
+  ${guideModal}
+  <div style="width:min(1060px,97vw);z-index:1;display:flex;gap:18px;align-items:flex-start;padding:16px 8px;font-family:'Times New Roman',Georgia,serif;color:#1a1007">
+    ${sidebar}
+    <div style="flex:1;background:#D8C7A1;border:2px solid #73181F;border-radius:8px;padding:20px 24px;box-shadow:0 6px 20px rgba(0,0,0,.1)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-size:.78rem;color:#73181F;opacity:.7">Passo ${cc.step} di 10</span>
+        <div style="display:flex;gap:10px">
+          <button onclick="ccOpenGuide()" style="width:28px;height:28px;border-radius:50%;background:#73181F;color:white;border:none;cursor:pointer;font-family:serif;font-weight:bold;font-size:.9rem">i</button>
+          <button onclick="nav('characters')" style="background:#73181F;color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-weight:bold;font-size:1.1rem;display:flex;align-items:center;justify-content:center">×</button>
+        </div>
+      </div>
+      ${stepContent}
+    </div>
+  </div>`;
+}
+
+function renderCCStep(cc,cs,stats,remaining){
+  const s=cc.step;
+  if(s===1)return renderCCStep1(cs);
+  if(s===2)return renderCCOrigins('Origini (1/3). Lignaggio','Le tue origini plasmano il tuo corpo e la tua mente.',DB.heritage,'lineage',cs.origins.lineage);
+  if(s===3)return renderCCOrigins('Origini (2/3). Infanzia','Come sei cresciuto prima di prendere in mano il tuo destino?',DB.childhood,'childhood',cs.origins.childhood);
+  if(s===4)return renderCCOrigins('Origini (3/3). Professione','Cosa facevi prima di diventare un avventuriero?',DB.profession,'profession',cs.origins.profession,'CREDITI ❯');
+  if(s===5)return renderCCCredits(cs);
+  if(s===6)return renderCCEquip('Equipaggiamento (1/3). Armi',DB.equip_weapons,remaining,5,7);
+  if(s===7)return renderCCEquip('Equipaggiamento (2/3). Protezioni',DB.equip_protection,remaining,6,8);
+  if(s===8)return renderCCEquip('Equipaggiamento (3/3). Dotazione',DB.equip_slots,remaining,7,9,'TALENTI ❯');
+  if(s===9)return renderCCTalents(cc,cs,stats);
+  if(s===10)return renderCCAbilities(cc,cs);
+  return '';
+}
+
+function renderCCStep1(cs){
+  return`
+  <h3 style="color:#73181F;margin-bottom:14px">Il tuo Eroe</h3>
+  <input id="cc-name" class="input-line" value="${esc(cs.name)}" placeholder="Nome del Personaggio" oninput="ccSetName(this.value)">
+  <select class="input-line" style="cursor:pointer" onchange="ccSetSex(this.value)">
+    <option value="" ${!cs.sex?'selected':''}>Scegli il Sesso...</option>
+    <option value="Maschio" ${cs.sex==='Maschio'?'selected':''}>Maschio</option>
+    <option value="Femmina" ${cs.sex==='Femmina'?'selected':''}>Femmina</option>
+    <option value="Altro" ${cs.sex==='Altro'?'selected':''}>Altro / Non specificato</option>
+  </select>
+  ${navBtns(null,()=>'ccGoStep(2)','ORIGINI ❯')}`;
+}
+
+function renderCCOrigins(title,subtitle,items,type,selected,nextLabel='AVANTI ❯'){
+  const prev=({lineage:1,childhood:2,profession:3}[type]);
+  const next=({lineage:3,childhood:4,profession:5}[type]);
+  const validation=({lineage:"Scegli un Lignaggio!",childhood:"Scegli un'Infanzia!",profession:"Scegli una Professione!"}[type]);
+  return`
+  <h3 style="color:#73181F;margin-bottom:6px">${esc(title)}</h3>
+  <p style="font-size:.86rem;opacity:.75;margin-bottom:12px">${esc(subtitle)}</p>
+  ${items.map((item,i)=>`
+  <div class="cc-card ${selected?.name===item.name?'sel':''}" onclick="ccSelectOrigin('${type}',${i})">
+    <div style="font-weight:bold;color:#73181F">${esc(item.name)}</div>
+    <div style="font-size:.83rem;margin-top:3px;opacity:.8">${esc(item.description)}</div>
+    <div style="font-size:.79rem;margin-top:5px;background:rgba(115,24,31,.07);padding:2px 7px;border-radius:4px;display:inline-block">
+      VIG${item.vig>=0?'+':''}${item.vig} IST${item.ins>=0?'+':''}${item.ins} MEN${item.min>=0?'+':''}${item.min}
+    </div>
+  </div>`).join('')}
+  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(${prev})">❮ INDIETRO</button>
+    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.origins.${type}){alert('${validation.replace(/'/g,"\\'")}');return;}ccGoStep(${next})">${esc(nextLabel)}</button>
+  </div>`;
+}
+
+function renderCCCredits(cs){
+  return`
+  <h3 style="color:#73181F;margin-bottom:14px">Crediti Iniziali</h3>
+  <div style="text-align:center;padding:28px 16px;border:2px dashed #73181F;border-radius:12px;background:rgba(115,24,31,.04)">
+    ${!cs.hasRolled
+      ?`<p style="margin-bottom:18px;opacity:.8">Tira 4d6 per determinare i tuoi crediti iniziali (risultato × 10).</p>
+         <button class="btn btn-primary" style="max-width:220px;margin:0 auto" onclick="ccRollCredits()">🎲 LANCIA I DADI</button>`
+      :`<p style="margin-bottom:8px;opacity:.8">Il destino ha parlato!</p>
+        <div style="font-size:4rem;color:#73181F;font-weight:bold;margin:10px 0">${cs.credits}</div>
+        <p>Hai ottenuto <strong>${cs.credits}</strong> Crediti.</p>`}
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(4)">❮ INDIETRO</button>
+    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.hasRolled){alert('Tira i dadi prima!');return;}ccGoStep(6)">EQUIPAGGIAMENTO ❯</button>
+  </div>`;
+}
+
+function renderCCEquip(title,items,remaining,prev,next,nextLabel='AVANTI ❯'){
+  const spent=ccSpent();
+  return`
+  <h3 style="color:#73181F;margin-bottom:6px">${esc(title)}</h3>
+  <div style="margin-bottom:12px;font-weight:bold;color:#18732D;font-size:.9rem">Crediti rimanenti: ${remaining}</div>
+  ${items.map((item,i)=>{
+    const entry=S.cc.cs.equipment.find(e=>e.equip_name===item.equip_name);
+    const qty=entry?entry.qty||1:0;
+    const canMore=(spent+item.equip_cost)<=S.cc.cs.credits;
+    const slotLabel=item.equip_inventory&&String(item.equip_inventory)!=='0'?String(item.equip_inventory):'0 slot';
+    const sc=parseSlotCost(item.equip_inventory);
+    return`
+    <div class="equip-card ${qty>0?'sel':''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:4px">
+        <span style="font-weight:bold;color:#73181F">${esc(item.equip_name)}</span>
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <span class="badge" style="background:#555;font-size:.64rem">📦 ${esc(slotLabel)}</span>
+          <span class="badge">${item.equip_cost} cr</span>
+        </div>
+      </div>
+      <div style="font-size:.81rem;opacity:.8;margin-bottom:8px">${esc(item.equip_bonus)}</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="sm-btn" ${qty===0?'disabled':''} onclick="ccRemoveEquip('${esc(item.equip_name)}')">−</button>
+        <span style="font-weight:bold;min-width:22px;text-align:center;color:${qty>0?'#73181F':'#888'}">${qty}</span>
+        <button class="sm-btn" ${!canMore?'disabled':''} onclick="ccAddEquip('${esc(item.equip_name)}',${i})">+</button>
+        ${qty>0&&sc>0?`<span style="font-size:.72rem;opacity:.65;margin-left:4px">(${fmtSlots(sc*qty)} slot totali)</span>`:''}
+      </div>
+    </div>`}).join('')}
+  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(${prev})">❮ INDIETRO</button>
+    <button class="btn btn-primary" style="max-width:220px" onclick="ccGoStep(${next})">${esc(nextLabel)}</button>
+  </div>`;
+}
+
+function renderCCTalents(cc,cs,stats){
+  return`
+  <h3 style="color:#73181F;margin-bottom:6px">Talenti (Max 3)</h3>
+  <p style="font-size:.84rem;opacity:.75;margin-bottom:10px">Scelti: ${cs.talents.length}/3 — clicca per selezionare/deselezionare.</p>
+  ${['VIG','IST','MEN'].map(cat=>{
+    const catStat={VIG:stats.vig,IST:stats.ins,MEN:stats.min}[cat];
+    const statOk=catStat>=6;
+    const isOpen=cc.openCats[cat];
+    const talentsOfCat=DB.talents.filter(t=>t.cat===cat);
+    return`
+    <div>
+      <div class="sec-hdr">
+        <span>${cat}</span>
+        ${!statOk?`<button onclick="ccToggleCat('${cat}')" style="background:none;border:1px solid #73181F;border-radius:4px;padding:1px 8px;font-size:.72rem;cursor:pointer;color:#73181F;font-weight:bold">${isOpen?'▾ chiudi':'▸ mostra'}</button>`:''}
+      </div>
+      ${!statOk&&!isOpen?`<div style="font-size:.82rem;color:#888;font-style:italic;padding:5px 0 8px">⚠ Richiede ${cat} ≥ 6 per accedere a questi talenti (il tuo è ${catStat}).</div>`:''}
+      ${(statOk||isOpen)?talentsOfCat.map((t,idx)=>{
+        const dbIdx=DB.talents.indexOf(t);
+        const count=cs.talents.filter(x=>x.talent_name===t.talent_name).length;
+        const max=t.talent_max||1;
+        const sel=count>0;
+        const reqErr=!statOk?`Richiede ${cat} ≥ 6`:checkTalentReqs(t,stats,1,cs.talents);
+        const reqMet=!reqErr;
+        const atMax=count>=max;
+        const clickable=!(!statOk)&&reqMet&&!(atMax&&!sel);
+        const r=t.talent_req||{};
+        const rp=[];
+        if(r.level)rp.push(`Lv.${r.level}`);
+        if(r.vig)rp.push(`${r.vig} VIG`);
+        if(r.ist)rp.push(`${r.ist} IST`);
+        if(r.men)rp.push(`${r.men} MEN`);
+        if(r.talent)rp.push(r.talent);
+        const catC={VIG:'#8B0000',IST:'#1a4a1a',MEN:'#1a1a6e'}[cat];
+        return`
+        <div class="cc-card ${sel?'sel':''} ${!clickable?'dis':''}" onclick="${clickable?`ccToggleTalent(${dbIdx})`:'void(0)'}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span style="font-weight:bold;color:#73181F">${esc(t.talent_name)}</span>
+              <span class="badge" style="background:${catC};font-size:.65rem">${cat}</span>
+              ${max>1&&max<99?`<span class="badge" style="background:#555;font-size:.65rem">max ${max}</span>`:''}
+              ${max===99?`<span class="badge" style="background:#555;font-size:.65rem">ripetibile</span>`:''}
+            </div>
+            <span class="badge" style="flex-shrink:0">${esc(t.talent_cost)}</span>
+          </div>
+          ${rp.length?`<div style="font-size:.73rem;margin-top:4px;color:${reqMet?'#18732D':'#d32f2f'};font-weight:bold">${reqMet?'✓':'✗'} Req: ${esc(rp.join(' · '))}</div>`:''}
+          <div style="font-size:.81rem;margin-top:4px;opacity:.8">${esc(t.talent_description)}</div>
+          ${sel?`<div style="font-size:.72rem;margin-top:4px;color:#73181F;font-weight:bold">✓ Selezionato${count>1?` ×${count}`:''}</div>`:''}
+          ${!reqMet?`<div style="font-size:.72rem;margin-top:3px;color:#d32f2f">${esc(reqErr)}</div>`:''}
+        </div>`}).join(''):''}
+    </div>`}).join('')}
+  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(8)">❮ INDIETRO</button>
+    <button class="btn btn-primary" style="max-width:220px" onclick="ccGoStep(10)">ABILITÀ ❯</button>
+  </div>`;
+}
+
+function renderCCAbilities(cc,cs){
+  const psycheCount=cs.talents.filter(t=>t.talent_name.toLowerCase().includes('psiche')).length;
+  const hasPsyche=psycheCount>0;
+  const maxAb=psycheCount*3;
+  let abContent='';
+  if(!hasPsyche){
+    abContent=`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(115,24,31,.06);border-radius:8px;margin-bottom:8px;border:1px dashed #73181F">
+      <div style="font-size:.86rem;color:#73181F">🔒 Richiede il talento <strong>Abile nella psiche</strong> per sbloccare le abilità.</div>
+      <button onclick="ccToggleAbilityOpen()" style="background:none;border:1px solid #73181F;border-radius:4px;padding:2px 8px;font-size:.73rem;cursor:pointer;color:#73181F;font-weight:bold;flex-shrink:0;margin-left:10px">${cc.abilityOpen?'▾ chiudi':'▸ mostra'}</button>
+    </div>
+    ${cc.abilityOpen?DB.abilities.map(a=>`
+    <div class="cc-card dis" style="opacity:.4;cursor:not-allowed">
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-weight:bold;color:#73181F">${esc(a.ability_name)}</span>
+        <span class="badge">${esc(a.ability_cost)}</span>
+      </div>
+      <div style="font-size:.81rem;margin-top:3px;opacity:.8">${esc(a.ability_description)}</div>
+    </div>`).join(''):''}`;
+  } else {
+    abContent=`
+    <p style="font-size:.84rem;opacity:.75;margin-bottom:10px">Abile nella psiche ×${psycheCount} — puoi scegliere fino a <strong>${maxAb}</strong> abilità. Selezionate: ${cs.abilities.length}/${maxAb}</p>
+    ${DB.abilities.map((a,i)=>{
+      const sel=cs.abilities.some(x=>x.ability_name===a.ability_name);
+      const maxReached=cs.abilities.length>=maxAb&&!sel;
+      return`
+      <div class="cc-card ${sel?'sel':''} ${maxReached?'dis':''}" onclick="${maxReached?'void(0)':`ccToggleAbility(${i})`}">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-weight:bold;color:#73181F">${esc(a.ability_name)}</span>
+          <span class="badge">${esc(a.ability_cost)}</span>
+        </div>
+        <div style="font-size:.81rem;margin-top:3px;opacity:.8">${esc(a.ability_description)}</div>
+        ${sel?`<div style="font-size:.72rem;margin-top:3px;color:#73181F;font-weight:bold">✓ Selezionata</div>`:''}
+      </div>`}).join('')}`;
+  }
+  return`
+  <h3 style="color:#73181F;margin-bottom:6px">Abilità Speciali Psichiche</h3>
+  ${abContent}
+  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(9)">❮ INDIETRO</button>
+    <button class="btn btn-primary" style="max-width:220px" onclick="ccFinish()">CONCLUDI ✓</button>
+  </div>`;
+}
+
+function navBtns(onBack,onNext,nextLabel='AVANTI ❯'){
+  return`<div style="display:flex;justify-content:${onBack?'space-between':'flex-end'};margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+    ${onBack?`<button class="btn btn-secondary" style="max-width:160px" onclick="${onBack}()">❮ INDIETRO</button>`:''}
+    <button class="btn btn-primary" style="max-width:220px" onclick="${onNext}()">${esc(nextLabel)}</button>
+  </div>`;}
+
+// ─── CC EVENT HANDLERS ────────────────────────────────────────────────────────
+function ccSetName(v){S.cc.cs.name=v;render();}
+function ccSetSex(v){S.cc.cs.sex=v;render();}
+function ccOpenGuide(){S.cc.guide=true;render();}
+function ccCloseGuide(){S.cc.guide=false;render();}
+function ccDismissGuide(){S.cc.guide=false;S.cc.guideDismissed=true;render();}
+function ccGoStep(n){
+  S.cc.step=n;
+  if(!S.cc.guideDismissed&&GUIDE[n])S.cc.guide=true;
+  window.scrollTo(0,0);render();
+}
+function ccSelectOrigin(type,i){
+  S.cc.cs.origins[type]={lineage:DB.heritage,childhood:DB.childhood,profession:DB.profession}[type][i];
+  render();
+}
+function ccRollCredits(){
+  const total=[0,0,0,0].reduce(s=>s+Math.ceil(Math.random()*6),0)*10;
+  S.cc.cs.credits=total;S.cc.cs.hasRolled=true;render();
+}
+function ccAddEquip(name,dbIdx){
+  // find item in all equip arrays
+  const allEquip=[...DB.equip_weapons,...DB.equip_protection,...DB.equip_slots];
+  const item=allEquip.find(e=>e.equip_name===name);
+  if(!item)return;
+  const spent=ccSpent();
+  if(spent+item.equip_cost>S.cc.cs.credits){alert('Crediti insufficienti!');return;}
+  const idx=S.cc.cs.equipment.findIndex(e=>e.equip_name===name);
+  if(idx>=0){S.cc.cs.equipment[idx].qty=(S.cc.cs.equipment[idx].qty||1)+1;}
+  else{S.cc.cs.equipment.push({...item,qty:1});}
+  render();
+}
+function ccRemoveEquip(name){
+  const idx=S.cc.cs.equipment.findIndex(e=>e.equip_name===name);
+  if(idx<0)return;
+  const qty=S.cc.cs.equipment[idx].qty||1;
+  if(qty<=1)S.cc.cs.equipment.splice(idx,1);
+  else S.cc.cs.equipment[idx].qty=qty-1;
+  render();
+}
+function ccToggleCat(cat){S.cc.openCats[cat]=!S.cc.openCats[cat];render();}
+function ccToggleAbilityOpen(){S.cc.abilityOpen=!S.cc.abilityOpen;render();}
+function ccToggleTalent(dbIdx){
+  const t=DB.talents[dbIdx];
+  const cs=S.cc.cs;
+  const stats=ccStats();
+  const count=cs.talents.filter(x=>x.talent_name===t.talent_name).length;
+  const max=t.talent_max||1;
+  if(count>0){
+    const arr=cs.talents;
+    for(let i=arr.length-1;i>=0;i--){if(arr[i].talent_name===t.talent_name){arr.splice(i,1);break;}}
+  } else {
+    if(cs.talents.length>=3){alert('Puoi scegliere al massimo 3 talenti!');return;}
+    if(count>=max){alert(`Questo talento può essere preso al massimo ${max} volta/e!`);return;}
+    const err=checkTalentReqs(t,stats,1,cs.talents);
+    if(err){alert(err);return;}
+    cs.talents.push(t);
+    // if ability count now exceeds allowed (psiche removed), trim
+    const psycheCount=cs.talents.filter(x=>x.talent_name.toLowerCase().includes('psiche')).length;
+    const maxAb=psycheCount*3;
+    if(cs.abilities.length>maxAb)cs.abilities=cs.abilities.slice(0,maxAb);
+  }
+  render();
+}
+function ccToggleAbility(i){
+  const a=DB.abilities[i];
+  const cs=S.cc.cs;
+  const psycheCount=cs.talents.filter(t=>t.talent_name.toLowerCase().includes('psiche')).length;
+  if(!psycheCount){alert("Richiede il talento 'Abile nella Psiche'!");return;}
+  const maxAb=psycheCount*3;
+  const has=cs.abilities.some(x=>x.ability_name===a.ability_name);
+  if(has){cs.abilities=cs.abilities.filter(x=>x.ability_name!==a.ability_name);}
+  else{if(cs.abilities.length>=maxAb){alert(`Massimo ${maxAb} abilità!`);return;}cs.abilities.push(a);}
+  render();
+}
+function ccFinish(){
+  const cs=S.cc.cs;
+  if(!cs.name.trim()){alert('Inserisci il nome del personaggio!');return;}
+  if(!cs.origins.lineage||!cs.origins.childhood||!cs.origins.profession){alert('Completa tutte le Origini!');return;}
+  const st=ccStats();
+  const spent=ccSpent();
+  const char={
+    id:cs.id,name:cs.name,sex:cs.sex,level:1,exp:0,
+    vig:st.vig,ins:st.ins,min:st.min,
+    cVig:0,cIns:0,cMin:0,
+    hpMax:st.vig*2,hpCurr:st.vig*2,
+    enMax:st.min*2,enCurr:st.min*2,
+    damage:1,protection:0,
+    heritage:cs.origins.lineage.name,childhood:cs.origins.childhood.name,profession:cs.origins.profession.name,
+    credits:cs.credits-spent,
+    inventory:cs.equipment.map(e=>({item:e.equip_name,description:e.equip_bonus,quantity:e.qty||1,slot:String(e.equip_inventory||'0')})),
+    talents:cs.talents,abilities:cs.abilities,
+    mainHand:'',offHand:'',body:'',slot1:'',slot2:'',slot3:'',
+  };
+  S.chars.push(char);persist();
+  nav('characters');
+}
+
+// ─── RENDER: SHEET ────────────────────────────────────────────────────────────
+function renderSheet(){
+  if(!S.sh)return`<div class="frame" style="text-align:center">Personaggio non trovato.<br><br><button class="btn btn-secondary" style="max-width:200px;margin:0 auto" onclick="nav('characters')">Indietro</button></div>`;
+  const L=S.sh.local;
+  const cKey=k=>`c${k[0].toUpperCase()+k.slice(1)}`;
+  const eff=k=>(L[k]||0)-(L[cKey(k)]||0);
+  const eqNames=[L.mainHand,L.offHand,L.body,L.slot1,L.slot2,L.slot3].filter(Boolean);
+  const{dmg,prot}=calcCombat(eqNames);
+
+  // Dice modal
+  const diceModal=S.sh.diceTarget?renderDiceModal():'';
+  // Delete modal
+  const delModal=S.sh.deleteModal?`
+  <div class="overlay">
+    <div class="modal" style="border-color:#d32f2f">
+      <h4 style="color:#d32f2f;margin-bottom:10px;font-size:1rem">⚠ Elimina personaggio</h4>
+      <p style="font-size:.87rem;line-height:1.55;margin-bottom:16px;opacity:.8">Questa azione è irreversibile. Scrivi il nome <strong>${esc(L.name)}</strong> per confermare:</p>
+      <input id="delete-input" class="input-line" style="border:2px solid #d32f2f;margin-bottom:18px" value="${esc(S.sh.deleteInput)}" placeholder="${esc(L.name)}" oninput="shSetDeleteInput(this.value)">
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-secondary" style="flex:1" onclick="shCancelDelete()">Annulla</button>
+        <button class="btn btn-primary" style="flex:1;background:#d32f2f;border-color:#d32f2f" onclick="shConfirmDelete()">🗑 Elimina</button>
+      </div>
+    </div>
+  </div>`:'';
+
+  let tabContent='';
+  if(S.sh.tab==='generale')tabContent=renderSheetGenerale(L,eff,cKey,dmg,prot);
+  else if(S.sh.tab==='inventario')tabContent=renderSheetInventario(L);
+  else if(S.sh.tab==='talenti')tabContent=renderSheetTalenti(L);
+  else if(S.sh.tab==='abilità')tabContent=renderSheetAbilita(L);
+
+  return`
+  ${diceModal}${delModal}
+  <div class="frame" style="width:min(820px,97vw);text-align:left;padding:22px 28px">
+    <div style="border-bottom:2px solid #73181F;padding-bottom:14px;margin-bottom:16px">
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <div style="font-size:1.8rem;font-weight:bold;color:#73181F;flex:1">${esc(L.name)}</div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="display:flex;flex-direction:column;align-items:center;font-size:.74rem;color:#73181F;font-weight:bold">LIV<span style="font-size:1.05rem">${L.level}</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;font-size:.74rem;color:#73181F;font-weight:bold">
+            EXP<input id="sh-exp" type="number" value="${L.exp||0}" style="width:54px;text-align:center;border:none;background:transparent;font-size:1.05rem;font-family:inherit;outline:none;color:#1a1007" oninput="shSetExp(this.value)">
+          </div>
+          ${L.level<10?`<button title="Passa di livello" onclick="nav('levelup',{charId:'${esc(L.id)}'})" style="background:#73181F;color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-weight:bold;font-size:1.1rem;display:flex;align-items:center;justify-content:center">+</button>`:''}
+          <button onclick="shOpenDelete()" style="background:transparent;color:#d32f2f;border:1.5px solid #d32f2f;border-radius:6px;padding:4px 9px;cursor:pointer;font-size:.75rem;font-weight:bold;letter-spacing:.5px;font-family:inherit">✕ Elimina</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;font-size:.85rem;opacity:.75">
+        ${[['Lignaggio',L.heritage],['Infanzia',L.childhood],['Professione',L.profession]].map(([k,v])=>`<span><strong>${k}:</strong> ${esc(v||'—')}</span>`).join('')}
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap">
+      ${['generale','inventario','talenti','abilità'].map(t=>`<button class="tab-btn ${S.sh.tab===t?'active':''}" onclick="shSetTab('${t}')">${t.toUpperCase()}</button>`).join('')}
+    </div>
+    ${tabContent}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px">
+      <button class="btn btn-secondary" onclick="nav('characters')">❮ INDIETRO</button>
+      <button class="btn btn-primary" onclick="shSave()">SALVA SCHEDA</button>
+    </div>
+  </div>`;
+}
+
+function renderSheetGenerale(L,eff,cKey,dmg,prot){
+  const dots=(k,max=2)=>[...Array(max)].map((_,g)=>{
+    const gi=g+1;
+    const active=(L[cKey(k)]||0)>=gi;
+    return`<span class="dot ${active?'on':''}" onclick="shToggleCond('${k}',${gi})" title="Condizione ${gi}"></span>`;
+  }).join('');
+  const invOpts=(L.inventory||[]).map(i=>`<option value="${esc(i.item)}">${esc(i.item)}</option>`).join('');
+  const equipSlots=[['Mano principale','mainHand'],['Mano secondaria','offHand'],['Corpo','body'],['Slot 1','slot1'],['Slot 2','slot2'],['Slot 3','slot3']];
+  return`
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div>
+      <div style="margin-bottom:20px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
+        <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">CARATTERISTICHE</h3>
+        ${[['vig','VIG'],['ins','IST'],['min','MEN']].map(([k,l])=>`
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-weight:bold;width:38px">${l}</span>
+          <div style="border:2px solid #73181F;border-radius:6px;padding:4px 12px;min-width:46px;text-align:center;font-weight:bold;font-size:1.25rem;color:${(L[cKey(k)]||0)>0?'#ff4d4d':'#73181F'}">${eff(k)}</div>
+          <div style="display:flex;gap:6px">${dots(k)}</div>
+          <button onclick="shOpenDice('${l}',${eff(k)})" title="Tiro su ${l}" style="margin-left:auto;background:#73181F;color:white;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:.8rem;flex-shrink:0">🎲</button>
+        </div>`).join('')}
+      </div>
+      <div>
+        <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:10px">COMBATTIMENTO</h3>
+        <div style="font-size:.78rem;color:#73181F;font-weight:bold;margin-bottom:4px">SALUTE</div>
+        <div class="bar-outer"><div class="bar-inner" style="width:${L.hpMax>0?Math.min(100,(L.hpCurr/L.hpMax)*100):0}%;background:#18732D"></div><div class="bar-label">${L.hpCurr} / ${L.hpMax}</div></div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button onclick="shAdjust('hpCurr',-1)" style="background:#73181F;color:white;border:none;border-radius:6px;padding:4px 12px;cursor:pointer;font-family:inherit;font-weight:bold">−</button>
+          <button onclick="shAdjust('hpCurr',1)" style="background:#73181F;color:white;border:none;border-radius:6px;padding:4px 12px;cursor:pointer;font-family:inherit;font-weight:bold">+</button>
+        </div>
+        <div style="font-size:.78rem;color:#73181F;font-weight:bold;margin-bottom:4px">ENERGIA</div>
+        <div class="bar-outer"><div class="bar-inner" style="width:${L.enMax>0?Math.min(100,(L.enCurr/L.enMax)*100):0}%;background:#182473"></div><div class="bar-label">${L.enCurr} / ${L.enMax}</div></div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button onclick="shAdjust('enCurr',-1)" style="background:#73181F;color:white;border:none;border-radius:6px;padding:4px 12px;cursor:pointer;font-family:inherit;font-weight:bold">−</button>
+          <button onclick="shAdjust('enCurr',1)" style="background:#73181F;color:white;border:none;border-radius:6px;padding:4px 12px;cursor:pointer;font-family:inherit;font-weight:bold">+</button>
+        </div>
+        <div style="display:flex;justify-content:space-around;padding:10px 0;background:rgba(115,24,31,.05);border-radius:8px">
+          <div style="text-align:center;font-size:.85rem">DANNO<br><strong style="font-size:1.2rem;color:#73181F">${dmg}</strong></div>
+          <div style="text-align:center;font-size:.85rem">PROTEZIONE<br><strong style="font-size:1.2rem;color:#73181F">${prot}</strong></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">EQUIPAGGIAMENTO ATTIVO</h3>
+      ${equipSlots.map(([lbl,k])=>`
+      <div style="margin-bottom:8px">
+        <div style="font-size:.76rem;color:#73181F;font-weight:bold;margin-bottom:3px">${lbl}:</div>
+        <select style="width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:9px 10px;font-family:'Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;cursor:pointer" onchange="shSetEquip('${k}',this.value)">
+          <option value="">— nessuno —</option>
+          ${(L.inventory||[]).map(i=>`<option value="${esc(i.item)}" ${L[k]===i.item?'selected':''}>${esc(i.item)}</option>`).join('')}
+        </select>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderSheetInventario(L){
+  const items=(L.inventory||[]);
+  const slotsUsed=items.reduce((s,i)=>s+parseSlotCost(i.slot)*(i.quantity||1),0);
+  return`
+  <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">OGGETTI NELLO ZAINO</h3>
+  ${items.length===0?'<p style="opacity:.55;font-style:italic">Zaino vuoto.</p>':''}
+  ${items.map((item,idx)=>`
+  <div style="border:1px solid #73181F;border-radius:8px;padding:12px;margin-bottom:8px;background:rgba(255,255,255,.3)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+      <strong>${esc(item.item)}</strong>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="badge">×${item.quantity||1}</span>
+        <button onclick="shUseItem(${idx})" style="padding:2px 8px;background:#73181F;color:white;border:none;border-radius:4px;cursor:pointer;font-size:.78rem;font-family:inherit">Usa</button>
+      </div>
+    </div>
+    <div style="font-size:.81rem;opacity:.73;font-style:italic">${esc(item.description||'')}</div>
+  </div>`).join('')}
+  <div style="padding:12px;border:2px dashed #73181F;border-radius:8px;text-align:center;font-weight:bold;margin-top:14px;background:rgba(0,0,0,.02)">
+    Slot occupati: ${fmtSlots(slotsUsed)} / ${L.vig*2}
+  </div>`;
+}
+
+function renderSheetTalenti(L){
+  return`
+  <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">TALENTI APPRESI</h3>
+  ${!(L.talents&&L.talents.length)?'<p style="opacity:.55;font-style:italic">Nessun talento.</p>':''}
+  ${(L.talents||[]).map(t=>`
+  <div style="border:1px solid #73181F;border-radius:8px;padding:12px;margin-bottom:8px;background:rgba(255,255,255,.3)">
+    <div style="display:flex;justify-content:space-between"><strong>${esc(t.talent_name)}</strong><span class="badge">${esc(t.talent_cost)}</span></div>
+    <div style="font-size:.81rem;opacity:.73;margin-top:4px">${esc(t.talent_description)}</div>
+  </div>`).join('')}`;
+}
+
+function renderSheetAbilita(L){
+  return`
+  <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">ABILITÀ SPECIALI</h3>
+  ${!(L.abilities&&L.abilities.length)?'<p style="opacity:.55;font-style:italic">Nessuna abilità.</p>':''}
+  ${(L.abilities||[]).map(a=>`
+  <div style="border:1px solid #73181F;border-radius:8px;padding:12px;margin-bottom:8px;background:rgba(255,255,255,.3)">
+    <div style="display:flex;justify-content:space-between"><strong>${esc(a.ability_name)}</strong><span class="badge">${esc(a.ability_cost)}</span></div>
+    <div style="font-size:.81rem;opacity:.73;margin-top:4px">${esc(a.ability_description)}</div>
+  </div>`).join('')}`;
+}
+
+// ─── DICE ROLLER ──────────────────────────────────────────────────────────────
+const DICE_FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
+let _diceInterval=null;
+
+function renderDiceModal(){
+  const dt=S.sh.diceTarget;
+  const dr=S.dr||{d1:null,d2:null,rolling:false,result:null};
+  return`
+  <div class="overlay" style="z-index:9998">
+    <div class="modal" style="text-align:center;max-width:360px">
+      <h3 style="color:#73181F;letter-spacing:3px;margin-bottom:4px;font-size:1rem">TIRO 2d6</h3>
+      <p style="font-size:.85rem;opacity:.7;margin-bottom:20px">${esc(dt.statName)} <strong style="color:#73181F">${dt.statValue}</strong> — supera con ≤ ${dt.statValue}</p>
+      <div style="display:flex;justify-content:center;gap:20px;margin-bottom:22px;min-height:72px" id="dice-display">
+        ${[dr.d1,dr.d2].map(d=>`
+        <div id="die-${d===dr.d1?1:2}" style="width:68px;height:68px;border:3px solid #73181F;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;font-size:2.6rem;box-shadow:0 4px 14px rgba(0,0,0,.18)">
+          ${d?DICE_FACES[d-1]:'<span style="color:#ccc;font-size:1.8rem">?</span>'}
+        </div>`).join('')}
+      </div>
+      ${dr.result?`
+      <div style="margin-bottom:20px">
+        <div style="font-size:2.2rem;font-weight:bold;color:#73181F;line-height:1">${dr.result.total}</div>
+        <div style="font-size:.78rem;opacity:.6;margin:4px 0 10px">${dr.d1} + ${dr.d2} = ${dr.result.total} vs ${esc(dt.statName)} ${dt.statValue}</div>
+        <div style="display:inline-block;padding:7px 22px;border-radius:8px;font-weight:bold;font-size:1rem;letter-spacing:2px;background:${dr.result.success?'#18732D':'#d32f2f'};color:white;box-shadow:0 0 16px ${dr.result.success?'rgba(24,115,45,.4)':'rgba(211,47,47,.4)'}">
+          ${dr.result.success?'✓ SUCCESSO':'✗ FALLIMENTO'}
+        </div>
+      </div>`:''}
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-secondary" style="flex:1;padding:10px" onclick="shCloseDice()">Chiudi</button>
+        <button class="btn btn-primary" style="flex:2;padding:10px" ${dr.rolling?'disabled':''} onclick="shRoll()">${dr.rolling?'⏳ ...':dr.result?'🎲 Ritira':'🎲 Lancia'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── SHEET EVENT HANDLERS ─────────────────────────────────────────────────────
+function shSetTab(t){S.sh.tab=t;render();}
+function shSetExp(v){S.sh.local.exp=parseInt(v)||0;} // no re-render to keep focus
+function shAdjust(field,delta){
+  const L=S.sh.local;
+  if(field==='hpCurr')L.hpCurr=Math.max(0,Math.min(L.hpMax,L.hpCurr+delta));
+  if(field==='enCurr')L.enCurr=Math.max(0,Math.min(L.enMax,L.enCurr+delta));
+  render();
+}
+function shToggleCond(k,g){
+  const L=S.sh.local;
+  const ck=`c${k[0].toUpperCase()+k.slice(1)}`;
+  const cur=L[ck]||0;
+  L[ck]=cur>=g?g-1:g;
+  render();
+}
+function shSetEquip(slot,val){S.sh.local[slot]=val;render();}
+function shOpenDice(name,val){S.sh.diceTarget={statName:name,statValue:val};S.dr={d1:null,d2:null,rolling:false,result:null};render();}
+function shCloseDice(){S.sh.diceTarget=null;S.dr=null;if(_diceInterval)clearInterval(_diceInterval);render();}
+function shRoll(){
+  if(!S.dr||S.dr.rolling)return;
+  S.dr.result=null;S.dr.rolling=true;
+  const final1=Math.ceil(Math.random()*6);
+  const final2=Math.ceil(Math.random()*6);
+  if(S.settings.diceAnim){
+    let tick=0;
+    _diceInterval=setInterval(()=>{
+      S.dr.d1=Math.ceil(Math.random()*6);
+      S.dr.d2=Math.ceil(Math.random()*6);
+      // update dice faces directly without full re-render
+      const d1el=document.getElementById('die-1');
+      const d2el=document.getElementById('die-2');
+      if(d1el)d1el.textContent=DICE_FACES[S.dr.d1-1];
+      if(d2el)d2el.textContent=DICE_FACES[S.dr.d2-1];
+      tick++;
+      if(tick>=16){
+        clearInterval(_diceInterval);
+        S.dr.d1=final1;S.dr.d2=final2;
+        S.dr.rolling=false;
+        S.dr.result={total:final1+final2,success:final1+final2<=S.sh.diceTarget.statValue};
+        render();
+      }
+    },70);
+  } else {
+    S.dr.d1=final1;S.dr.d2=final2;
+    S.dr.rolling=false;
+    S.dr.result={total:final1+final2,success:final1+final2<=S.sh.diceTarget.statValue};
+    render();
+  }
+}
+function shUseItem(idx){
+  const inv=S.sh.local.inventory;
+  if(inv[idx].quantity>1)inv[idx]={...inv[idx],quantity:inv[idx].quantity-1};
+  else inv.splice(idx,1);
+  render();
+}
+function shOpenDelete(){S.sh.deleteModal=true;S.sh.deleteInput='';render();}
+function shCancelDelete(){S.sh.deleteModal=false;S.sh.deleteInput='';render();}
+function shSetDeleteInput(v){S.sh.deleteInput=v;}
+function shConfirmDelete(){
+  if(S.sh.deleteInput.trim()===S.sh.local.name.trim()){
+    const id=S.sh.local.id;
+    S.chars=S.chars.filter(c=>c.id!==id);
+    persist();nav('characters');
+  } else {alert('Il nome non corrisponde. Eliminazione annullata.');}
+}
+function shSave(){
+  // read exp from input in case it wasn't rerendered
+  const expEl=document.getElementById('sh-exp');
+  if(expEl)S.sh.local.exp=parseInt(expEl.value)||0;
+  const idx=S.chars.findIndex(c=>c.id===S.sh.local.id);
+  if(idx>=0)S.chars[idx]=JSON.parse(JSON.stringify(S.sh.local));
+  persist();alert('Scheda salvata!');
+}
+
+// ─── RENDER: LEVEL UP ─────────────────────────────────────────────────────────
+function renderLevelUp(){
+  const charId=S.params.charId;
+  const char=S.chars.find(c=>c.id===charId);
+  if(!char)return`<div class="frame">Personaggio non trovato.</div>`;
+  const lu=S.lu;
+  const newLvl=char.level+1;
+  const needsAttr=[3,6,9].includes(newLvl);
+  const needsExtra=[2,4,6,8,10].includes(newLvl);
+  const isPsyche=lu.newTalent?.talent_name?.toLowerCase().includes('psiche');
+
+  const sidebar=`
+  <div style="width:220px;flex-shrink:0;background:#D8C7A1;border:2px solid #73181F;border-radius:8px;padding:16px;position:sticky;top:20px;font-size:.88rem">
+    <h3 style="margin:0 0 6px;color:#73181F;border-bottom:1px solid #73181F;padding-bottom:6px">${esc(char.name)}</h3>
+    <p style="font-style:italic;opacity:.7;margin-bottom:12px">Lv.${char.level} → <strong style="color:#73181F">Lv.${newLvl}</strong></p>
+    ${[['VIG','vig'],['IST','ins'],['MEN','min']].map(([l,k])=>`
+    <div style="display:flex;justify-content:space-between;font-weight:bold;margin-bottom:4px">
+      <span>${l}:</span><span>${(char[k]||0)+(lu.attrBoost===k?1:0)}</span>
+    </div>`).join('')}
+    <hr style="margin:8px 0;border-color:rgba(115,24,31,.2)">
+    <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Salute:</span><strong>${char.hpMax+2}</strong></div>
+    <div style="display:flex;justify-content:space-between"><span>Energia:</span><strong>${char.enMax+2}</strong></div>
+  </div>`;
+
+  let stepContent='';
+  if(lu.step===1){
+    stepContent=`
+    <h2 style="color:#73181F;margin-bottom:10px">Passaggio di Livello ${newLvl}</h2>
+    <p style="opacity:.8;margin-bottom:16px">Salute ed Energia aumentano automaticamente di +2.</p>
+    ${needsAttr?`
+    <p style="font-weight:bold;margin-bottom:12px">Scegli quale Caratteristica aumentare di 1 (Max 10):</p>
+    <div style="display:flex;gap:12px;margin-bottom:4px">
+      ${[['vig','VIG'],['ins','IST'],['min','MEN']].map(([k,l])=>`
+      <div onclick="${(char[k]||0)>=10?`alert('Già al massimo!')`:`luSelectAttr('${k}')`}" style="flex:1;border:2px solid ${lu.attrBoost===k?'#73181F':'#ccc'};border-radius:8px;padding:14px;text-align:center;cursor:pointer;background:${lu.attrBoost===k?'rgba(115,24,31,.1)':'rgba(255,255,255,.4)'};transition:all .2s">
+        <div style="color:#73181F;font-weight:bold;font-size:1.1rem">${l}</div>
+        <div style="font-size:1.8rem;font-weight:bold">${char[k]||0}</div>
+      </div>`).join('')}
+    </div>`:''}
+    <div style="display:flex;justify-content:flex-end;margin-top:20px;border-top:1px solid #84785E;padding-top:14px">
+      <button class="btn btn-primary" style="max-width:220px" onclick="${needsAttr&&!lu.attrBoost?`alert('Scegli una Caratteristica!')`:(needsExtra?`luGoStep(2)`:`luFinish()`)}">${needsExtra?'AVANTI ❯':'CONFERMA LIVELLO ✓'}</button>
+    </div>`;
+  } else if(lu.step===2){
+    stepContent=`
+    <h2 style="color:#73181F;margin-bottom:6px">Nuovo Talento</h2>
+    <p style="font-size:.84rem;opacity:.7;margin-bottom:14px">Filtrati per categoria. Hai ${char.vig} VIG / ${char.ins} IST / ${char.min} MEN:</p>
+    ${['VIG','IST','MEN'].map(cat=>{
+      const catStat={VIG:char.vig,IST:char.ins,MEN:char.min}[cat];
+      const statOk=catStat>=6;
+      const isOpen=lu.openCats[cat];
+      return`
+      <div>
+        <div class="sec-hdr">
+          <span>${cat}</span>
+          ${!statOk?`<button onclick="luToggleCat('${cat}')" style="background:none;border:1px solid #73181F;border-radius:4px;padding:1px 8px;font-size:.72rem;cursor:pointer;color:#73181F;font-weight:bold">${isOpen?'▾ chiudi':'▸ mostra'}</button>`:''}
+        </div>
+        ${!statOk&&!isOpen?`<div style="font-size:.82rem;color:#888;font-style:italic;padding:5px 0 8px">⚠ Richiede ${cat} ≥ 6 (il tuo è ${catStat}).</div>`:''}
+        ${(statOk||isOpen)?DB.talents.filter(t=>t.cat===cat).map(t=>{
+          const dbIdx=DB.talents.indexOf(t);
+          const count=(char.talents||[]).filter(x=>x.talent_name===t.talent_name).length;
+          const max=t.talent_max||1;
+          const blocked=max!==99&&count>=max;
+          const sel=lu.newTalent?.talent_name===t.talent_name;
+          const r=t.talent_req||{};
+          const rp=[];
+          if(r.level)rp.push(`Lv.${r.level}`);
+          if(r.vig)rp.push(`${r.vig} VIG`);
+          if(r.ist)rp.push(`${r.ist} IST`);
+          if(r.men)rp.push(`${r.men} MEN`);
+          if(r.talent)rp.push(r.talent);
+          let reqOk=!blocked;
+          if(r.level&&char.level<r.level)reqOk=false;
+          if(r.vig&&char.vig<r.vig)reqOk=false;
+          if(r.ist&&char.ins<r.ist)reqOk=false;
+          if(r.men&&char.min<r.men)reqOk=false;
+          if(r.talent&&!(char.talents||[]).some(x=>x.talent_name===r.talent))reqOk=false;
+          const clickable=!blocked&&reqOk&&statOk;
+          return`
+          <div class="cc-card ${sel?'sel':''}" style="opacity:${(!reqOk||blocked||!statOk)?.4:1};cursor:${clickable?'pointer':'not-allowed'}" onclick="${clickable?`luSelectTalent(${dbIdx})`:'void(0)'}">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+              <span style="font-weight:bold;color:#73181F">${esc(t.talent_name)}${count>0?` ×${count}`:''}</span>
+              <div style="display:flex;gap:4px">
+                ${max>1&&max<99?`<span class="badge" style="background:#555;font-size:.63rem">max ${max}</span>`:''}
+                <span class="badge">${esc(t.talent_cost)}</span>
+              </div>
+            </div>
+            ${rp.length?`<div style="font-size:.72rem;color:${reqOk?'#18732D':'#d32f2f'};margin-top:3px;font-weight:bold">${reqOk?'✓':'✗'} Req: ${esc(rp.join(' · '))}</div>`:''}
+            <div style="font-size:.8rem;margin-top:3px;opacity:.8">${esc(t.talent_description)}</div>
+            ${blocked?`<div style="font-size:.71rem;color:#999;margin-top:2px">Già preso al massimo</div>`:''}
+          </div>`}).join(''):''}
+      </div>`;}).join('')}
+    <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+      <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(1)">❮ INDIETRO</button>
+      <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newTalent){alert('Scegli un talento!');return;}luGoStep(3)">AVANTI ❯</button>
+    </div>`;
+  } else if(lu.step===3){
+    const availAb=DB.abilities.filter(a=>!(char.abilities||[]).some(x=>x.ability_name===a.ability_name));
+    stepContent=`
+    <h2 style="color:#73181F;margin-bottom:6px">Nuova Abilità Speciale</h2>
+    ${isPsyche?`<div style="padding:8px 12px;background:rgba(24,115,45,.1);border:1px solid #18732D;border-radius:7px;margin-bottom:12px;font-size:.85rem;color:#18732D;font-weight:bold">✨ Hai preso "Abile nella psiche"! Scegli 1 abilità base + fino a 3 aggiuntive.</div>`:''}
+    <p style="font-size:.84rem;opacity:.7;margin-bottom:14px">
+      Abilità base: ${lu.newAbility?`✓ ${esc(lu.newAbility.ability_name)}`:'<em>nessuna</em>'}
+      ${isPsyche?`<br>Bonus (${lu.extraAbilities.length}/3): ${lu.extraAbilities.length?lu.extraAbilities.map(a=>esc(a.ability_name)).join(', '):'<em>nessuna</em>'}`:''}
+    </p>
+    ${availAb.map((a,i)=>{
+      const realIdx=DB.abilities.indexOf(a);
+      const isBase=lu.newAbility?.ability_name===a.ability_name;
+      const isExtra=lu.extraAbilities.some(x=>x.ability_name===a.ability_name);
+      const sel=isBase||isExtra;
+      const extraFull=lu.extraAbilities.length>=3&&!isExtra;
+      const blockClick=!lu.newAbility&&!isBase?false:(lu.newAbility&&!isPsyche&&!isBase)?(true):(isPsyche&&extraFull&&!sel);
+      return`
+      <div class="cc-card ${sel?'sel':''}" style="opacity:${blockClick?.45:1};cursor:${blockClick?'not-allowed':'pointer'}" onclick="${blockClick?'void(0)':`luSelectAbility(${realIdx})`}">
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-weight:bold;color:#73181F">${esc(a.ability_name)}</span>
+          <div style="display:flex;gap:5px">
+            ${isBase?`<span class="badge" style="background:#18732D">base</span>`:''}
+            ${isExtra?`<span class="badge" style="background:#555">bonus</span>`:''}
+            <span class="badge">${esc(a.ability_cost)}</span>
+          </div>
+        </div>
+        <div style="font-size:.81rem;margin-top:3px;opacity:.8">${esc(a.ability_description)}</div>
+      </div>`}).join('')}
+    <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+      <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(2)">❮ INDIETRO</button>
+      <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newAbility){alert('Scegli almeno un\\'abilità!');return;}luFinish()">CONFERMA LIVELLO ✓</button>
+    </div>`;
+  }
+
+  return`
+  <div style="width:min(860px,97vw);z-index:1;display:flex;gap:18px;align-items:flex-start;padding:16px 8px;font-family:'Times New Roman',Georgia,serif;color:#1a1007">
+    ${sidebar}
+    <div style="flex:1;background:#D8C7A1;border:2px solid #73181F;border-radius:8px;padding:22px">${stepContent}</div>
+  </div>`;
+}
+
+// ─── LU EVENT HANDLERS ────────────────────────────────────────────────────────
+function luGoStep(n){S.lu.step=n;window.scrollTo(0,0);render();}
+function luSelectAttr(k){S.lu.attrBoost=k;render();}
+function luSelectTalent(dbIdx){S.lu.newTalent=DB.talents[dbIdx];render();}
+function luToggleCat(cat){S.lu.openCats[cat]=!S.lu.openCats[cat];render();}
+function luSelectAbility(dbIdx){
+  const a=DB.abilities[dbIdx];
+  const lu=S.lu;
+  const isBase=lu.newAbility?.ability_name===a.ability_name;
+  const isExtra=lu.extraAbilities.some(x=>x.ability_name===a.ability_name);
+  const isPsyche=lu.newTalent?.talent_name?.toLowerCase().includes('psiche');
+  if(isBase){lu.newAbility=null;render();return;}
+  if(isExtra){lu.extraAbilities=lu.extraAbilities.filter(x=>x.ability_name!==a.ability_name);render();return;}
+  if(!lu.newAbility){lu.newAbility=a;render();return;}
+  if(isPsyche&&lu.extraAbilities.length<3){lu.extraAbilities.push(a);render();return;}
+}
+function luFinish(){
+  const char=S.chars.find(c=>c.id===S.params.charId);
+  if(!char)return;
+  const lu=S.lu;
+  const newLvl=char.level+1;
+  const s={...char,level:newLvl,exp:0,hpMax:char.hpMax+2,hpCurr:char.hpCurr+2,enMax:char.enMax+2,enCurr:char.enCurr+2};
+  if(lu.attrBoost)s[lu.attrBoost]=(char[lu.attrBoost]||0)+1;
+  if(lu.newTalent)s.talents=[...(char.talents||[]),lu.newTalent];
+  const allNewAb=[lu.newAbility,...lu.extraAbilities].filter(Boolean);
+  if(allNewAb.length)s.abilities=[...(char.abilities||[]),...allNewAb];
+  const idx=S.chars.findIndex(c=>c.id===char.id);
+  if(idx>=0)S.chars[idx]=s;
+  persist();
+  alert(`${char.name} è avanzato al Livello ${newLvl}!`);
+  nav('sheet',{charId:char.id});
+}
+
+// ─── RENDER: SETTINGS ─────────────────────────────────────────────────────────
+function renderSettings(){
+  const{music,diceAnim}=S.settings;
+  const tog=(id,checked,fn)=>`
+  <label class="toggle-wrap">
+    <input type="checkbox" ${checked?'checked':''} onchange="${fn}">
+    <span class="toggle-track"></span>
+    <span class="toggle-knob"></span>
+  </label>`;
+  return`
+  <div class="frame">
+    <div style="font-size:44px;margin-bottom:8px">⚙️</div>
+    <h2 style="font-size:1.7rem;letter-spacing:4px;margin:0 0 16px">IMPOSTAZIONI</h2>
+    <div class="menu-c">
+      <div style="text-align:left;margin-bottom:18px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
+        <h3 style="color:#73181F;letter-spacing:2px;font-size:.92rem;margin-bottom:14px">AUDIO</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <span>Musica di sottofondo</span>
+          ${tog('music',music,'settingsToggle("music")')}
+        </div>
+      </div>
+      <div style="text-align:left;margin-bottom:18px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
+        <h3 style="color:#73181F;letter-spacing:2px;font-size:.92rem;margin-bottom:14px">GAMEPLAY</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <span>Animazioni dadi</span>
+          ${tog('diceAnim',diceAnim,'settingsToggle("diceAnim")')}
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="nav('home')">TORNA AL MENU</button>
+    </div>
+    <div style="font-size:.78rem;opacity:.55;color:#73181F;margin-top:14px">Le impostazioni vengono salvate automaticamente</div>
+  </div>`;
+}
+function settingsToggle(key){S.settings[key]=!S.settings[key];persist();render();}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+load();
+
+// Splash
+const splashEl=document.getElementById('splash');
+setTimeout(()=>splashEl.classList.add('fade'),1800);
+setTimeout(()=>{
+  splashEl.style.display='none';
+  applyMusic();
+},3100);
+
+render();
+</script>
+</body>
+</html>
