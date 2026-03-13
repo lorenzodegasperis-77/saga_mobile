@@ -1156,7 +1156,8 @@ function renderLevelUp(){
         <div style="font-size:1.8rem;font-weight:bold">${char[k]||0}</div>
       </div>`).join('')}
     </div>`:''}
-    <div style="display:flex;justify-content:flex-end;margin-top:20px;border-top:1px solid #84785E;padding-top:14px">
+    <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+      <button class="btn btn-secondary" style="max-width:160px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
       <button class="btn btn-primary" style="max-width:220px" onclick="${needsAttr&&!lu.attrBoost?`alert('Scegli una Caratteristica!')`:(needsExtra?`luGoStep(2)`:`luFinish()`)}">${needsExtra?'AVANTI ❯':'CONFERMA LIVELLO ✓'}</button>
     </div>`;
   } else if(lu.step===2){
@@ -1210,6 +1211,7 @@ function renderLevelUp(){
       </div>`;}).join('')}
     <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
       <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(1)">❮ INDIETRO</button>
+      <button class="btn btn-secondary" style="max-width:120px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
       <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newTalent){alert('Scegli un talento!');return;}luGoStep(3)">AVANTI ❯</button>
     </div>`;
   } else if(lu.step===3){
@@ -1242,7 +1244,8 @@ function renderLevelUp(){
       </div>`}).join('')}
     <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
       <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(2)">❮ INDIETRO</button>
-      <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newAbility){alert('Scegli almeno un\\'abilità!');return;}luFinish()">CONFERMA LIVELLO ✓</button>
+      <button class="btn btn-secondary" style="max-width:120px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
+      <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newAbility){alert('Scegli almeno un\'abilità!');return;}luFinish()">CONFERMA LIVELLO ✓</button>
     </div>`;
   }
 
@@ -1255,6 +1258,7 @@ function renderLevelUp(){
 
 // ─── LU EVENT HANDLERS ────────────────────────────────────────────────────────
 function luGoStep(n){S.lu.step=n;window.scrollTo(0,0);render();}
+function luCancel(){nav('sheet',{charId:S.params.charId});}
 function luSelectAttr(k){S.lu.attrBoost=k;render();}
 function luSelectTalent(dbIdx){S.lu.newTalent=DB.talents[dbIdx];render();}
 function luToggleCat(cat){S.lu.openCats[cat]=!S.lu.openCats[cat];render();}
@@ -1604,23 +1608,23 @@ function renderSettings(){
 
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px">🎵 AUDIO</h3>
-        ${row('Musica di sottofondo',tog(music,'settingsToggle("music")'))}
-        ${row('Effetti sonori',tog(sfxEnabled,'settingsToggle("sfxEnabled")'))}
+        ${row('Musica di sottofondo',tog(music,"settingsToggle('music')"))}
+        ${row('Effetti sonori',tog(sfxEnabled,"settingsToggle('sfxEnabled')"))}
         ${row('Stile effetti sonori',sel(sfxStyle,[
           ['fantasy','⚔️ Fantasy'],['scifi','🚀 Sci-Fi'],['modern','🔫 Moderno'],['neutral','🎲 Neutro']
-        ],'settingsSfxStyle(this.value)'))}
+        ],"settingsSfxStyle(this.value)"))}
       </div>
 
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px">🎮 GAMEPLAY</h3>
-        ${row('Animazioni dadi 3D',tog(diceAnim,'settingsToggle("diceAnim")'))}
+        ${row('Animazioni dadi 3D',tog(diceAnim,"settingsToggle('diceAnim')"))}
       </div>
 
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px">🌐 LOCALIZZAZIONE</h3>
         ${row('Lingua interfaccia',sel(language,[
           ['it','🇮🇹 Italiano'],['en','🇬🇧 English'],['de','🇩🇪 Deutsch'],['fr','🇫🇷 Français'],['es','🇪🇸 Español']
-        ],'settingsLanguage(this.value)'))}
+        ],"settingsLanguage(this.value)"))}
         <div style="font-size:.75rem;color:#888;font-style:italic;margin-top:-6px">⚠ Traduzione in sviluppo — solo placeholder</div>
       </div>
 
