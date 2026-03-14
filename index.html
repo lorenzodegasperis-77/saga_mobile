@@ -331,7 +331,7 @@ function calcStats(o){
   });
   return{vig:v,ins:i,min:m};
 }
-function calcCombat(names=[]){
+function calcCombat(names=[],char=null){
   let d=1,p=0;
   if(names.includes('Arma semplice'))d+=2;
   if(names.includes('Arma letale'))d+=3;
@@ -342,7 +342,26 @@ function calcCombat(names=[]){
   if(names.includes('Protezione leggera'))p+=1;
   if(names.includes('Protezione media'))p+=2;
   if(names.includes('Protezione pesante'))p+=3;
+  if(char){
+    const weaponNames=['Arma semplice','Arma letale','Armi a distanza leggere','Armi a distanza medie','Armi a distanza pesanti'];
+    const hasWeapon=names.some(n=>weaponNames.includes(n));
+    if(hasWeapon){
+      const expertCount=(char.talents||[]).filter(t=>t.talent_name==='Combattente esperto').length;
+      d+=expertCount;
+    }
+    const twp=calcTwoWeaponEffects(char);
+    d+=twp.dmgBonus;
+  }
   return{dmg:d,prot:p};
+}
+function calcTwoWeaponEffects(L){
+  const weaponNames=['Arma semplice','Arma letale','Armi a distanza leggere','Armi a distanza medie','Armi a distanza pesanti'];
+  const mh=L.mainHand,oh=L.offHand;
+  if(!mh||!oh)return{vigPenalty:0,dmgBonus:0};
+  if(!weaponNames.includes(mh)||!weaponNames.includes(oh))return{vigPenalty:0,dmgBonus:0};
+  const hasDual=(L.talents||[]).some(t=>t.talent_name==='Combattere con due armi');
+  if(hasDual&&mh==='Arma semplice'&&oh==='Arma semplice')return{vigPenalty:0,dmgBonus:1};
+  return{vigPenalty:1,dmgBonus:0};
 }
 function parseSlotCost(str){
   if(!str||String(str)==='0')return 0;
@@ -723,13 +742,15 @@ function renderCCCredits(cs){
   </div>`;
 }
 
-function renderCCEquip(title,items,remaining,prev,next,nextLabel='AVANTI ❯',isLast=false){
+function renderCCEquip(title,items,remaining,prev,next,nextLabel='AVANTI \u276f',isLast=false){
   const spent=ccSpent();
   const talents=S.cc.cs.talents;
-  return`
-  <h3 style="color:#73181F;margin-bottom:6px">${esc(title)}</h3>
-  <div style="margin-bottom:12px;font-weight:bold;color:#18732D;font-size:.9rem">Crediti rimanenti: ${remaining}</div>
-  ${items.map((item,i)=>{
+  const tiers=[
+    {label:'Economici',sub:'fino a 15 cr',min:0,max:15,color:'#18732D'},
+    {label:'Standard',sub:'16\u201345 cr',min:16,max:45,color:'#8a6000'},
+    {label:'Avanzati',sub:'oltre 45 cr',min:46,max:Infinity,color:'#73181F'},
+  ];
+  function renderItem(item,i){
     const entry=S.cc.cs.equipment.find(e=>e.equip_name===item.equip_name);
     const qty=entry?entry.qty||1:0;
     const canMore=(spent+item.equip_cost)<=S.cc.cs.credits;
@@ -742,22 +763,37 @@ function renderCCEquip(title,items,remaining,prev,next,nextLabel='AVANTI ❯',is
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:4px">
         <span style="font-weight:bold;color:#73181F">${esc(item.equip_name)}</span>
         <div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
-          ${locked?`<span class="badge" style="background:#8B4513;font-size:.62rem">🔒 ${esc(reqErr)}</span>`:''}
-          <span class="badge" style="background:#555;font-size:.64rem">📦 ${esc(slotLabel)}</span>
+          ${locked?`<span class="badge" style="background:#8B4513;font-size:.62rem">\ud83d\udd12 ${esc(reqErr)}</span>`:''}
+          <span class="badge" style="background:#555;font-size:.64rem">\ud83d\udce6 ${esc(slotLabel)}</span>
           <span class="badge">${item.equip_cost} cr</span>
         </div>
       </div>
       <div style="font-size:.81rem;opacity:.8;margin-bottom:8px">${esc(item.equip_bonus)}</div>
-      ${locked?`<div style="font-size:.76rem;color:#8B4513;font-weight:bold;margin-bottom:6px">⚠ Richiede il talento <em>${esc(reqErr)}</em> per utilizzare questo oggetto</div>`:''}
+      ${locked?`<div style="font-size:.76rem;color:#8B4513;font-weight:bold;margin-bottom:6px">\u26a0 Richiede il talento <em>${esc(reqErr)}</em></div>`:''}
       <div style="display:flex;align-items:center;gap:10px">
-        <button class="sm-btn" ${qty===0?'disabled':''} onclick="ccRemoveEquip('${esc(item.equip_name)}')">−</button>
+        <button class="sm-btn" ${qty===0?'disabled':''} onclick="ccRemoveEquip('${esc(item.equip_name)}')">\u2212</button>
         <span style="font-weight:bold;min-width:22px;text-align:center;color:${qty>0?'#73181F':'#888'}">${qty}</span>
-        <button class="sm-btn" ${(!canMore||locked)?'disabled':''} onclick="ccAddEquip('${esc(item.equip_name)}',${i})" title="${locked?'Talento mancante':''}"  >+</button>
+        <button class="sm-btn" ${(!canMore||locked)?'disabled':''} onclick="ccAddEquip('${esc(item.equip_name)}',${i})" title="${locked?'Talento mancante':''}">+</button>
         ${qty>0&&sc>0?`<span style="font-size:.72rem;opacity:.65;margin-left:4px">(${fmtSlots(sc*qty)} slot totali)</span>`:''}
       </div>
-    </div>`}).join('')}
+    </div>`;}
+  const tieredHtml=tiers.map(tier=>{
+    const group=items.filter(it=>it.equip_cost>=tier.min&&it.equip_cost<=tier.max);
+    if(!group.length)return'';
+    return`<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:5px 10px;background:rgba(0,0,0,.04);border-radius:6px;border-left:3px solid ${tier.color}">
+        <span style="font-weight:bold;font-size:.82rem;color:${tier.color}">${tier.label}</span>
+        <span style="font-size:.75rem;opacity:.6">${tier.sub}</span>
+      </div>
+      ${group.map((it)=>renderItem(it,items.indexOf(it))).join('')}
+    </div>`;
+  }).join('');
+  return`
+  <h3 style="color:#73181F;margin-bottom:6px">${esc(title)}</h3>
+  <div style="margin-bottom:12px;font-weight:bold;color:#18732D;font-size:.9rem">Crediti rimanenti: ${remaining}</div>
+  ${tieredHtml}
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(${prev})">❮ INDIETRO</button>
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(${prev})">\u276e INDIETRO</button>
     <button class="btn btn-primary" style="max-width:220px" onclick="${isLast?'ccFinish()':'ccGoStep('+next+')'}">${esc(nextLabel)}</button>
   </div>`;
 }
@@ -976,7 +1012,8 @@ function renderSheet(){
   const cKey=k=>`c${k[0].toUpperCase()+k.slice(1)}`;
   const eff=k=>(L[k]||0)-(L[cKey(k)]||0);
   const eqNames=[L.mainHand,L.offHand,L.body,L.slot1,L.slot2,L.slot3].filter(Boolean);
-  const{dmg,prot}=calcCombat(eqNames);
+  const{dmg,prot}=calcCombat(eqNames,L);
+  const twpEff=calcTwoWeaponEffects(L);
 
   // Delete modal
   const delModal=S.sh.deleteModal?`
@@ -993,7 +1030,7 @@ function renderSheet(){
   </div>`:'';
 
   let tabContent='';
-  if(S.sh.tab==='generale')tabContent=renderSheetGenerale(L,eff,cKey,dmg,prot);
+  if(S.sh.tab==='generale')tabContent=renderSheetGenerale(L,eff,cKey,dmg,prot,twpEff);
   else if(S.sh.tab==='inventario')tabContent=renderSheetInventario(L);
   else if(S.sh.tab==='talenti')tabContent=renderSheetTalenti(L);
   else if(S.sh.tab==='abilità')tabContent=renderSheetAbilita(L);
@@ -1028,7 +1065,8 @@ function renderSheet(){
   </div>`;
 }
 
-function renderSheetGenerale(L,eff,cKey,dmg,prot){
+function renderSheetGenerale(L,eff,cKey,dmg,prot,twpEff){
+  twpEff=twpEff||{vigPenalty:0,dmgBonus:0};
   const dots=(k,max=2)=>[...Array(max)].map((_,g)=>{
     const gi=g+1;
     const active=(L[cKey(k)]||0)>=gi;
@@ -1040,13 +1078,17 @@ function renderSheetGenerale(L,eff,cKey,dmg,prot){
     <div>
       <div style="margin-bottom:20px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">CARATTERISTICHE</h3>
-        ${[['vig','VIG'],['ins','IST'],['min','MEN']].map(([k,l])=>`
+        ${[['vig','VIG'],['ins','IST'],['min','MEN']].map(([k,l])=>{
+          const penalty=(k==='vig'&&twpEff.vigPenalty>0)?twpEff.vigPenalty:0;
+          const displayVal=eff(k)-penalty;
+          const hasCondition=(L[cKey(k)]||0)>0;
+          return`
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <span style="font-weight:bold;width:38px">${l}</span>
-          <div style="border:2px solid #73181F;border-radius:6px;padding:4px 12px;min-width:46px;text-align:center;font-weight:bold;font-size:1.25rem;color:${(L[cKey(k)]||0)>0?'#ff4d4d':'#73181F'}">${eff(k)}</div>
+          <div style="border:2px solid #73181F;border-radius:6px;padding:4px 12px;min-width:46px;text-align:center;font-weight:bold;font-size:1.25rem;color:${(hasCondition||penalty>0)?'#ff4d4d':'#73181F'}">${displayVal}</div>
           <div style="display:flex;gap:6px">${dots(k)}</div>
-          <button onclick="shOpenDice('${l}',${eff(k)})" title="Tiro su ${l}" style="margin-left:auto;background:#73181F;color:white;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:.8rem;flex-shrink:0">🎲</button>
-        </div>`).join('')}
+          ${penalty>0?`<span style="font-size:.68rem;color:#ff4d4d;font-weight:bold">−${penalty} (due armi)</span>`:''}<button onclick="shOpenDice('${l}',${displayVal})" title="Tiro su ${l}" style="margin-left:auto;background:#73181F;color:white;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:.8rem;flex-shrink:0">🎲</button>
+        </div>`}).join('')}
       </div>
       <div>
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:10px">COMBATTIMENTO</h3>
@@ -1066,6 +1108,8 @@ function renderSheetGenerale(L,eff,cKey,dmg,prot){
           <div style="text-align:center;font-size:.85rem">DANNO<br><strong style="font-size:1.2rem;color:#73181F">${dmg}</strong></div>
           <div style="text-align:center;font-size:.85rem">PROTEZIONE<br><strong style="font-size:1.2rem;color:#73181F">${prot}</strong></div>
         </div>
+        ${twpEff.vigPenalty>0?`<div style="margin-top:6px;font-size:.72rem;color:#ff4d4d;font-style:italic;text-align:center">⚠ −1 VIG (due armi equipaggiate)</div>`:''}
+        ${twpEff.dmgBonus>0?`<div style="margin-top:6px;font-size:.72rem;color:#18732D;font-style:italic;text-align:center">✓ +1 Danno (Combattere con due armi)</div>`:''}
       </div>
     </div>
     <div>
@@ -1319,7 +1363,7 @@ function renderLevelUp(){
     <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
       <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(2)">❮ INDIETRO</button>
       <button class="btn btn-secondary" style="max-width:120px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
-      <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newAbility){alert('Scegli almeno un\'abilità!');return;}luFinish()">CONFERMA LIVELLO ✓</button>
+      <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newAbility){alert('Seleziona almeno una abilita prima di procedere!');return;}luFinish()">CONFERMA LIVELLO ✓</button>
     </div>`;
   }
 
@@ -1418,6 +1462,14 @@ function _makeFaceTex(v){
 
 function openDiceOv(numDice,title,subtitle,mode,statValue,onClose){
   if(_diceThree)_destroyDiceThree();
+  // If animations disabled, roll immediately and show simple modal
+  if(!S.settings.diceAnim){
+    const values=Array.from({length:numDice},()=>Math.ceil(Math.random()*6));
+    const total=values.reduce((s,v)=>s+v,0);
+    S.diceOv={numDice,mode,statValue,rolling:false,settled:true,values,total,onClose};
+    _showSimpleDiceModal(numDice,title,subtitle,mode,statValue,values,total);
+    return;
+  }
   S.diceOv={numDice,mode,statValue,rolling:false,settled:false,values:null,total:null,onClose};
   const ov=document.getElementById('dice-overlay');
   ov.style.display='flex';
@@ -1427,6 +1479,49 @@ function openDiceOv(numDice,title,subtitle,mode,statValue,onClose){
   const btn=document.getElementById('dice-ov-btn');
   btn.textContent='🎲 Lancia '+numDice+'d6';btn.disabled=false;
   requestAnimationFrame(()=>_initDice3D(numDice));
+}
+
+function _showSimpleDiceModal(numDice,title,subtitle,mode,statValue,values,total){
+  const diceIcons=['⚀','⚁','⚂','⚃','⚄','⚅'];
+  let resultHtml='';
+  if(mode==='credits'){
+    const cr=total*10;
+    resultHtml=`<div style="margin-top:10px;opacity:.7;font-size:.83rem">${values.join(' + ')} = ${total} × 10</div>
+    <div style="font-size:2.8rem;font-weight:bold;color:#73181F;line-height:1.2">${cr}</div>
+    <div style="font-size:.82rem;opacity:.65">Crediti iniziali</div>`;
+  }else if(mode==='stat'){
+    const ok=total<=statValue;
+    resultHtml=`<div style="font-size:1rem;font-weight:bold;color:#73181F;margin-bottom:8px">${values.join(' + ')} = ${total} vs ${statValue}</div>
+    <div style="display:inline-block;padding:7px 24px;border-radius:8px;font-weight:bold;font-size:1rem;letter-spacing:2px;background:${ok?'#18732D':'#d32f2f'};color:white">${ok?'✓ SUCCESSO':'✗ FALLIMENTO'}</div>`;
+  }else{
+    resultHtml=`<div style="margin-top:8px;font-size:2rem;font-weight:bold;color:#73181F">${values.join(' + ')} = ${total}</div>`;
+  }
+  // build modal in app
+  const modalDiv=document.createElement('div');
+  modalDiv.id='simple-dice-modal';
+  modalDiv.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:19999;font-family:Times New Roman,Georgia,serif';
+  modalDiv.innerHTML=`
+  <div style="background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:26px 28px;max-width:400px;width:90%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5)">
+    <h3 style="color:#73181F;letter-spacing:3px;font-size:1rem;margin:0 0 4px">${title}</h3>
+    <p style="font-size:.83rem;opacity:.68;margin:0 0 16px">${subtitle}</p>
+    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      ${values.map(v=>`<div style="background:#1a0a02;border:2px solid #73181F;border-radius:8px;width:54px;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-size:1.8rem;line-height:1">${diceIcons[v-1]}</span>
+        <span style="color:#D8C7A1;font-size:.7rem;font-weight:bold">${v}</span>
+      </div>`).join('')}
+    </div>
+    ${resultHtml}
+    <button onclick="closeSimpleDiceModal()" style="margin-top:18px;padding:10px 32px;border-radius:8px;background:#73181F;color:white;border:none;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.9rem;letter-spacing:1px">Chiudi</button>
+  </div>`;
+  document.body.appendChild(modalDiv);
+}
+
+function closeSimpleDiceModal(){
+  const el=document.getElementById('simple-dice-modal');
+  if(el)el.remove();
+  const diceOv=S.diceOv;
+  if(diceOv&&diceOv.onClose)diceOv.onClose(diceOv.values,diceOv.total);
+  S.diceOv=null;
 }
 
 function closeDiceOv(){
