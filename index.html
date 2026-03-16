@@ -185,12 +185,12 @@ const DB={
     {name:'Guaritore',description:'Il tuo compito è alleviare il dolore e curare le ferite, che tu lo faccia con erbe, tecnologia avanzata o magia. Spesso ti trovi in prima linea in situazioni pericolose, a salvare vite.',vig:1,ins:1,min:0},
     {name:'Artigiano/Inventore',description:'Sei abile nel creare e migliorare oggetti. Potresti fabbricare armi, armature o tecnologia. Hai talento nel creare ciò che altri usano per sopravvivere o combattere.',vig:1,ins:0,min:1},
   ],
-  equip_weapons:[
+equip_weapons:[
     {equip_name:'Arma semplice',equip_bonus:'+2 Danno',equip_cost:15,equip_inventory:'1 slot'},
-    {equip_name:'Arma letale',equip_bonus:'+3 Danno',equip_cost:25,equip_inventory:'2 slot'},
+    {equip_name:'Arma letale',equip_bonus:'+3 Danno. Non impugnabile nella mano secondaria.',equip_cost:25,equip_inventory:'2 slot'},
     {equip_name:'Armi a distanza leggere',equip_bonus:'+1 Danno, Gittata corta',equip_cost:20,equip_inventory:'1 slot'},
-    {equip_name:'Armi a distanza medie',equip_bonus:'+2 Danno, Gittata media',equip_cost:35,equip_inventory:'2 slot'},
-    {equip_name:'Armi a distanza pesanti',equip_bonus:'+4 Danno, Gittata lunga',equip_cost:70,equip_inventory:'3 slot'},
+    {equip_name:'Armi a distanza medie',equip_bonus:'+2 Danno, Gittata media. Arma a due mani non impugnabile nella mano secondaria.',equip_cost:35,equip_inventory:'2 slot'},
+    {equip_name:'Armi a distanza pesanti',equip_bonus:'+4 Danno, Gittata lunga. Arma a due mani non impugnabile nella mano secondaria.',equip_cost:70,equip_inventory:'3 slot'},
   ],
   equip_protection:[
     {equip_name:'Protezione leggera',equip_bonus:'+1 Protezione',equip_cost:20,equip_inventory:'1 slot'},
@@ -355,13 +355,21 @@ function calcCombat(names=[],char=null){
   return{dmg:d,prot:p};
 }
 function calcTwoWeaponEffects(L){
-  const weaponNames=['Arma semplice','Arma letale','Armi a distanza leggere','Armi a distanza medie','Armi a distanza pesanti'];
-  const mh=L.mainHand,oh=L.offHand;
-  if(!mh||!oh)return{vigPenalty:0,dmgBonus:0};
-  if(!weaponNames.includes(mh)||!weaponNames.includes(oh))return{vigPenalty:0,dmgBonus:0};
-  const hasDual=(L.talents||[]).some(t=>t.talent_name==='Combattere con due armi');
-  if(hasDual&&mh==='Arma semplice'&&oh==='Arma semplice')return{vigPenalty:0,dmgBonus:1};
-  return{vigPenalty:1,dmgBonus:0};
+  const mh=L.mainHand, oh=L.offHand;
+  
+  // Se la mano secondaria è vuota, nessuna penalità e nessun bonus
+  if(!oh) return {vigPenalty:0, dmgBonus:0};
+
+  // Controlla se il personaggio ha il talento
+  const hasDual = (L.talents||[]).some(t=>t.talent_name==='Combattere con due armi');
+
+  // Eccezione: ha il talento E impugna DUE armi semplici
+  if(hasDual && mh==='Arma semplice' && oh==='Arma semplice'){
+    return {vigPenalty:0, dmgBonus:1}; // Niente malus, +1 Danno
+  }
+
+  // In tutti gli altri casi, avere un oggetto nella mano secondaria riduce il VIG di 1
+  return {vigPenalty:1, dmgBonus:0};
 }
 function parseSlotCost(str){
   if(!str||String(str)==='0')return 0;
@@ -434,6 +442,7 @@ function initCC(){
     step:1,guide:true,guideDismissed:false,
     openCats:{VIG:false,IST:false,MEN:false},
     abilityOpen:false,
+	shopTab:0,
     cs:{
       id:genId(),name:'',sex:'',
       origins:{lineage:null,childhood:null,profession:null},
@@ -442,6 +451,12 @@ function initCC(){
     }
   };
 }
+
+function ccSetShopTab(idx){
+  S.cc.shopTab = idx;
+  render();
+}
+
 function initSH(char){
   return{local:JSON.parse(JSON.stringify(char)),tab:'generale',deleteModal:false,deleteInput:''};
 }
@@ -745,11 +760,14 @@ function renderCCCredits(cs){
 function renderCCEquip(title,items,remaining,prev,next,nextLabel='AVANTI \u276f',isLast=false){
   const spent=ccSpent();
   const talents=S.cc.cs.talents;
+  const isDotazione = (S.cc.step === 10);
+
   const tiers=[
     {label:'Economici',sub:'fino a 15 cr',min:0,max:15,color:'#18732D'},
     {label:'Standard',sub:'16\u201345 cr',min:16,max:45,color:'#8a6000'},
     {label:'Avanzati',sub:'oltre 45 cr',min:46,max:Infinity,color:'#73181F'},
   ];
+
   function renderItem(item,i){
     const entry=S.cc.cs.equipment.find(e=>e.equip_name===item.equip_name);
     const qty=entry?entry.qty||1:0;
@@ -776,22 +794,34 @@ function renderCCEquip(title,items,remaining,prev,next,nextLabel='AVANTI \u276f'
         <button class="sm-btn" ${(!canMore||locked)?'disabled':''} onclick="ccAddEquip('${esc(item.equip_name)}',${i})" title="${locked?'Talento mancante':''}">+</button>
         ${qty>0&&sc>0?`<span style="font-size:.72rem;opacity:.65;margin-left:4px">(${fmtSlots(sc*qty)} slot totali)</span>`:''}
       </div>
-    </div>`;}
-  const tieredHtml=tiers.map(tier=>{
-    const group=items.filter(it=>it.equip_cost>=tier.min&&it.equip_cost<=tier.max);
-    if(!group.length)return'';
-    return`<div style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:5px 10px;background:rgba(0,0,0,.04);border-radius:6px;border-left:3px solid ${tier.color}">
-        <span style="font-weight:bold;font-size:.82rem;color:${tier.color}">${tier.label}</span>
-        <span style="font-size:.75rem;opacity:.6">${tier.sub}</span>
-      </div>
-      ${group.map((it)=>renderItem(it,items.indexOf(it))).join('')}
     </div>`;
-  }).join('');
+  }
+
+  let contentHtml = '';
+
+  if (isDotazione) {
+    const activeTab = S.cc.shopTab || 0;
+    const tabsHtml = `
+      <div class="tab-row" style="display:flex;gap:6px;margin-bottom:16px;">
+        ${tiers.map((t, idx) => `
+          <button class="tab-btn ${activeTab === idx ? 'active' : ''}" style="flex:1; padding:8px 4px; font-size:.75rem; border-color:${t.color}" onclick="ccSetShopTab(${idx})">
+            ${t.label}<br><span style="font-size:.65rem;font-weight:normal;opacity:.8">${t.sub}</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+    const tier = tiers[activeTab];
+    const group = items.filter(it => it.equip_cost >= tier.min && it.equip_cost <= tier.max);
+    contentHtml = tabsHtml + `<div style="margin-bottom:14px">${group.map(it => renderItem(it, items.indexOf(it))).join('')}</div>`;
+  } else {
+    // Armi e Protezioni in una lista semplice senza Tab
+    contentHtml = `<div style="margin-bottom:14px">${items.map(it => renderItem(it, items.indexOf(it))).join('')}</div>`;
+  }
+
   return`
   <h3 style="color:#73181F;margin-bottom:6px">${esc(title)}</h3>
   <div style="margin-bottom:12px;font-weight:bold;color:#18732D;font-size:.9rem">Crediti rimanenti: ${remaining}</div>
-  ${tieredHtml}
+  ${contentHtml}
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
     <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(${prev})">\u276e INDIETRO</button>
     <button class="btn btn-primary" style="max-width:220px" onclick="${isLast?'ccFinish()':'ccGoStep('+next+')'}">${esc(nextLabel)}</button>
@@ -845,7 +875,6 @@ function renderCCTalents(cc,cs,stats){
           ${rp.length?`<div style="font-size:.73rem;margin-top:4px;color:${reqMet?'#18732D':'#d32f2f'};font-weight:bold">${reqMet?'✓':'✗'} Req: ${esc(rp.join(' · '))}</div>`:''}
           <div style="font-size:.81rem;margin-top:4px;opacity:.8">${esc(t.talent_description)}</div>
           ${sel?`<div style="font-size:.72rem;margin-top:4px;color:#73181F;font-weight:bold">✓ Selezionato${count>1?` ×${count}`:''}</div>`:''}
-          ${!reqMet?`<div style="font-size:.72rem;margin-top:3px;color:#d32f2f">${esc(reqErr)}</div>`:''}
         </div>`}).join(''):''}
     </div>`}).join('')}
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
@@ -1202,11 +1231,35 @@ function shToggleCond(k,g){
   render();
 }
 function shSetEquip(slot,val){
+  const L = S.sh.local;
+
   if(val){
-    const reqErr=checkEquipReq(val,S.sh.local.talents);
-    if(reqErr){alert(`Non puoi equipaggiare "${val}".\nRichiede il talento: ${reqErr}`);render();return;}
+    const reqErr=checkEquipReq(val, L.talents);
+    if(reqErr){alert(`Non puoi equipaggiare "${val}".\nRichiede il talento: ${reqErr}`); render(); return;}
+
+    // Vincoli per la mano secondaria
+    if(slot === 'offHand') {
+      if(val === 'Arma letale' || val === 'Armi a distanza medie' || val === 'Armi a distanza pesanti') {
+        alert("Non puoi equipaggiare questa arma nella mano secondaria.");
+        render(); return;
+      }
+      if(L.mainHand === 'Armi a distanza medie' || L.mainHand === 'Armi a distanza pesanti') {
+        alert("Stai impugnando un'arma a due mani. Non puoi equipaggiare nulla nella mano secondaria.");
+        render(); return;
+      }
+    }
+
+    // Vincoli per la mano principale se si equipaggia un'arma a due mani
+    if(slot === 'mainHand' && (val === 'Armi a distanza medie' || val === 'Armi a distanza pesanti')) {
+      if(L.offHand) {
+        alert("Questa è un'arma a due mani. L'oggetto nella mano secondaria è stato riposto nello zaino.");
+        L.offHand = ''; 
+      }
+    }
   }
-  S.sh.local[slot]=val;render();
+
+  L[slot]=val;
+  render();
 }
 function shOpenDice(name,val){
   openDiceOv(2,'TIRO CARATTERISTICA',`${name} ${val} — successo con 2d6 ≤ ${val}`,'stat',val,()=>{render();});
