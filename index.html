@@ -597,15 +597,23 @@ function renderCharacters(){
             <span class="badge" style="background:${c.sex==='Femmina'?'#9A2727':'#5a1010'};font-size:.68rem">${esc(c.sex||'—')}</span>
           </div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          ${[['⚔','VIG',c.vig],['👁','IST',c.ins],['🧠','MEN',c.min]].map(([ic,lb,v])=>`
-          <div style="display:flex;align-items:center;gap:4px;background:rgba(115,24,31,.08);border-radius:6px;padding:3px 8px;font-size:.83rem">
-            <span>${ic}</span><span style="font-weight:bold;color:#73181F">${lb}</span><span style="font-weight:bold">${v}</span>
-          </div>`).join('')}
-          <div style="margin-left:auto;font-size:.76rem;opacity:.65;display:flex;gap:8px">
-            <span>❤ ${c.hpCurr}/${c.hpMax}</span><span>⚡ ${c.enCurr}/${c.enMax}</span>
-          </div>
-        </div>
+		<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+		  ${[['💪','VIG',c.vig],['👁️','IST',c.ins],['🧠','MEN',c.min]].map(([ic,lb,v])=>`
+		  <div style="display:flex;align-items:center;gap:4px;background:rgba(115,24,31,.08);border-radius:6px;padding:3px 8px;font-size:.83rem">
+			<span style="filter: grayscale(100%) brightness(0.7); opacity: 0.8;">${ic}</span>
+			<span style="font-weight:bold;color:#73181F">${lb}</span>
+			<span style="font-weight:bold">${v}</span>
+		  </div>`).join('')}
+		  
+		  <div style="margin-left:auto;font-size:.76rem;opacity:.65;display:flex;gap:8px">
+			<span style="display:flex;align-items:center;gap:3px">
+			  <span style="filter: grayscale(100%) brightness(0.7);">❤</span> ${c.hpCurr}/${c.hpMax}
+			</span>
+			<span style="display:flex;align-items:center;gap:3px">
+			  <span style="filter: grayscale(100%) brightness(0.7);">⚡</span> ${c.enCurr}/${c.enMax}
+			</span>
+		  </div>
+		</div>
       </div>`).join('');
   return`
   <div class="frame sh-frame" style="width:min(640px,95vw);text-align:left;padding:24px 32px">
