@@ -189,8 +189,8 @@ equip_weapons:[
     {equip_name:'Arma semplice',equip_bonus:'+2 Danno',equip_cost:15,equip_inventory:'1 slot'},
     {equip_name:'Arma letale',equip_bonus:'+3 Danno. Non impugnabile nella mano secondaria.',equip_cost:25,equip_inventory:'2 slot'},
     {equip_name:'Armi a distanza leggere',equip_bonus:'+1 Danno, Gittata corta',equip_cost:20,equip_inventory:'1 slot'},
-    {equip_name:'Armi a distanza medie',equip_bonus:'+2 Danno, Gittata media. Arma a due mani non impugnabile nella mano secondaria.',equip_cost:35,equip_inventory:'2 slot'},
-    {equip_name:'Armi a distanza pesanti',equip_bonus:'+4 Danno, Gittata lunga. Arma a due mani non impugnabile nella mano secondaria.',equip_cost:70,equip_inventory:'3 slot'},
+    {equip_name:'Armi a distanza medie',equip_bonus:'+2 Danno, Gittata media. Arma a due mani.',equip_cost:35,equip_inventory:'2 slot'},
+    {equip_name:'Armi a distanza pesanti',equip_bonus:'+4 Danno, Gittata lunga. Arma a due mani.',equip_cost:70,equip_inventory:'3 slot'},
   ],
   equip_protection:[
     {equip_name:'Protezione leggera',equip_bonus:'+1 Protezione',equip_cost:20,equip_inventory:'1 slot'},
@@ -551,22 +551,9 @@ function renderHome(){
       <h3 style="color:#73181F;font-size:.95rem;letter-spacing:2px;margin-bottom:10px">Partite salvate</h3>
       <div style="border-radius:8px;border:1px dashed #73181F;padding:10px 14px;max-height:150px;overflow-y:auto">${sessionRows}</div>
     </div>
-<div style="display:flex;justify-content:center;align-items:center;gap:14px;margin-top:22px;padding-top:16px;border-top:1px dashed rgba(115,24,31,.3);width:100%">
-  ${[
-    // SVG per CAFFÈ
-    `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>`,
-    // SVG per LIBRO
-    `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`,
-    // SVG per LINK
-    `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`,
-    // SVG per MESSAGGIO
-    `<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>`
-  ].map(svg => `
-    <button onclick="void(0)" style="display:flex;justify-content:center;align-items:center;width:40px;height:40px;border-radius:50%;background:#73181F;border:none;cursor:pointer;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
-      ${svg}
-    </button>
-  `).join('')}
-</div>
+    <div style="display:flex;justify-content:center;align-items:center;gap:14px;margin-top:22px;padding-top:16px;border-top:1px dashed rgba(115,24,31,.3);width:100%">
+      ${['☕','📖','🔗','💬'].map(ic=>`<button onclick="void(0)" style="width:40px;height:40px;border-radius:50%;background:#73181F;color:white;border:none;cursor:pointer;font-size:1.1rem;transition:transform .2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">${ic}</button>`).join('')}
+    </div>
     <div style="font-size:.78rem;opacity:.55;color:#73181F;margin-top:14px">Versione 1.1</div>
   </div>`;
 }
@@ -575,16 +562,7 @@ function renderHome(){
 function renderAdventures(){
   return`
   <div class="frame">
-<div style="margin-bottom:8px">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-icon lucide-book-open" style="width:50px;height:50px">
-<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>
-</svg>
-</div>
-
-
-
-
-
+    <div style="font-size:44px;margin-bottom:8px">📖</div>
     <h2 style="font-size:1.7rem;letter-spacing:4px;margin:0 0 4px">AVVENTURE</h2>
     <div style="color:#73181F;font-style:italic;margin-bottom:24px">Scegli il tuo destino</div>
     <div class="menu-c">
@@ -606,18 +584,7 @@ function renderAdventures(){
 // ─── RENDER: CHARACTERS ───────────────────────────────────────────────────────
 function renderCharacters(){
   const charCards=S.chars.length===0
-  
-    ?`<div style="text-align:center;padding:30px 0;opacity:.4">
-  <div style="margin-bottom:10px">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:60px;height:60px">
-      <path d="M12 2L5 21h14L12 2z"></path>
-      <path d="M12 2v19"></path>
-      <path d="M5 21s2-5 7-5 7 5 7 5"></path>
-      <circle cx="12" cy="9" r="3"></circle>
-    </svg>
-  </div>
-  <p style="font-style:italic">Nessun personaggio trovato.</p>
-</div>`
+    ?`<div style="text-align:center;padding:30px 0;opacity:.55"><div style="font-size:3rem;margin-bottom:10px">🧙</div><p style="font-style:italic">Nessun personaggio trovato.</p></div>`
     :S.chars.map(c=>`
       <div class="char-card" onclick="nav('sheet',{charId:'${esc(c.id)}'})">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
@@ -630,32 +597,15 @@ function renderCharacters(){
             <span class="badge" style="background:${c.sex==='Femmina'?'#9A2727':'#5a1010'};font-size:.68rem">${esc(c.sex||'—')}</span>
           </div>
         </div>
-		<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-		
-		${[
-		  ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hand-fist-icon lucide-hand-fist" style="width:14px;height:14px;opacity:0.8"><path d="M12.035 17.012a3 3 0 0 0-3-3l-.311-.002a.72.72 0 0 1-.505-1.229l1.195-1.195A2 2 0 0 1 10.828 11H12a2 2 0 0 0 0-4H9.243a3 3 0 0 0-2.122.879l-2.707 2.707A4.83 4.83 0 0 0 3 14a8 8 0 0 0 8 8h2a8 8 0 0 0 8-8V7a2 2 0 1 0-4 0v2a2 2 0 1 0 4 0"/><path d="M13.888 9.662A2 2 0 0 0 17 8V5A2 2 0 1 0 13 5"/><path d="M9 5A2 2 0 1 0 5 5V10"/><path d="M9 7V4A2 2 0 1 1 13 4V7.268"/></svg>', 'VIG', c.vig],
-		  ['<svg viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;opacity:0.8"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>', 'IST', c.ins],
-		  ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-brain-icon lucide-brain" style="width:14px;height:14px;opacity:0.8"><path d="M12 18V5"/><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"/><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></svg>', 'MEN', c.min]
-		].map(([ic,lb,v])=>`
-		
-		  <div style="display:flex;align-items:center;gap:4px;background:rgba(115,24,31,.08);border-radius:6px;padding:3px 8px;font-size:.83rem">
-			<span style="display:flex;align-items:center">${ic}</span>
-			<span style="font-weight:bold;color:#73181F">${lb}</span>
-			<span style="font-weight:bold">${v}</span>
-		  </div>`).join('')}
-		  
-		  <div style="margin-left:auto;font-size:.76rem;opacity:.65;display:flex;gap:8px">
-			<span style="display:flex;align-items:center;gap:3px">
-			<span style="display:flex;align-items:center;gap:3px">
-			  <svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-			  ${c.hpCurr}/${c.hpMax}
-			</span>
-			<span style="display:flex;align-items:center;gap:3px">
-			  <svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-			  ${c.enCurr}/${c.enMax}
-			</span>
-		  </div>
-		</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          ${[['⚔','VIG',c.vig],['👁','IST',c.ins],['🧠','MEN',c.min]].map(([ic,lb,v])=>`
+          <div style="display:flex;align-items:center;gap:4px;background:rgba(115,24,31,.08);border-radius:6px;padding:3px 8px;font-size:.83rem">
+            <span>${ic}</span><span style="font-weight:bold;color:#73181F">${lb}</span><span style="font-weight:bold">${v}</span>
+          </div>`).join('')}
+          <div style="margin-left:auto;font-size:.76rem;opacity:.65;display:flex;gap:8px">
+            <span>❤ ${c.hpCurr}/${c.hpMax}</span><span>⚡ ${c.enCurr}/${c.enMax}</span>
+          </div>
+        </div>
       </div>`).join('');
   return`
   <div class="frame sh-frame" style="width:min(640px,95vw);text-align:left;padding:24px 32px">
@@ -925,6 +875,7 @@ function renderCCTalents(cc,cs,stats){
           ${rp.length?`<div style="font-size:.73rem;margin-top:4px;color:${reqMet?'#18732D':'#d32f2f'};font-weight:bold">${reqMet?'✓':'✗'} Req: ${esc(rp.join(' · '))}</div>`:''}
           <div style="font-size:.81rem;margin-top:4px;opacity:.8">${esc(t.talent_description)}</div>
           ${sel?`<div style="font-size:.72rem;margin-top:4px;color:#73181F;font-weight:bold">✓ Selezionato${count>1?` ×${count}`:''}</div>`:''}
+          ${!reqMet?`<div style="font-size:.72rem;margin-top:3px;color:#d32f2f">${esc(reqErr)}</div>`:''}
         </div>`}).join(''):''}
     </div>`}).join('')}
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
@@ -1289,8 +1240,8 @@ function shSetEquip(slot,val){
 
     // Vincoli per la mano secondaria
     if(slot === 'offHand') {
-      if(val === 'Arma letale' || val === 'Armi a distanza medie' || val === 'Armi a distanza pesanti') {
-        alert("Non puoi equipaggiare questa arma nella mano secondaria.");
+      if(val === 'Arma letale') {
+        alert("Le armi letali non possono essere equipaggiate nella mano secondaria.");
         render(); return;
       }
       if(L.mainHand === 'Armi a distanza medie' || L.mainHand === 'Armi a distanza pesanti') {
@@ -1874,12 +1825,12 @@ function renderSettings(){
   </select>`;
   return`
   <div class="frame settings-frame" style="max-width:500px">
-    <div style="font-size:38px;margin-bottom:6px"><svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg></div>
+    <div style="font-size:38px;margin-bottom:6px">⚙️</div>
     <h2 style="font-size:1.6rem;letter-spacing:4px;margin:0 0 18px">IMPOSTAZIONI</h2>
     <div style="text-align:left;width:100%">
 
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
-        <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music" style="width:18px;height:18px"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> AUDIO</h3>
+        <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px">🎵 AUDIO</h3>
         ${row('Musica di sottofondo',tog(music,"settingsToggle('music')"))}
         ${row('Effetti sonori',tog(sfxEnabled,"settingsToggle('sfxEnabled')"))}
         ${row('Stile effetti sonori',sel(sfxStyle,[
@@ -1888,12 +1839,12 @@ function renderSettings(){
       </div>
 
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
-        <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gamepad2-icon lucide-gamepad-2" style="width:18px;height:18px"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg> GAMEPLAY</h3>
+        <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px">🎮 GAMEPLAY</h3>
         ${row('Animazioni dadi 3D',tog(diceAnim,"settingsToggle('diceAnim')"))}
       </div>
 
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
-        <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe-icon lucide-globe" style="width:18px;height:18px"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg> LOCALIZZAZIONE</h3>
+        <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px">🌐 LOCALIZZAZIONE</h3>
         ${row('Lingua interfaccia',sel(language,[
           ['it','🇮🇹 Italiano'],['en','🇬🇧 English'],['de','🇩🇪 Deutsch'],['fr','🇫🇷 Français'],['es','🇪🇸 Español']
         ],"settingsLanguage(this.value)"))}
