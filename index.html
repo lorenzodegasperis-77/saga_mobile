@@ -312,9 +312,9 @@ equip_weapons:[
 };
 
 const ADVENTURES=[
-  {id:1,title:'Le Ombre di Eldoria',desc:'Un villaggio isolato, un segreto antico e una notte eterna.',difficulty:'Facile',color:'#18732D'},
-  {id:2,title:'Il Trono di Ossa',desc:'La scalata verso il potere richiede grandi sacrifici.',difficulty:'Medio',color:'#8a6000'},
-  {id:3,title:'Il Tesoro di Khal-Dun',desc:'Una mappa strappata e una cripta dimenticata.',difficulty:'Difficile',color:'#73181F'},
+  {id:1,title:'Le Ombre di Eldoria',desc:'Un villaggio isolato, un segreto antico e una notte eterna.'},
+  {id:2,title:'Il Trono di Ossa',desc:'La scalata verso il potere richiede grandi sacrifici.'},
+  {id:3,title:'Il Tesoro di Khal-Dun',desc:'Una mappa strappata e una cripta dimenticata.'},
 ];
 
 const GUIDE={
@@ -437,6 +437,8 @@ let S={
   lu:null,
   // 3D dice overlay
   diceOv:null,
+  // adventure system
+  adventures:[],ae:null,ap:null,
 };
 
 function initCC(){
@@ -473,6 +475,7 @@ function persist(){
     localStorage.setItem('saga-characters',JSON.stringify(S.chars));
     localStorage.setItem('saga-sessions',JSON.stringify(S.sessions));
     localStorage.setItem('saga-settings',JSON.stringify(S.settings));
+    localStorage.setItem('saga-adventures',JSON.stringify(S.adventures));
   }catch(e){}
 }
 function load(){
@@ -480,6 +483,7 @@ function load(){
     const c=localStorage.getItem('saga-characters');if(c)S.chars=JSON.parse(c);
     const s=localStorage.getItem('saga-sessions');if(s)S.sessions=JSON.parse(s);
     const st=localStorage.getItem('saga-settings');if(st)S.settings=JSON.parse(st);
+    const av=localStorage.getItem('saga-adventures');if(av)S.adventures=JSON.parse(av);
   }catch(e){}
   S.loaded=true;
 }
@@ -517,6 +521,10 @@ function render(){
   else if(S.page==='sheet')html=renderSheet();
   else if(S.page==='levelup')html=renderLevelUp();
   else if(S.page==='settings')html=renderSettings();
+  else if(S.page==='adv-list')html=renderAdvList();
+  else if(S.page==='adv-edit')html=renderAdvEdit();
+  else if(S.page==='adv-char-select')html=renderAdvCharSelect();
+  else if(S.page==='adv-play')html=renderAdvPlay();
 
   app.innerHTML=html;
 
@@ -542,11 +550,12 @@ function renderHome(){
     <div class="home-subtitle" style="color:#73181F;font-style:italic;margin-bottom:32px">Avventure Interattive</div>
     <div class="menu-c">
       <button class="btn btn-primary" onclick="nav('adventures')">► Nuova Avventura</button>
-      <button class="btn btn-secondary" onclick="nav('characters')">I miei personaggi</button>
-      <button class="btn btn-secondary" onclick="alert('Funzione in arrivo — scarica avventure create dalla community!')">Scarica Avventura</button>
+      <button class="btn btn-secondary" onclick="nav('characters')"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg> I miei personaggi</button>
+      <button class="btn btn-secondary" onclick="nav('adv-list')"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg> Scrivi avventura</button>
+      <button class="btn btn-secondary" onclick="alert('Funzione in arrivo — scarica avventure create dalla community!')"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-from-line-icon lucide-arrow-down-from-line"><path d="M19 3H5"/><path d="M12 21V7"/><path d="m6 15 6 6 6-6"/></svg> Scarica Avventura</button>
       <div class="btn-group-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <button class="btn btn-secondary" onclick="nav('settings')">Impostazioni</button>
-        <button class="btn btn-secondary" onclick="showCreditsOv()">Crediti</button>
+        <button class="btn btn-secondary" onclick="nav('settings')"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg> Impostazioni</button>
+        <button class="btn btn-secondary" onclick="showCreditsOv()"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-text-align-center-icon lucide-text-align-center"><path d="M21 5H3"/><path d="M17 12H7"/><path d="M19 19H5"/></svg> Crediti</button>
       </div>
     </div>
     <div style="margin-top:24px;width:100%">
@@ -576,33 +585,30 @@ function renderHome(){
 // ─── RENDER: ADVENTURES ───────────────────────────────────────────────────────
 function renderAdventures(){
   return`
-  <div class="frame">
-<div style="margin-bottom:8px">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-icon lucide-book-open" style="width:50px;height:50px">
-<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>
-</svg>
-</div>
-
-
-
-
-
-    <h2 style="font-size:1.7rem;letter-spacing:4px;margin:0 0 4px">AVVENTURE</h2>
-    <div style="color:#73181F;font-style:italic;margin-bottom:24px">Scegli il tuo destino</div>
+  <div class="frame sh-frame" style="width:min(640px,95vw);text-align:left;padding:24px 32px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid #73181F">
+	  <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-icon lucide-book-open">
+	<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>
+	</svg>
+      <div>
+        <h2 style="font-size:1.5rem;letter-spacing:4px;margin:0">AVVENTURE</h2>
+		    <div style="color:#73181F;font-style:italic">Scegli il tuo destino</div>
+      </div>
+    </div>
     <div class="menu-c">
       ${ADVENTURES.map(a=>`
       <div class="card">
         <div style="display:flex;justify-content:space-between;margin-bottom:6px">
           <h3 style="margin:0;font-size:1.05rem">${esc(a.title)}</h3>
-          <span class="badge" style="background:${a.color}">${esc(a.difficulty)}</span>
         </div>
         <p style="font-size:.84rem;margin:0 0 10px;opacity:.8;line-height:1.4">${esc(a.desc)}</p>
         <button class="btn btn-primary" style="padding:7px 14px;font-size:.8rem" onclick="alert('${esc(a.title).replace(/'/g,'&#39;')} in arrivo nelle prossime versioni!')">INIZIA</button>
       </div>`).join('')}
       <button class="btn btn-secondary" onclick="nav('home')">❮ TORNA AL MENU</button>
     </div>
-    <div style="font-size:.78rem;opacity:.55;color:#73181F;margin-top:14px">Nuove avventure in arrivo ogni mese</div>
+    </div>
   </div>`;
+  
 }
 
 // ─── RENDER: CHARACTERS ───────────────────────────────────────────────────────
@@ -617,6 +623,7 @@ function renderCharacters(){
       <path d="M5 21s2-5 7-5 7 5 7 5"></path>
       <circle cx="12" cy="9" r="3"></circle>
     </svg>
+	
   </div>
   <p style="font-style:italic">Nessun personaggio trovato.</p>
 </div>`
@@ -662,10 +669,10 @@ function renderCharacters(){
   return`
   <div class="frame sh-frame" style="width:min(640px,95vw);text-align:left;padding:24px 32px">
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid #73181F">
-      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" style="flex-shrink:0"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+	  <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>
       <div>
         <h2 style="font-size:1.5rem;letter-spacing:4px;margin:0">PERSONAGGI</h2>
-        <div style="font-size:.78rem;opacity:.55;margin-top:2px">${S.chars.length} ${S.chars.length===1?'eroe':'eroi'} creati</div>
+        <div style="font-size:.78rem;opacity:.55;margin-top:2px">${S.chars.length} ${S.chars.length===1?'eroe':'eroi'} ${S.chars.length===1?'creato':'creati'}</div>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:0;margin-bottom:16px">${charCards}</div>
@@ -798,7 +805,7 @@ function renderCCCredits(cs){
   <div style="text-align:center;padding:28px 16px;border:2px dashed #73181F;border-radius:12px;background:rgba(115,24,31,.04)">
     ${!cs.hasRolled
       ?`<p style="margin-bottom:18px;opacity:.8">Tira 4d6 per determinare i tuoi crediti iniziali (risultato × 10).</p>
-         <button class="btn btn-primary" style="max-width:220px;margin:0 auto" onclick="ccRollCredits()">🎲 LANCIA I DADI</button>`
+         <button class="btn btn-primary" style="max-width:220px;margin:0 auto" onclick="ccRollCredits()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dices-icon lucide-dices"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg> LANCIA I DADI</button>`
       :`<p style="margin-bottom:8px;opacity:.8">Il destino ha parlato!</p>
         <div style="font-size:4rem;color:#73181F;font-weight:bold;margin:10px 0">${cs.credits}</div>
         <p>Hai ottenuto <strong>${cs.credits}</strong> Crediti.</p>`}
@@ -895,7 +902,7 @@ function renderCCTalents(cc,cs,stats){
         <span>${cat}</span>
         ${!statOk?`<button onclick="ccToggleCat('${cat}')" style="background:none;border:1px solid #73181F;border-radius:4px;padding:1px 8px;font-size:.72rem;cursor:pointer;color:#73181F;font-weight:bold">${isOpen?'▾ chiudi':'▸ mostra'}</button>`:''}
       </div>
-      ${!statOk&&!isOpen?`<div style="font-size:.82rem;color:#888;font-style:italic;padding:5px 0 8px">⚠ Richiede ${cat} ≥ 6 per accedere a questi talenti (il tuo è ${catStat}).</div>`:''}
+      ${!statOk&&!isOpen?`<div style="font-size:.82rem;color:#888;font-style:italic;padding:5px 0 8px"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Richiede ${cat} ≥ 6 per accedere a questi talenti (il tuo è ${catStat}).</div>`:''}
       ${(statOk||isOpen)?talentsOfCat.map((t,idx)=>{
         const dbIdx=DB.talents.indexOf(t);
         const count=cs.talents.filter(x=>x.talent_name===t.talent_name).length;
@@ -931,7 +938,7 @@ function renderCCTalents(cc,cs,stats){
     </div>`}).join('')}
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
     <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(4)">❮ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:220px" onclick="ccGoStep(6)">ABILITÀ ISTANTANEE ❯</button>
+    <button class="btn btn-primary" style="max-width:230px" onclick="ccGoStep(6)">ABILITÀ ISTANTANEE ❯</button>
   </div>`;
 }
 
@@ -943,7 +950,7 @@ function renderCCAbilities(cc,cs){
   if(!hasPsyche){
     abContent=`
     <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(115,24,31,.06);border-radius:8px;margin-bottom:8px;border:1px dashed #73181F">
-      <div style="font-size:.86rem;color:#73181F">🔒 Richiede il talento <strong>Abile nella psiche</strong> per sbloccare le abilità.</div>
+      <div style="font-size:.86rem;color:#73181F"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock-icon lucide-lock"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Richiede il talento <strong>Abile nella psiche</strong> per sbloccare le abilità.</div>
       <button onclick="ccToggleAbilityOpen()" style="background:none;border:1px solid #73181F;border-radius:4px;padding:2px 8px;font-size:.73rem;cursor:pointer;color:#73181F;font-weight:bold;flex-shrink:0;margin-left:10px">${cc.abilityOpen?'▾ chiudi':'▸ mostra'}</button>
     </div>
     ${cc.abilityOpen?DB.abilities.map(a=>`
@@ -1100,7 +1107,7 @@ function renderSheet(){
   const delModal=S.sh.deleteModal?`
   <div class="overlay">
     <div class="modal" style="border-color:#d32f2f">
-      <h4 style="color:#d32f2f;margin-bottom:10px;font-size:1rem">⚠ Elimina personaggio</h4>
+      <h4 style="color:#d32f2f;margin-bottom:10px;font-size:1rem"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Elimina personaggio</h4>
       <p style="font-size:.87rem;line-height:1.55;margin-bottom:16px;opacity:.8">Questa azione è irreversibile. Scrivi il nome <strong>${esc(L.name)}</strong> per confermare:</p>
       <input id="delete-input" class="input-line" style="border:2px solid #d32f2f;margin-bottom:18px" value="${esc(S.sh.deleteInput)}" placeholder="${esc(L.name)}" oninput="shSetDeleteInput(this.value)">
       <div style="display:flex;gap:10px">
@@ -1168,7 +1175,7 @@ function renderSheetGenerale(L,eff,cKey,dmg,prot,twpEff){
           <span style="font-weight:bold;width:38px">${l}</span>
           <div style="border:2px solid #73181F;border-radius:6px;padding:4px 12px;min-width:46px;text-align:center;font-weight:bold;font-size:1.25rem;color:${(hasCondition||penalty>0)?'#ff4d4d':'#73181F'}">${displayVal}</div>
           <div style="display:flex;gap:6px">${dots(k)}</div>
-          ${penalty>0?`<span style="font-size:.68rem;color:#ff4d4d;font-weight:bold">−${penalty} (due armi)</span>`:''}<button onclick="shOpenDice('${l}',${displayVal})" title="Tiro su ${l}" style="margin-left:auto;background:#73181F;color:white;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:.8rem;flex-shrink:0">🎲</button>
+          ${penalty>0?`<span style="font-size:.68rem;color:#ff4d4d;font-weight:bold">−${penalty} (due armi)</span>`:''}<button onclick="shOpenDice('${l}',${displayVal})" title="Tiro su ${l}" style="margin-left:auto;background:#73181F;color:white;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:.8rem;flex-shrink:0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dices-icon lucide-dices"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg> </button>
         </div>`}).join('')}
       </div>
       <div>
@@ -1189,7 +1196,7 @@ function renderSheetGenerale(L,eff,cKey,dmg,prot,twpEff){
           <div style="text-align:center;font-size:.85rem">DANNO<br><strong style="font-size:1.2rem;color:#73181F">${dmg}</strong></div>
           <div style="text-align:center;font-size:.85rem">PROTEZIONE<br><strong style="font-size:1.2rem;color:#73181F">${prot}</strong></div>
         </div>
-        ${twpEff.vigPenalty>0?`<div style="margin-top:6px;font-size:.72rem;color:#ff4d4d;font-style:italic;text-align:center">⚠ −1 VIG (due armi equipaggiate)</div>`:''}
+        ${twpEff.vigPenalty>0?`<div style="margin-top:6px;font-size:.72rem;color:#ff4d4d;font-style:italic;text-align:center"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> −1 VIG (due armi equipaggiate)</div>`:''}
         ${twpEff.dmgBonus>0?`<div style="margin-top:6px;font-size:.72rem;color:#18732D;font-style:italic;text-align:center">✓ +1 Danno (Combattere con due armi)</div>`:''}
       </div>
     </div>
@@ -1205,13 +1212,13 @@ function renderSheetGenerale(L,eff,cKey,dmg,prot,twpEff){
         const curInUsable=usable.some(i=>i.item===curVal);
         const opts=usable.map(i=>`<option value="${esc(i.item)}" ${L[k]===i.item?'selected':''}>${esc(i.item)}</option>`).join('');
         // locked item currently equipped (no talent)
-        const lockedNote=curVal&&!curInUsable?`<div style="font-size:.71rem;color:#d32f2f;margin-top:3px">⚠ "${esc(curVal)}" richiede un talento che non possiedi</div>`:'';
+        const lockedNote=curVal&&!curInUsable?`<div style="font-size:.71rem;color:#d32f2f;margin-top:3px"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> "${esc(curVal)}" richiede un talento che non possiedi</div>`:'';
         return`
       <div style="margin-bottom:8px">
         <div style="font-size:.76rem;color:#73181F;font-weight:bold;margin-bottom:3px">${lbl}:</div>
         <select style="width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid ${curVal&&!curInUsable?'#d32f2f':'#73181F'};padding:9px 10px;font-family:'Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;cursor:pointer" onchange="shSetEquip('${k}',this.value)">
           <option value="">— nessuno —</option>
-          ${curVal&&!curInUsable?`<option value="${esc(curVal)}" selected>⚠ ${esc(curVal)} (talento mancante)</option>`:''}
+          ${curVal&&!curInUsable?`<option value="${esc(curVal)}" selected><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> ${esc(curVal)} (talento mancante)</option>`:''}
           ${opts}
         </select>
         ${lockedNote}
@@ -1397,7 +1404,7 @@ function renderLevelUp(){
           <span>${cat}</span>
           ${!statOk?`<button onclick="luToggleCat('${cat}')" style="background:none;border:1px solid #73181F;border-radius:4px;padding:1px 8px;font-size:.72rem;cursor:pointer;color:#73181F;font-weight:bold">${isOpen?'▾ chiudi':'▸ mostra'}</button>`:''}
         </div>
-        ${!statOk&&!isOpen?`<div style="font-size:.82rem;color:#888;font-style:italic;padding:5px 0 8px">⚠ Richiede ${cat} ≥ 6 (il tuo è ${catStat}).</div>`:''}
+        ${!statOk&&!isOpen?`<div style="font-size:.82rem;color:#888;font-style:italic;padding:5px 0 8px"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Richiede ${cat} ≥ 6 (il tuo è ${catStat}).</div>`:''}
         ${(statOk||isOpen)?DB.talents.filter(t=>t.cat===cat).map(t=>{
           const dbIdx=DB.talents.indexOf(t);
           const count=(char.talents||[]).filter(x=>x.talent_name===t.talent_name).length;
@@ -1861,7 +1868,7 @@ function _showDiceOvResult(diceOv){
 function renderSettings(){
   const{music,diceAnim,sfxEnabled,sfxStyle,language}=S.settings;
   const tog=(checked,fn)=>`
-  <label class="toggle-wrap">
+    <label class="toggle-wrap">
     <input type="checkbox" ${checked?'checked':''} onchange="${fn}">
     <span class="toggle-track"></span>
     <span class="toggle-knob"></span>
@@ -1875,11 +1882,19 @@ function renderSettings(){
     ${opts.map(([v,l])=>`<option value="${v}" ${val===v?'selected':''}>${l}</option>`).join('')}
   </select>`;
   return`
-  <div class="frame settings-frame" style="max-width:500px">
-    <div style="font-size:38px;margin-bottom:6px"><svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg></div>
-    <h2 style="font-size:1.6rem;letter-spacing:4px;margin:0 0 18px">IMPOSTAZIONI</h2>
-    <div style="text-align:left;width:100%">
+  
+  <div class="frame sh-frame" style="width:min(640px,95vw);text-align:left;padding:24px 32px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid #73181F">
+	<svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>
+	<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>
+	</svg>
+      <div>
+        <h2 style="font-size:1.5rem;letter-spacing:4px;margin:0">IMPOSTAZIONI</h2>
+		    <div style="color:#73181F;font-style:italic"></div>
+      </div>
+    </div>
 
+    <div style="text-align:left;width:100%">
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music" style="width:18px;height:18px"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> AUDIO</h3>
         ${row('Musica di sottofondo',tog(music,"settingsToggle('music')"))}
@@ -1888,7 +1903,6 @@ function renderSettings(){
           ['fantasy','⚔️ Fantasy'],['scifi','🚀 Sci-Fi'],['modern','🔫 Moderno'],['neutral','🎲 Neutro']
         ],"settingsSfxStyle(this.value)"))}
       </div>
-
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gamepad2-icon lucide-gamepad-2" style="width:18px;height:18px"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg> GAMEPLAY</h3>
         ${row('Animazioni dadi 3D',tog(diceAnim,"settingsToggle('diceAnim')"))}
@@ -1899,14 +1913,17 @@ function renderSettings(){
         ${row('Lingua interfaccia',sel(language,[
           ['it','🇮🇹 Italiano'],['en','🇬🇧 English'],['de','🇩🇪 Deutsch'],['fr','🇫🇷 Français'],['es','🇪🇸 Español']
         ],"settingsLanguage(this.value)"))}
-        <div style="font-size:.75rem;color:#888;font-style:italic;margin-top:-6px">⚠ Traduzione in sviluppo — solo placeholder</div>
+        <div style="font-size:.75rem;color:#888;font-style:italic;margin-top:-6px"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Traduzione in sviluppo — solo placeholder</div>
       </div>
 
     </div>
     <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:6px">TORNA AL MENU</button>
     <div style="font-size:.75rem;opacity:.5;color:#73181F;margin-top:10px">Le impostazioni vengono salvate automaticamente</div>
   </div>`;
+
 }
+  
+  
 function settingsToggle(key){
   S.settings[key]=!S.settings[key];
   persist();
@@ -1916,7 +1933,6 @@ function settingsToggle(key){
 }
 function settingsSfxStyle(v){S.settings.sfxStyle=v;persist();render();}
 function settingsLanguage(v){S.settings.language=v;persist();render();}
-
 
 
 // ─── CREDITS OVERLAY ─────────────────────────────────────────────────────────
@@ -1939,6 +1955,642 @@ setTimeout(()=>{
 
 render();
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// SISTEMA AVVENTURE — Creazione, Editor, Gioco
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ─── DATI ─────────────────────────────────────────────────────────────────────
+function genParaId(used){
+  let id;
+  do{id=String(Math.floor(Math.random()*999)+1).padStart(3,'0');}
+  while(used.includes(id));
+  return id;
+}
+function mkAdv(){
+  return{id:'ADV-'+Math.random().toString(36).substr(2,9).toUpperCase(),
+    title:'Nuova Avventura',desc:'',
+    author:'',startParagraph:null,paragraphs:[],created:Date.now()};
+}
+function mkPara(used){return{id:genParaId(used),name:'',text:'',exits:[]};}
+function mkExit(type){
+  const b={id:genId(),type};
+  if(type==='choice')return{...b,label:'',to:''};
+  if(type==='stat_check')return{...b,stat:'VIG',label:'',successTo:'',failTo:''};
+  if(type==='talent_check')return{...b,talent:'',successTo:'',failTo:''};
+  if(type==='code_check')return{...b,code:'',label:'',to:'',elseTo:''};
+  if(type==='code_grant')return{...b,code:'',label:''};
+  if(type==='end')return{...b,label:"Fine dell'avventura"};
+  return b;
+}
+function initAE(adv){
+  return{adv:JSON.parse(JSON.stringify(adv)),
+    selPara:adv.paragraphs[0]?.id||null,viewMode:'edit'};
+}
+function initAP(adv,charId){
+  const ch=S.chars.find(c=>c.id===charId);
+  return{adv,charId,char:ch?JSON.parse(JSON.stringify(ch)):null,
+    currPara:adv.startParagraph||adv.paragraphs[0]?.id,codes:[],history:[]};
+}
+
+// ─── RENDER: LISTA AVVENTURE ──────────────────────────────────────────────────
+function renderAdvList(){
+  const advs=S.adventures||[];
+  const cards=advs.length===0
+    ?`<div style="text-align:center;padding:36px 0;opacity:.55"><div style="font-size:3rem">🗺️</div><p style="font-style:italic;margin-top:10px">Nessuna avventura. Crea la tua prima!</p></div>`
+    :advs.map(a=>`
+    <div style="background:rgba(196,176,138,.3);border:2px solid ${a.color||'#73181F'};border-radius:10px;padding:14px 18px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:10px">
+        <div>
+          <div style="font-weight:bold;font-size:1.05rem;color:${a.color||'#73181F'}">${esc(a.title)}</div>
+          <div style="font-size:.75rem;opacity:.6;margin-top:2px">${a.paragraphs.length} paragrafi${a.author?' · '+esc(a.author):''}</div>
+        </div>
+      </div>
+      ${a.desc?`<p style="font-size:.82rem;opacity:.75;margin:0 0 10px;line-height:1.4">${esc(a.desc)}</p>`:''}
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">
+        <button class="btn btn-primary" style="font-size:.78rem;padding:8px;min-height:36px" onclick="aeOpenEdit('${a.id}')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-pen-icon lucide-square-pen"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg> Modifica</button>
+        <button class="btn btn-secondary" style="font-size:.78rem;padding:8px;min-height:36px" onclick="aeExport('${a.id}')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-up-icon lucide-file-up"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg> Esporta</button>
+        <button class="btn btn-secondary" style="font-size:.78rem;padding:8px;min-height:36px;color:#d32f2f;border-color:#d32f2f" onclick="aeConfirmDelete('${a.id}')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+      </div>
+      ${a.startParagraph&&a.paragraphs.length&&S.chars.length
+        ?`<button class="btn btn-primary" style="width:100%;font-size:.82rem;min-height:40px;background:#18732D;border-color:#18732D" onclick="aePickChar('${a.id}')">▶ GIOCA</button>`
+        :`<div style="font-size:.72rem;color:#888;text-align:center;font-style:italic;padding:4px 0">${
+          !a.paragraphs.length?'Aggiungi paragrafi per giocare'
+          :!a.startParagraph?'Imposta il paragrafo iniziale per giocare'
+          :'Crea un personaggio per giocare'}</div>`}
+    </div>`).join('');
+  return`
+  <div class="frame sh-frame" style="width:min(640px,95vw);text-align:left;padding:24px 32px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid #73181F">
+      <div style="font-size:2rem"><svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-icon lucide-map"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg></div>
+      <div>
+        <h2 style="font-size:1.5rem;letter-spacing:4px;margin:0">AVVENTURE</h2>
+        <div style="font-size:.78rem;opacity:.55;margin-top:2px">${advs.length} ${advs.length===1?'avventura':'avventure'} ${advs.length===1?'creata':'create'}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px">
+      <button class="btn btn-primary" onclick="aeCreateNew()">+ Crea avventura</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('adv-import-inp').click()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg> Importa JSON</button>
+    </div>
+    <input id="adv-import-inp" type="file" accept=".json" style="display:none" onchange="aeImportFile(event)">
+    ${cards}
+    <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:6px">❮ TORNA AL MENU</button>
+  </div>`;
+}
+
+// ─── RENDER: EDITOR AVVENTURA ─────────────────────────────────────────────────
+function renderAdvEdit(){
+  if(!S.ae)return`<div class="frame">Errore.<br><button class="btn btn-secondary" onclick="nav('adv-list')">Indietro</button></div>`;
+  const{adv,selPara,viewMode}=S.ae;
+  const selP=adv.paragraphs.find(p=>p.id===selPara);
+
+  const paraList=adv.paragraphs.length===0
+    ?`<div style="font-size:.82rem;opacity:.55;font-style:italic;padding:10px 4px;line-height:1.5">Nessun paragrafo.<br>Aggiungi il primo!</div>`
+    :adv.paragraphs.map(p=>`
+    <div onclick="aeSelectParaAndEdit('${p.id}')" style="padding:7px 9px;border-radius:6px;cursor:pointer;border:1.5px solid ${p.id===selPara?'#73181F':'transparent'};background:${p.id===selPara?'rgba(115,24,31,.1)':'transparent'};margin-bottom:3px;display:flex;align-items:center;gap:5px;font-size:.82rem">
+      ${p.id===adv.startParagraph?`<span style="font-size:.55rem;background:#18732D;color:white;border-radius:3px;padding:1px 4px;flex-shrink:0">▶</span>`:`<span style="font-size:.55rem;opacity:0;flex-shrink:0">▶</span>`}
+      <span style="font-family:monospace;font-weight:bold;color:${p.id===adv.startParagraph?'#18732D':'#73181F'};flex-shrink:0">${p.id}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;opacity:.75">${p.name||'—'}</span>
+      <span style="font-size:.62rem;opacity:.4;flex-shrink:0">${(p.exits||[]).length}↗</span>
+    </div>`).join('');
+
+  const mainContent=viewMode==='tree'
+    ?renderAdvTree(adv,selPara)
+    :selP?renderParaEditor(selP,adv)
+    :`<div style="text-align:center;padding:60px 20px;opacity:.6"><div style="font-size:2.8rem;margin-bottom:12px">📄</div><p>${adv.paragraphs.length?'Seleziona un paragrafo dalla lista.':'Aggiungi il tuo primo paragrafo con il pulsante a sinistra!'}</p></div>`;
+
+  return`
+  <div style="width:100vw;max-width:1100px;display:flex;flex-direction:column;z-index:1;font-family:'Times New Roman',Georgia,serif;color:#1a1007;min-height:100svh;background:#D8C7A1">
+    <div style="background:#D8C7A1;border-bottom:2px solid #73181F;padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.12)">
+      <button onclick="nav('adv-list')" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:1.2rem;padding:4px 8px;line-height:1">❮</button>
+      <input id="ae-title" value="${esc(adv.title)}" oninput="aeSetMeta('title',this.value)" style="flex:1;min-width:100px;background:transparent;border:none;border-bottom:2px solid #73181F;padding:5px 6px;font-size:1rem;font-family:inherit;font-weight:bold;color:#1a1007;outline:none">
+      <input value="${esc(adv.author||'')}" oninput="aeSetMeta('author',this.value)" placeholder="Autore..." style="width:110px;background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.8rem;font-family:inherit;color:#1a1007;outline:none">
+      
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button onclick="aeSaveAdv()" class="btn btn-primary" style="padding:6px 14px;font-size:.8rem;min-height:34px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg> Salva</button>
+        <button onclick="aeExport(S.ae.adv.id)" class="btn btn-secondary" style="padding:6px 10px;font-size:.8rem;min-height:34px" title="Esporta JSON"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-up-icon lucide-file-up"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg></button>
+      </div>
+    </div>
+    ${adv.desc!==undefined?`<div style="background:rgba(0,0,0,.04);border-bottom:1px solid rgba(115,24,31,.15);padding:6px 14px"><input value="${esc(adv.desc||'')}" oninput="aeSetMeta('desc',this.value)" placeholder="Descrizione breve dell'avventura..." style="width:100%;background:transparent;border:none;font-size:.82rem;font-family:inherit;color:#1a1007;outline:none;opacity:.75"></div>`:''}
+    <div style="display:flex;flex:1">
+      <div style="width:190px;flex-shrink:0;border-right:2px solid rgba(115,24,31,.2);padding:10px 8px;background:rgba(216,199,161,.4);overflow-y:auto;max-height:calc(100svh - 86px)">
+        <div style="font-size:.68rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:8px;padding:0 2px">PARAGRAFI (${adv.paragraphs.length})</div>
+        ${paraList}
+        <button onclick="aeAddPara()" class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:.76rem;padding:7px;border-style:dashed;min-height:34px">+ Aggiungi</button>
+        <div style="margin-top:14px;border-top:1px solid rgba(115,24,31,.2);padding-top:10px">
+          <div style="font-size:.68rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:7px;padding:0 2px">VISUALIZZA</div>
+          <div style="display:flex;gap:4px">
+            <button onclick="aeToggleView('edit')" style="flex:1;padding:5px 3px;border-radius:5px;border:1.5px solid #73181F;background:${viewMode==='edit'?'#73181F':'transparent'};color:${viewMode==='edit'?'white':'#1a1007'};cursor:pointer;font-size:.68rem;font-family:inherit">✏️ Editor</button>
+            <button onclick="aeToggleView('tree')" style="flex:1;padding:5px 3px;border-radius:5px;border:1.5px solid #73181F;background:${viewMode==='tree'?'#73181F':'transparent'};color:${viewMode==='tree'?'white':'#1a1007'};cursor:pointer;font-size:.68rem;font-family:inherit">🌿 Albero</button>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;padding:18px 20px;overflow-y:auto;max-height:calc(100svh - 86px)">
+        ${mainContent}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ─── PARA EDITOR ─────────────────────────────────────────────────────────────
+function renderParaEditor(p,adv){
+  const iS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 7px;font-family:'Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;border-radius:3px 3px 0 0`;
+  const sS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 6px;font-family:'Times New Roman',serif;font-size:.85rem;color:#1a1007;outline:none;cursor:pointer`;
+  const isStart=p.id===adv.startParagraph;
+  const tLabels={choice:'Scelta',stat_check:'Prova stat',talent_check:'Prova talento',code_check:'Verifica codice',code_grant:'Dona codice',end:'Fine'};
+  const tColors={choice:'#73181F',stat_check:'#8a6000',talent_check:'#1a4a1a',code_check:'#555',code_grant:'#18732D',end:'#333'};
+
+  const exitsHtml=(p.exits||[]).map((e,idx)=>{
+    const col=tColors[e.type]||'#555';
+    let flds='';
+    if(e.type==='choice'){
+      flds=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center">
+        <input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Testo della scelta..." style="flex:2;min-width:110px;${iS}">
+        <span style="color:#73181F;font-weight:bold">→</span>
+        <input value="${esc(e.to)}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID" style="width:58px;font-family:monospace;${iS}" maxlength="3">
+      </div>`;
+    }else if(e.type==='stat_check'){
+      flds=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center">
+        <select onchange="aeUE(${idx},'stat',this.value)" style="${sS}">
+          ${['VIG','IST','MEN'].map(s=>`<option ${e.stat===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Etichetta (opz.)" style="flex:1;min-width:90px;${iS}">
+        <span style="color:#18732D;font-size:.8rem;font-weight:bold">✓→</span>
+        <input value="${esc(e.successTo)}" oninput="aeUE(${idx},'successTo',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
+        <span style="color:#d32f2f;font-size:.8rem;font-weight:bold">✗→</span>
+        <input value="${esc(e.failTo)}" oninput="aeUE(${idx},'failTo',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
+      </div>`;
+    }else if(e.type==='talent_check'){
+      flds=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center">
+        <input value="${esc(e.talent)}" oninput="aeUE(${idx},'talent',this.value)" placeholder="Nome esatto del talento..." style="flex:2;min-width:120px;${iS}">
+        <span style="color:#18732D;font-size:.8rem;font-weight:bold">✓→</span>
+        <input value="${esc(e.successTo)}" oninput="aeUE(${idx},'successTo',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
+        <span style="color:#d32f2f;font-size:.8rem;font-weight:bold">✗→</span>
+        <input value="${esc(e.failTo)}" oninput="aeUE(${idx},'failTo',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
+      </div>`;
+    }else if(e.type==='code_check'){
+      flds=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center">
+        <input value="${esc(e.code)}" oninput="aeUE(${idx},'code',this.value.toUpperCase())" placeholder="CODICE" style="width:100px;font-family:monospace;text-transform:uppercase;${iS}">
+        <input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Etichetta (opz.)" style="flex:1;min-width:80px;${iS}">
+        <span style="color:#18732D;font-size:.8rem;font-weight:bold">Sì→</span>
+        <input value="${esc(e.to)}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
+        <span style="color:#888;font-size:.8rem;font-weight:bold">No→</span>
+        <input value="${esc(e.elseTo||'')}" oninput="aeUE(${idx},'elseTo',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
+      </div>`;
+    }else if(e.type==='code_grant'){
+      flds=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center">
+        <input value="${esc(e.code)}" oninput="aeUE(${idx},'code',this.value.toUpperCase())" placeholder="CODICE" style="width:120px;font-family:monospace;text-transform:uppercase;${iS}">
+        <input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Etichetta (es: Segna questo codice nella scheda)" style="flex:1;min-width:120px;${iS}">
+      </div>`;
+    }else if(e.type==='end'){
+      flds=`<div style="margin-top:6px"><input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Messaggio di fine avventura..." style="width:100%;${iS}"></div>`;
+    }
+    return`<div style="background:rgba(255,255,255,.4);border:1.5px solid ${col};border-radius:7px;padding:10px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="badge" style="background:${col};font-size:.63rem">${tLabels[e.type]||e.type}</span>
+        <button onclick="aeDE(${idx})" style="background:transparent;border:none;color:#d32f2f;cursor:pointer;font-size:.95rem;padding:2px 7px;line-height:1">✕</button>
+      </div>${flds}
+    </div>`;
+  }).join('');
+
+  return`
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <div style="font-family:monospace;font-size:1.5rem;font-weight:bold;color:#73181F;background:rgba(115,24,31,.1);padding:6px 14px;border-radius:6px;cursor:pointer" title="Clicca per cambiare ID" onclick="aeChangeId('${p.id}')">${p.id}</div>
+    <input id="para-name-inp" value="${esc(p.name)}" oninput="aePN(this.value)" placeholder="Nome paragrafo (opzionale)..." style="flex:1;min-width:120px;${iS}">
+    <button onclick="aeSetStart('${p.id}')" style="padding:6px 10px;border-radius:6px;border:1.5px solid ${isStart?'#18732D':'#84785E'};background:${isStart?'#18732D':'transparent'};color:${isStart?'white':'#1a1007'};cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px">${isStart?'▶ Inizio':'Imposta inizio'}</button>
+    <button onclick="aeDP('${p.id}')" style="padding:6px 10px;border-radius:6px;border:1.5px solid #d32f2f;background:transparent;color:#d32f2f;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px">🗑️</button>
+  </div>
+  <div style="margin-bottom:16px">
+    <div class="sec-hdr" style="margin-top:0">TESTO DEL PARAGRAFO</div>
+    <textarea id="para-text-ta" oninput="aePT(this.value)" style="width:100%;min-height:160px;background:rgba(0,0,0,.03);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:12px;font-family:'Times New Roman',serif;font-size:.95rem;color:#1a1007;resize:vertical;outline:none;line-height:1.65" placeholder="Scrivi qui il testo narrativo del paragrafo...">${esc(p.text)}</textarea>
+  </div>
+  <div>
+    <div class="sec-hdr">USCITE (${(p.exits||[]).length})</div>
+    ${exitsHtml}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
+      ${[['choice','🔀 Scelta'],['stat_check','🎲 Prova stat'],['talent_check','⭐ Talento'],['code_check','🔑 Verifica cod.'],['code_grant','🏷️ Dona cod.'],['end','🏁 Fine']].map(([t,l])=>`
+      <button onclick="aeAE('${t}')" style="padding:7px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ─── RENDER: ALBERO ───────────────────────────────────────────────────────────
+function renderAdvTree(adv,selPara){
+  const paras=adv.paragraphs;
+  if(!paras.length)return`<div style="text-align:center;padding:60px 20px;opacity:.5"><div style="font-size:3rem">🌿</div><p style="margin-top:10px">Aggiungi paragrafi per vedere l'albero.</p></div>`;
+
+  function getLinks(p){
+    const t=[];
+    (p.exits||[]).forEach(e=>{
+      if(e.to)t.push({to:e.to,type:e.type});
+      if(e.successTo)t.push({to:e.successTo,type:'success'});
+      if(e.failTo)t.push({to:e.failTo,type:'fail'});
+      if(e.elseTo)t.push({to:e.elseTo,type:'else'});
+    });
+    return t.filter(l=>paras.find(x=>x.id===l.to));
+  }
+
+  const startId=adv.startParagraph||paras[0].id;
+  const levels={[startId]:0};
+  const q=[startId];
+  while(q.length){
+    const curr=q.shift();
+    const p=paras.find(x=>x.id===curr);
+    if(!p)continue;
+    getLinks(p).forEach(l=>{
+      if(!(l.to in levels)){levels[l.to]=(levels[curr]||0)+1;q.push(l.to);}
+    });
+  }
+  paras.forEach(p=>{if(!(p.id in levels))levels[p.id]=-1;});
+
+  const byLevel={};
+  Object.entries(levels).forEach(([id,lv])=>{
+    const k=lv<0?'_disc':String(lv);
+    if(!byLevel[k])byLevel[k]=[];
+    byLevel[k].push(id);
+  });
+
+  const NW=108,NH=50,PX=48,PY=16;
+  const positions={};
+  const lkeys=Object.keys(byLevel).filter(k=>k!=='_disc').sort((a,b)=>+a-+b);
+  lkeys.forEach((lv,col)=>{
+    byLevel[lv].forEach((id,row)=>{positions[id]={x:col*(NW+PX)+14,y:row*(NH+PY)+14};});
+  });
+  if(byLevel['_disc']){
+    const col=lkeys.length;
+    byLevel['_disc'].forEach((id,row)=>{positions[id]={x:col*(NW+PX)+14,y:row*(NH+PY)+14,disc:true};});
+  }
+
+  let maxX=0,maxY=0;
+  Object.values(positions).forEach(p=>{if(p.x+NW>maxX)maxX=p.x+NW;if(p.y+NH>maxY)maxY=p.y+NH;});
+
+  const edgeColors={choice:'#73181F',stat_check:'#8a6000',talent_check:'#18732D',code_check:'#555',code_grant:'#18732D',success:'#18732D',fail:'#d32f2f',end:'#888'};
+  const edges=[];
+  paras.forEach(p=>{
+    const fp=positions[p.id];if(!fp)return;
+    getLinks(p).forEach(l=>{
+      const tp=positions[l.to];if(!tp)return;
+      edges.push({x1:fp.x+NW,y1:fp.y+NH/2,x2:tp.x,y2:tp.y+NH/2,col:edgeColors[l.type]||'#73181F'});
+    });
+  });
+
+  const edgeSVG=edges.map(e=>{
+    const mx=(e.x1+e.x2)/2;
+    return`<path d="M${e.x1},${e.y1} C${mx},${e.y1} ${mx},${e.y2} ${e.x2},${e.y2}" stroke="${e.col}" stroke-width="1.5" fill="none" opacity=".5" marker-end="url(#advA)"/>`;
+  }).join('');
+
+  const nodeSVG=paras.map(p=>{
+    const pos=positions[p.id];if(!pos)return'';
+    const isSel=p.id===selPara;
+    const isStart=p.id===adv.startParagraph;
+    const fill=isSel?'#73181F':isStart?'#18732D':pos.disc?'#bbb':'#D8C7A1';
+    const stk=isSel||isStart?fill:'#84785E';
+    const tc=isSel||isStart?'white':'#1a1007';
+    const lbl=p.name?`${p.id}·${p.name.substring(0,9)}${p.name.length>9?'…':''}`:p.id;
+    return`<g onclick="aeSelectParaAndEdit('${p.id}')" style="cursor:pointer">
+      <rect x="${pos.x}" y="${pos.y}" width="${NW}" height="${NH}" rx="7" fill="${fill}" stroke="${stk}" stroke-width="${isSel?2.5:1.5}" opacity="${pos.disc?.5:1}"/>
+      ${isStart&&!isSel?`<text x="${pos.x+NW/2}" y="${pos.y+13}" text-anchor="middle" fill="white" font-size="7.5" font-family="sans-serif">▶ INIZIO</text>`:''}
+      <text x="${pos.x+NW/2}" y="${pos.y+(isStart&&!isSel?29:NH/2+5)}" text-anchor="middle" fill="${tc}" font-size="11" font-family="monospace" font-weight="bold">${lbl}</text>
+      <text x="${pos.x+NW/2}" y="${pos.y+NH-8}" text-anchor="middle" fill="${tc}" font-size="7.5" font-family="sans-serif" opacity=".65">${(p.exits||[]).length} uscita/e</text>
+    </g>`;
+  }).join('');
+
+  return`
+  <div style="font-size:.78rem;opacity:.6;margin-bottom:8px">🌿 Clicca su un nodo per aprire il paragrafo nell'editor. &nbsp;|&nbsp; Grigio = disconnesso &nbsp;|&nbsp; Verde = inizio</div>
+  <div style="overflow:auto;border:1.5px solid rgba(115,24,31,.2);border-radius:8px;background:#f5f0e4;padding:8px;max-height:calc(100svh - 200px)">
+    <svg width="${maxX+18}" height="${maxY+18}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="advA" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+          <path d="M0,0 L0,7 L7,3.5 z" fill="#73181F" opacity=".55"/>
+        </marker>
+      </defs>
+      ${edgeSVG}${nodeSVG}
+    </svg>
+  </div>`;
+}
+
+// ─── RENDER: SELEZIONE PERSONAGGIO ───────────────────────────────────────────
+function renderAdvCharSelect(){
+  const advId=S.params.advId;
+  const adv=(S.adventures||[]).find(a=>a.id===advId);
+  if(!adv)return`<div class="frame">Avventura non trovata.<br><br><button class="btn btn-secondary" style="max-width:200px;margin:0 auto" onclick="nav('adv-list')">Indietro</button></div>`;
+  return`
+  <div class="frame" style="width:min(520px,95vw)">
+    <div style="font-size:1.6rem;margin-bottom:6px">▶</div>
+    <h2 style="font-size:1.4rem;letter-spacing:3px;margin:0 0 4px">GIOCA</h2>
+    <div style="color:#73181F;font-style:italic;margin-bottom:20px;font-size:.95rem">${esc(adv.title)}</div>
+    <p style="font-size:.9rem;opacity:.8;margin-bottom:18px">Scegli il personaggio con cui vuoi giocare:</p>
+    ${S.chars.map(c=>`
+    <div class="char-card" onclick="apStart('${advId}','${c.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:bold;color:#73181F">${esc(c.name)}</div>
+          <div style="font-size:.76rem;opacity:.6;margin-top:2px">${[c.heritage,c.childhood,c.profession].filter(Boolean).map(esc).join(' · ')}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          ${[['⚔','VIG',c.vig],['👁','IST',c.ins],['🧠','MEN',c.min]].map(([ic,lb,v])=>`<div style="display:flex;align-items:center;gap:3px;background:rgba(115,24,31,.08);border-radius:5px;padding:2px 6px;font-size:.78rem"><span>${ic}</span><strong>${v}</strong></div>`).join('')}
+          <span class="badge">Lv.${c.level}</span>
+        </div>
+      </div>
+    </div>`).join('')}
+    <button class="btn btn-secondary" onclick="nav('adv-list')" style="margin-top:6px">❮ INDIETRO</button>
+  </div>`;
+}
+
+// ─── RENDER: GIOCO ────────────────────────────────────────────────────────────
+function renderAdvPlay(){
+  if(!S.ap)return`<div class="frame">Sessione non trovata.<br><br><button class="btn btn-secondary" style="max-width:200px;margin:0 auto" onclick="nav('adv-list')">Indietro</button></div>`;
+  const{adv,char,currPara,codes,history}=S.ap;
+  const para=adv.paragraphs.find(p=>p.id===currPara);
+
+  if(!para)return`
+  <div class="frame" style="text-align:center">
+    <div style="font-size:3rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
+    <h3 style="color:#73181F">Paragrafo "${currPara}" non trovato!</h3>
+    <p style="opacity:.7;margin:10px 0 18px">Il collegamento porta a un paragrafo inesistente nell'avventura.</p>
+    ${history.length?`<button class="btn btn-secondary" style="max-width:200px;margin:0 auto 8px" onclick="apBack()">❮ Torna indietro</button><br>`:''}
+    <button class="btn btn-secondary" style="max-width:200px;margin:0 auto" onclick="nav('adv-list')">Abbandona</button>
+  </div>`;
+
+  const exits=para.exits||[];
+  const codeGrants=exits.filter(e=>e.type==='code_grant');
+  const choices=exits.filter(e=>e.type==='choice');
+  const statChecks=exits.filter(e=>e.type==='stat_check');
+  const talentChecks=exits.filter(e=>e.type==='talent_check');
+  const codeChecks=exits.filter(e=>e.type==='code_check');
+  const ends=exits.filter(e=>e.type==='end');
+
+  const paraText=para.text
+    ?para.text.split('\n').map(l=>`<p style="margin:0 0 10px;line-height:1.75">${esc(l)||'&nbsp;'}</p>`).join('')
+    :`<p style="opacity:.45;font-style:italic">— Questo paragrafo non ha testo. —</p>`;
+
+  const codeGrantsHtml=codeGrants.length?`
+  <div style="background:rgba(24,115,45,.08);border:1.5px solid #18732D;border-radius:8px;padding:10px 14px;margin-bottom:14px">
+    <div style="font-size:.7rem;color:#18732D;font-weight:bold;letter-spacing:2px;margin-bottom:9px">🏷️ CODICI</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${codeGrants.map(e=>{
+        const owned=codes.includes(e.code);
+        return`<button onclick="${owned?'void(0)':`apGrantCode('${e.code}')`}" title="${owned?'Già segnato':'Clicca per segnare il codice'}" style="padding:6px 14px;border-radius:20px;border:2px solid ${owned?'#18732D':'#73181F'};background:${owned?'#18732D':'transparent'};color:${owned?'white':'#1a1007'};cursor:${owned?'default':'pointer'};font-family:inherit;font-size:.82rem;transition:all .2s">${owned?'✓ ':''}<strong style="font-family:monospace">${esc(e.code)}</strong>${e.label&&!owned?` <span style="font-weight:normal;font-size:.75rem;opacity:.8">${esc(e.label)}</span>`:''}${owned?` <span style="font-size:.7rem;opacity:.75">segnato</span>`:''}</button>`;
+      }).join('')}
+    </div>
+  </div>`:'';
+
+  const choicesHtml=choices.map(e=>`
+  <button onclick="apGoTo('${e.to}')" class="btn btn-secondary" style="text-align:left;padding:13px 16px;margin-bottom:7px;border-color:rgba(115,24,31,.4)">
+    <span style="color:#73181F;font-weight:bold;margin-right:8px">▶</span>${esc(e.label)||`Vai al paragrafo ${e.to}`}
+    <span style="float:right;font-family:monospace;opacity:.4;font-size:.78rem">${e.to}</span>
+  </button>`).join('');
+
+  const statChecksHtml=statChecks.map(e=>{
+    const sv=(e.stat==='VIG'?char?.vig:e.stat==='IST'?char?.ins:char?.min)||0;
+    return`
+    <div style="background:rgba(138,96,0,.07);border:1.5px solid #8a6000;border-radius:8px;padding:12px;margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;flex-wrap:wrap;gap:6px">
+        <span style="font-weight:bold;color:#8a6000;font-size:.9rem">🎲 ${e.label||`Prova di ${e.stat}`}</span>
+        <span class="badge" style="background:#8a6000">${e.stat} ${sv} — 2d6 ≤ ${sv}</span>
+      </div>
+      <button onclick="apRollStat('${e.stat}',${sv},'${e.successTo}','${e.failTo}')" class="btn btn-primary" style="background:#8a6000;border-color:#8a6000;width:100%;font-size:.88rem;min-height:40px">🎲 Tira i dadi</button>
+    </div>`;
+  }).join('');
+
+  const talentChecksHtml=talentChecks.map(e=>{
+    const has=(char?.talents||[]).some(t=>t.talent_name===e.talent);
+    const dest=has?e.successTo:e.failTo;
+    return`
+    <div style="background:rgba(26,74,26,.07);border:1.5px solid ${has?'#18732D':'#84785E'};border-radius:8px;padding:12px;margin-bottom:7px">
+      <div style="font-size:.8rem;margin-bottom:7px">⭐ Talento: <strong>${esc(e.talent)}</strong></div>
+      <div style="font-size:.82rem;margin-bottom:9px">${has?`<span style="color:#18732D;font-weight:bold">✓ Possiedi questo talento!</span>`:`<span style="color:#888;font-style:italic">✗ Non possiedi questo talento.</span>`}</div>
+      ${dest?`<button onclick="apGoTo('${dest}')" class="btn btn-${has?'primary':'secondary'}" style="${has?'background:#18732D;border-color:#18732D;':''};width:100%;font-size:.88rem;min-height:38px">▶ ${has?`Vai al ${e.successTo}`:`Vai al ${e.failTo||'?'}`}</button>`:''}
+    </div>`;
+  }).join('');
+
+  const codeChecksHtml=codeChecks.map(e=>{
+    const has=codes.includes(e.code);
+    const dest=has?e.to:(e.elseTo||'');
+    return`
+    <div style="background:rgba(85,85,85,.05);border:1.5px solid ${has?'#18732D':'#84785E'};border-radius:8px;padding:12px;margin-bottom:7px">
+      <div style="font-size:.8rem;margin-bottom:7px;color:#555">🔑 ${e.label||'Verifica codice'}: <strong style="font-family:monospace">${esc(e.code)}</strong></div>
+      <div style="font-size:.82rem;margin-bottom:9px">${has?`<span style="color:#18732D;font-weight:bold">✓ Hai il codice!</span>`:`<span style="color:#888;font-style:italic">✗ Non hai questo codice.</span>`}</div>
+      ${dest?`<button onclick="apGoTo('${dest}')" class="btn btn-secondary" style="width:100%;font-size:.88rem;min-height:38px">▶ ${has?`Vai al ${e.to}`:`Vai al ${e.elseTo}`}</button>`:''}
+    </div>`;
+  }).join('');
+
+  const endsHtml=ends.map(e=>`
+  <div style="text-align:center;padding:16px;background:rgba(0,0,0,.06);border:1.5px solid #84785E;border-radius:8px;margin-bottom:7px">
+    <div style="font-size:1.8rem;margin-bottom:8px">🏁</div>
+    <div style="font-weight:bold;color:#333;margin-bottom:14px">${esc(e.label)||"Fine dell'avventura"}</div>
+    <button onclick="nav('adv-list')" class="btn btn-secondary" style="max-width:220px;margin:0 auto">Torna alle avventure</button>
+  </div>`).join('');
+
+  const hasExits=choicesHtml||statChecksHtml||talentChecksHtml||codeChecksHtml||endsHtml;
+
+  return`
+  <div style="min-height:100svh;display:flex;flex-direction:column;font-family:'Times New Roman',Georgia,serif;color:#1a1007;background:#D8C7A1">
+    <div style="background:#120801;border-bottom:2px solid #73181F;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:50">
+      <div>
+        <div style="color:#D8C7A1;font-weight:bold;font-size:.92rem">${char?esc(char.name):'???'} <span style="opacity:.5;font-size:.78rem;font-weight:normal">— ${esc(adv.title)}</span></div>
+        <div style="display:flex;gap:10px;margin-top:3px;flex-wrap:wrap">
+          ${char?[['VIG',char.vig],['IST',char.ins],['MEN',char.min]].map(([l,v])=>`<span style="color:#D8C7A1;font-size:.74rem;opacity:.85"><strong>${l}</strong> ${v}</span>`).join(''):''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        ${codes.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;max-width:220px;justify-content:flex-end">${codes.map(co=>`<span style="background:#18732D;color:white;font-size:.64rem;padding:2px 8px;border-radius:12px;font-family:monospace;font-weight:bold;cursor:pointer" onclick="apRemoveCode('${co}')" title="Clicca per rimuovere">${esc(co)} ×</span>`).join('')}</div>`:''}
+        ${history.length?`<button onclick="apBack()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">❮ Indietro</button>`:''}
+        <button onclick="if(confirm('Abbandonare la partita?'))nav('adv-list')" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">Abbandona</button>
+      </div>
+    </div>
+    <div style="flex:1;max-width:680px;width:100%;margin:0 auto;padding:26px 20px">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(115,24,31,.3)">
+        <div style="font-family:monospace;font-size:2.2rem;font-weight:bold;color:#73181F">${para.id}</div>
+        ${para.name?`<div style="font-size:1rem;opacity:.65;font-style:italic">${esc(para.name)}</div>`:''}
+      </div>
+      <div style="font-size:1.05rem;line-height:1.75;margin-bottom:22px">${paraText}</div>
+      ${codeGrantsHtml}
+      ${hasExits?`
+      <div style="margin-top:18px;border-top:1px solid rgba(115,24,31,.2);padding-top:16px">
+        <div style="font-size:.7rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:12px">COSA FAI?</div>
+        <div style="display:flex;flex-direction:column">${choicesHtml}${statChecksHtml}${talentChecksHtml}${codeChecksHtml}${endsHtml}</div>
+      </div>`:`<div style="text-align:center;opacity:.5;font-style:italic;padding:20px 0;font-size:.9rem">Nessuna uscita definita per questo paragrafo.</div>`}
+    </div>
+  </div>`;
+}
+
+// ─── HANDLER: EDITOR ─────────────────────────────────────────────────────────
+function aeCreateNew(){
+  const adv=mkAdv();
+  if(!S.adventures)S.adventures=[];
+  S.adventures.push(adv);persist();
+  S.ae=initAE(adv);
+  S.page='adv-edit';S.params={};window.scrollTo(0,0);render();
+}
+function aeOpenEdit(id){
+  const adv=(S.adventures||[]).find(a=>a.id===id);
+  if(!adv){alert('Avventura non trovata.');return;}
+  S.ae=initAE(adv);
+  S.page='adv-edit';S.params={};window.scrollTo(0,0);render();
+}
+function aeConfirmDelete(id){
+  const adv=(S.adventures||[]).find(a=>a.id===id);
+  if(!adv)return;
+  if(!confirm(`Eliminare "${adv.title}"? Questa azione è irreversibile.`))return;
+  S.adventures=S.adventures.filter(a=>a.id!==id);
+  persist();render();
+}
+function aeExport(id){
+  const adv=(S.adventures||[]).find(a=>a.id===id)||(S.ae?S.ae.adv:null);
+  if(!adv){alert('Avventura non trovata.');return;}
+  const blob=new Blob([JSON.stringify(adv,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`${adv.title.replace(/\W+/g,'_')}.saga.json`;
+  a.click();URL.revokeObjectURL(url);
+}
+function aeImportFile(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const adv=JSON.parse(e.target.result);
+      if(!adv.id||!adv.title||!Array.isArray(adv.paragraphs))throw new Error('Struttura non valida');
+      adv.id='ADV-'+Math.random().toString(36).substr(2,9).toUpperCase();
+      if(!S.adventures)S.adventures=[];
+      S.adventures.push(adv);persist();render();
+      alert(`"${adv.title}" importata!`);
+    }catch(err){alert('Errore importazione: '+err.message);}
+  };
+  reader.readAsText(file);
+  ev.target.value='';
+}
+function aePickChar(advId){
+  nav('adv-char-select',{advId});
+}
+function aeSaveAdv(){
+  if(!S.ae)return;
+  if(!S.adventures)S.adventures=[];
+  const idx=S.adventures.findIndex(a=>a.id===S.ae.adv.id);
+  const copy=JSON.parse(JSON.stringify(S.ae.adv));
+  if(idx>=0)S.adventures[idx]=copy;
+  else S.adventures.push(copy);
+  persist();
+  alert('Avventura salvata!');
+}
+function aeSetMeta(field,val){
+  if(!S.ae)return;
+  S.ae.adv[field]=val;
+}
+function aeToggleView(mode){
+  if(!S.ae)return;
+  S.ae.viewMode=mode;render();
+}
+function aeSelectParaAndEdit(id){
+  if(!S.ae)return;
+  S.ae.selPara=id;S.ae.viewMode='edit';render();
+}
+function aeAddPara(){
+  if(!S.ae)return;
+  const used=S.ae.adv.paragraphs.map(p=>p.id);
+  const p=mkPara(used);
+  S.ae.adv.paragraphs.push(p);
+  S.ae.selPara=p.id;render();
+}
+function aeDP(id){// delete para
+  if(!S.ae)return;
+  if(!confirm(`Eliminare il paragrafo ${id}?`))return;
+  S.ae.adv.paragraphs=S.ae.adv.paragraphs.filter(p=>p.id!==id);
+  if(S.ae.adv.startParagraph===id)S.ae.adv.startParagraph=null;
+  S.ae.selPara=S.ae.adv.paragraphs[0]?.id||null;render();
+}
+function aeSetStart(id){
+  if(!S.ae)return;
+  S.ae.adv.startParagraph=S.ae.adv.startParagraph===id?null:id;render();
+}
+function aePN(val){// set para name
+  if(!S.ae||!S.ae.selPara)return;
+  const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
+  if(p)p.name=val;
+}
+function aePT(val){// set para text (no re-render to keep cursor)
+  if(!S.ae||!S.ae.selPara)return;
+  const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
+  if(p)p.text=val;
+}
+function aeAE(type){// add exit
+  if(!S.ae||!S.ae.selPara)return;
+  const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
+  if(!p)return;
+  if(!p.exits)p.exits=[];
+  p.exits.push(mkExit(type));render();
+}
+function aeDE(idx){// delete exit
+  if(!S.ae||!S.ae.selPara)return;
+  const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
+  if(!p||!p.exits)return;
+  p.exits.splice(idx,1);render();
+}
+function aeUE(idx,field,val){// update exit (no re-render)
+  if(!S.ae||!S.ae.selPara)return;
+  const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
+  if(!p||!p.exits||!p.exits[idx])return;
+  p.exits[idx][field]=val;
+}
+function aeChangeId(oldId){
+  if(!S.ae)return;
+  const raw=prompt(`Nuovo ID per il paragrafo ${oldId} (001–999):`,oldId);
+  if(!raw)return;
+  const nid=String(parseInt(raw)).padStart(3,'0');
+  if(!/^\d{3}$/.test(nid)||parseInt(nid)<1||parseInt(nid)>999){alert('ID non valido (001–999)');return;}
+  if(S.ae.adv.paragraphs.some(p=>p.id===nid&&p.id!==oldId)){alert('ID già usato da un altro paragrafo!');return;}
+  // Update all references
+  S.ae.adv.paragraphs.forEach(p=>{
+    (p.exits||[]).forEach(e=>{
+      if(e.to===oldId)e.to=nid;
+      if(e.successTo===oldId)e.successTo=nid;
+      if(e.failTo===oldId)e.failTo=nid;
+      if(e.elseTo===oldId)e.elseTo=nid;
+    });
+  });
+  const tgt=S.ae.adv.paragraphs.find(x=>x.id===oldId);
+  if(tgt)tgt.id=nid;
+  if(S.ae.adv.startParagraph===oldId)S.ae.adv.startParagraph=nid;
+  S.ae.selPara=nid;render();
+}
+
+// ─── HANDLER: GIOCO ──────────────────────────────────────────────────────────
+function apStart(advId,charId){
+  const adv=(S.adventures||[]).find(a=>a.id===advId);
+  if(!adv){alert('Avventura non trovata.');return;}
+  S.ap=initAP(adv,charId);
+  nav('adv-play');
+}
+function apGoTo(paraId){
+  if(!S.ap||!paraId)return;
+  S.ap.history.push(S.ap.currPara);
+  S.ap.currPara=paraId;
+  window.scrollTo(0,0);render();
+}
+function apBack(){
+  if(!S.ap||!S.ap.history.length)return;
+  S.ap.currPara=S.ap.history.pop();
+  window.scrollTo(0,0);render();
+}
+function apGrantCode(code){
+  if(!S.ap||!code)return;
+  if(!S.ap.codes.includes(code))S.ap.codes.push(code);
+  render();
+}
+function apRemoveCode(code){
+  if(!S.ap)return;
+  S.ap.codes=S.ap.codes.filter(c=>c!==code);render();
+}
+function apRollStat(stat,statVal,successTo,failTo){
+  if(!S.ap)return;
+  openDiceOv(2,`Prova di ${stat}`,`Successo con 2d6 ≤ ${statVal} (tuo ${stat}: ${statVal})`,'stat',statVal,(vals,total)=>{
+    const ok=total<=statVal;
+    const dest=ok?successTo:failTo;
+    if(dest){setTimeout(()=>apGoTo(dest),200);}
+    else render();
+  });
+}
+
 </script>
 <!-- CREDITS OVERLAY -->
 <div id="credits-overlay" onclick="hideCreditsOv()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20001;align-items:flex-end;justify-content:center;cursor:pointer;font-family:'Times New Roman',Georgia,serif">
@@ -1954,21 +2606,21 @@ render();
         <div style="margin-bottom:32px">
           <div style="color:#73181F;font-size:.72rem;letter-spacing:3px;font-weight:bold;margin-bottom:14px;border-bottom:1px solid rgba(115,24,31,.3);padding-bottom:6px">IDEAZIONE E SCRITTURA</div>
           <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Autore</span><br><strong>Lorenzo De Gasperis</strong></div>
-          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Narrativa e Testi</span><br><strong>Lorenzo De Gasperis</strong></div>
-          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Ispirazioni Letterarie e Meccaniche</span><br>
+          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Narrativa e testi</span><br><strong>Lorenzo De Gasperis</strong></div>
+          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Ispirazioni letterarie e meccaniche</span><br>
             <span style="font-size:.88rem;line-height:1.7">Cairn <span style="opacity:.55">(Yochai Gal)</span><br>Streben <span style="opacity:.55">(G. Galli, N. Rossi)</span><br>Fabula Ultima <span style="opacity:.55">(Need Games, E. Galletto)</span><br>Grim Hollow <span style="opacity:.55">(Ghostfire Gaming)</span></span>
           </div>
         </div>
 
         <div style="margin-bottom:32px">
           <div style="color:#73181F;font-size:.72rem;letter-spacing:3px;font-weight:bold;margin-bottom:14px;border-bottom:1px solid rgba(115,24,31,.3);padding-bottom:6px">SVILUPPO TECNICO</div>
-          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Design del Codice</span><br><strong>Lorenzo De Gasperis</strong></div>
-          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Supporto alla Programmazione</span><br><strong>Claude AI</strong> <span style="opacity:.55">(Anthropic)</span> &amp; <strong>Gemini AI</strong> <span style="opacity:.55">(Google)</span></div>
+          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Design del codice</span><br><strong>Lorenzo De Gasperis</strong></div>
+          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Supporto alla programmazione</span><br><strong>Claude AI</strong> <span style="opacity:.55">(Anthropic)</span> &amp; <strong>Gemini AI</strong> <span style="opacity:.55">(Google)</span></div>
         </div>
 
         <div style="margin-bottom:32px">
           <div style="color:#73181F;font-size:.72rem;letter-spacing:3px;font-weight:bold;margin-bottom:14px;border-bottom:1px solid rgba(115,24,31,.3);padding-bottom:6px">COMPARTO VISIVO E UI</div>
-          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Direzione Artistica e Generazione Immagini</span><br><span style="font-size:.88rem">Generato tramite AI <span style="opacity:.55">(Gemini, Microsoft Copilot)</span><br>con la supervisione di <strong>Lorenzo De Gasperis</strong></span></div>
+          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Direzione artistica e generazione immagini</span><br><span style="font-size:.88rem">Generato tramite AI <span style="opacity:.55">(Gemini, Microsoft Copilot)</span><br>con la supervisione di <strong>Lorenzo De Gasperis</strong></span></div>
           <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">UI/UX Design</span><br><span style="opacity:.45;font-style:italic">— —</span></div>
           <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Consulenza Grafica Addizionale</span><br><span style="opacity:.45;font-style:italic">— —</span></div>
         </div>
@@ -1988,7 +2640,7 @@ render();
 <!-- 3D DICE OVERLAY -->
 <div id="dice-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:20000;align-items:center;justify-content:center;font-family:'Times New Roman',Georgia,serif;padding:12px">
   <div style="background:#D8C7A1;border:3px solid #73181F;border-radius:14px;padding:22px 24px;max-width:520px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.6)">
-    <h3 id="dice-ov-title" style="color:#73181F;letter-spacing:3px;font-size:1rem;margin:0 0 3px">LANCIA I DADI</h3>
+    <h3 id="dice-ov-title" style="color:#73181F;letter-spacing:3px;font-size:1rem;margin:0 0 3px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dices-icon lucide-dices"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg> LANCIA I DADI</h3>
     <p id="dice-ov-sub" style="font-size:.83rem;opacity:.68;margin:0 0 14px"></p>
     <div style="border-radius:10px;overflow:hidden;background:#120801;line-height:0">
       <canvas id="dice-canvas" style="width:100%;display:block"></canvas>
@@ -1996,7 +2648,7 @@ render();
     <div id="dice-ov-result" style="min-height:72px;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:10px 0 4px"></div>
     <div style="display:flex;gap:10px;margin-top:4px">
       <button onclick="closeDiceOv()" style="flex:1;padding:11px;border-radius:8px;font-weight:bold;font-size:.88rem;cursor:pointer;font-family:inherit;letter-spacing:1px;background:transparent;color:#1a1007;border:2px solid #73181F;transition:filter .2s" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">Chiudi</button>
-      <button id="dice-ov-btn" onclick="startDiceRoll()" style="flex:2;padding:11px;border-radius:8px;font-weight:bold;font-size:.88rem;cursor:pointer;font-family:inherit;letter-spacing:1px;background:#73181F;color:white;border:2px solid #73181F;transition:filter .2s" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter='none'">🎲 Lancia</button>
+      <button id="dice-ov-btn" onclick="startDiceRoll()" style="flex:2;padding:11px;border-radius:8px;font-weight:bold;font-size:.88rem;cursor:pointer;font-family:inherit;letter-spacing:1px;background:#73181F;color:white;border:2px solid #73181F;transition:filter .2s" onmouseover="this.style.filter='brightness(1.15)'" onmouseout="this.style.filter='none'"> Lancia</button>
     </div>
   </div>
 </div>
