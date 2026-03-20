@@ -17,7 +17,7 @@ html,body{min-height:100vh;min-height:100svh;background:#D8C7A1;font-family:'Tim
 #app{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 0;position:relative;}
 .bg-overlay{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(115,24,31,.07) 0%,transparent 65%),repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(0,0,0,.012) 40px,rgba(0,0,0,.012) 80px);pointer-events:none;z-index:0;}
 @keyframes creditsScroll {
-  0% { transform: translateY(77%); } /* Parte già visibile */
+  0% { transform: translateY(52%); } /* Parte già visibile */
   100% { transform: translateY(-100%); } /* Scorre fino alla fine */
 }@keyframes splashPulse{from{filter:drop-shadow(0 0 16px rgba(115,24,31,.5));}to{filter:drop-shadow(0 0 40px rgba(115,24,31,.9));}}
 /* SPLASH */
@@ -89,8 +89,8 @@ input,select,textarea{font-size:16px !important;}
 @media(max-width:640px){
   /* App container */
   #app{padding:0;justify-content:flex-start;}
-  /* Frame → full-width, no side borders/radius on small screens */
-  .frame{width:100vw;max-width:100vw;border-left:none;border-right:none;border-radius:0;padding:18px 16px;min-height:100svh;}
+  /* Frame → full-width on small screens — keep top/bottom burgundy border */
+  .frame{width:100vw;max-width:100vw;border-left:none;border-right:none;border-radius:0;padding:18px 16px;min-height:100svh;border-top:3px solid #73181F !important;border-bottom:3px solid #73181F !important;box-shadow:none;}
   /* Buttons */
   .btn{font-size:.9rem;letter-spacing:.5px;}
   .btn-group-2col{grid-template-columns:1fr 1fr;display:grid;gap:8px;}
@@ -119,7 +119,7 @@ input,select,textarea{font-size:16px !important;}
   .lu-sidebar{width:100% !important;position:sticky !important;top:0 !important;z-index:100 !important;border-radius:0 !important;border-left:none !important;border-right:none !important;border-top:none !important;padding:10px 14px !important;background:#D8C7A1 !important;box-shadow:0 3px 12px rgba(0,0,0,.18) !important;}
   .lu-main{border-left:none !important;border-right:none !important;border-radius:0 !important;padding:16px !important;}
   /* SHEET frame */
-  .sh-frame{border-left:none !important;border-right:none !important;border-radius:0 !important;padding:16px 14px !important;min-height:100svh;width:100vw !important;max-width:100vw !important;}
+  .sh-frame{border-left:none !important;border-right:none !important;border-radius:0 !important;border-top:3px solid #73181F !important;border-bottom:3px solid #73181F !important;padding:16px 14px !important;min-height:100svh;width:100vw !important;max-width:100vw !important;}
   /* HP/EN big buttons */
   .adj-btn{min-width:52px !important;min-height:44px !important;font-size:1.1rem !important;}
   /* Credits overlay */
@@ -137,12 +137,17 @@ input,select,textarea{font-size:16px !important;}
   .home-title{font-size:2.4rem !important;letter-spacing:4px !important;}
   .home-subtitle{margin-bottom:20px !important;}
   /* Settings frame */
-  .settings-frame{min-height:100svh !important;border-radius:0 !important;border-left:none;border-right:none;}
+  .settings-frame{min-height:100svh !important;border-radius:0 !important;border-left:none;border-right:none;border-top:3px solid #73181F !important;}
 }
 @media(max-width:380px){
   .cc-sidebar-stat{font-size:.7rem;padding:2px 6px;}
   .tab-btn{font-size:.72rem;padding:8px 10px;}
   .btn{font-size:.82rem;}
+}
+/* Extra depth on mobile cards */
+@media(max-width:640px){
+  .char-card,.cc-card,.equip-card{box-shadow:0 1px 4px rgba(0,0,0,.12);}
+  .card{box-shadow:0 1px 4px rgba(0,0,0,.12);}
 }
 /* CARD INFO */
 .card{background:rgba(196,176,138,.45);border:2px solid #73181F;border-radius:10px;padding:15px;margin-bottom:12px;text-align:left;}
@@ -472,18 +477,18 @@ function initLU(){
 function persist(){
   if(!S.loaded)return;
   try{
-    localStorage.setItem('saga-characters',JSON.stringify(S.chars));
-    localStorage.setItem('saga-sessions',JSON.stringify(S.sessions));
-    localStorage.setItem('saga-settings',JSON.stringify(S.settings));
-    localStorage.setItem('saga-adventures',JSON.stringify(S.adventures));
+    _sset('saga-characters',JSON.stringify(S.chars));
+    _sset('saga-sessions',JSON.stringify(S.sessions));
+    _sset('saga-settings',JSON.stringify(S.settings));
+    _sset('saga-adventures',JSON.stringify(S.adventures));
   }catch(e){}
 }
 function load(){
   try{
-    const c=localStorage.getItem('saga-characters');if(c)S.chars=JSON.parse(c);
-    const s=localStorage.getItem('saga-sessions');if(s)S.sessions=JSON.parse(s);
-    const st=localStorage.getItem('saga-settings');if(st)S.settings=JSON.parse(st);
-    const av=localStorage.getItem('saga-adventures');if(av)S.adventures=JSON.parse(av);
+    const c=_sget('saga-characters');if(c)S.chars=JSON.parse(c);
+    const s=_sget('saga-sessions');if(s)S.sessions=JSON.parse(s);
+    const st=_sget('saga-settings');if(st)S.settings=JSON.parse(st);
+    const av=_sget('saga-adventures');if(av)S.adventures=JSON.parse(av);
   }catch(e){}
   S.loaded=true;
 }
@@ -540,9 +545,20 @@ function renderHome(){
   const sessionRows=S.sessions.length===0
     ?`<p style="font-size:.84rem;opacity:.55;font-style:italic;text-align:center;padding:10px 0">Nessuna partita in corso.</p>`
     :S.sessions.map(s=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 2px;font-size:.87rem;border-bottom:1px solid rgba(0,0,0,.07)">
-        <div><span style="font-weight:bold;color:#73181F">${esc(s.adventureName)}</span><span style="opacity:.55;font-size:.75rem;margin-left:8px">Par.${esc(s.currentParagraph)}</span></div>
-        <div style="display:flex;gap:6px;align-items:center"><span style="opacity:.7;font-size:.78rem">${esc(s.charName)}</span><span class="badge">Lv.${esc(s.charLevel)}</span></div>
+      <div onclick="apResumeSession('${s.sessId}')" style="padding:8px 4px;border-bottom:1px solid rgba(0,0,0,.07);cursor:pointer;border-radius:4px;transition:background .15s" onmouseover="this.style.background='rgba(115,24,31,.06)'" onmouseout="this.style.background=''">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+          <div>
+            <span style="font-weight:bold;color:#73181F;font-size:.9rem">${esc(s.advTitle||s.adventureName||'—')}</span>
+            <span style="opacity:.5;font-size:.72rem;margin-left:6px">§${esc(s.currPara||s.currentParagraph||'—')}</span>
+          </div>
+          <span class="badge" style="font-size:.65rem">Lv.${esc(s.charLevel)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:.78rem;opacity:.7">${esc(s.charName)}</span>
+          ${s.hpMax?`<span style="font-size:.73rem;opacity:.75">❤ ${s.hpCurr}/${s.hpMax}</span>`:''}
+          ${s.enMax?`<span style="font-size:.73rem;opacity:.75">⚡ ${s.enCurr}/${s.enMax}</span>`:''}
+          <span style="font-size:.65rem;opacity:.38;margin-left:auto">${s.savedAt?new Date(s.savedAt).toLocaleDateString('it',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):''}</span>
+        </div>
       </div>`).join('');
   return`
   <div class="frame" style="z-index:1">
@@ -848,9 +864,9 @@ function renderCCEquip(title,items,remaining,prev,next,nextLabel='AVANTI \u276f'
       <div style="font-size:.81rem;opacity:.8;margin-bottom:8px">${esc(item.equip_bonus)}</div>
       ${locked?`<div style="font-size:.76rem;color:#8B4513;font-weight:bold;margin-bottom:6px">\u26a0 Richiede il talento <em>${esc(reqErr)}</em></div>`:''}
       <div style="display:flex;align-items:center;gap:10px">
-        <button class="sm-btn" ${qty===0?'disabled':''} onclick="ccRemoveEquip('${esc(item.equip_name)}')">\u2212</button>
+        <button class="sm-btn" ${qty===0?'disabled':''} onclick="ccRemoveEquipIdx(${items.indexOf(item)})">\u2212</button>
         <span style="font-weight:bold;min-width:22px;text-align:center;color:${qty>0?'#73181F':'#888'}">${qty}</span>
-        <button class="sm-btn" ${(!canMore||locked)?'disabled':''} onclick="ccAddEquip('${esc(item.equip_name)}',${i})" title="${locked?'Talento mancante':''}">+</button>
+        <button class="sm-btn" ${(!canMore||locked)?'disabled':''} onclick="ccAddEquipIdx(${items.indexOf(item)})" title="${locked?'Talento mancante':''}">+</button>
         ${qty>0&&sc>0?`<span style="font-size:.72rem;opacity:.65;margin-left:4px">(${fmtSlots(sc*qty)} slot totali)</span>`:''}
       </div>
     </div>`;
@@ -1035,6 +1051,16 @@ function ccRemoveEquip(name){
   else S.cc.cs.equipment[idx].qty=qty-1;
   render();
 }
+// Index-based wrappers to avoid apostrophe issues in onclick attributes
+function _ccCurrentShopItems(){
+  const s=S.cc.step;
+  if(s===8)return DB.equip_weapons;
+  if(s===9)return DB.equip_protection;
+  if(s===10)return DB.equip_slots;
+  return[...DB.equip_weapons,...DB.equip_protection,...DB.equip_slots];
+}
+function ccAddEquipIdx(i){const items=_ccCurrentShopItems();if(items[i])ccAddEquip(items[i].equip_name,i);}
+function ccRemoveEquipIdx(i){const items=_ccCurrentShopItems();if(items[i])ccRemoveEquip(items[i].equip_name);}
 function ccToggleCat(cat){S.cc.openCats[cat]=!S.cc.openCats[cat];render();}
 function ccToggleAbilityOpen(){S.cc.abilityOpen=!S.cc.abilityOpen;render();}
 function ccToggleTalent(dbIdx){
@@ -1594,14 +1620,20 @@ function openDiceOv(numDice,title,subtitle,mode,statValue,onClose){
 }
 
 function dieSVG(v,sz){
-  sz=sz||52;
-  const dots={1:[[.5,.5]],2:[[.28,.72],[.72,.28]],3:[[.28,.72],[.5,.5],[.72,.28]],
-    4:[[.28,.28],[.72,.28],[.28,.72],[.72,.72]],
-    5:[[.28,.28],[.72,.28],[.5,.5],[.28,.72],[.72,.72]],
-    6:[[.28,.28],[.72,.28],[.28,.5],[.72,.5],[.28,.72],[.72,.72]]};
-  const r=sz*.09;
-  const pips=(dots[v]||[]).map(([px,py])=>`<circle cx='${px*sz}' cy='${py*sz}' r='${r}' fill='#D8C7A1'/>`).join('');
-  return `<svg width='${sz}' height='${sz}' viewBox='0 0 ${sz} ${sz}'><rect width='${sz}' height='${sz}' rx='${sz*.14}' fill='#1a0a02'/><rect x='2' y='2' width='${sz-4}' height='${sz-4}' rx='${sz*.11}' fill='none' stroke='#73181F' stroke-width='1.5'/>${pips}</svg>`;
+  sz=sz||56;
+  const dots={1:[[.5,.5]],2:[[.3,.7],[.7,.3]],3:[[.3,.7],[.5,.5],[.7,.3]],
+    4:[[.3,.3],[.7,.3],[.3,.7],[.7,.7]],
+    5:[[.3,.3],[.7,.3],[.5,.5],[.3,.7],[.7,.7]],
+    6:[[.3,.25],[.7,.25],[.3,.5],[.7,.5],[.3,.75],[.7,.75]]};
+  const r=Math.max(sz*.1,4);
+  const pad=sz*.08;
+  const inner=sz-pad*2;
+  const pips=(dots[v]||[]).map(([px,py])=>`<circle cx='${pad+px*inner}' cy='${pad+py*inner}' r='${r}' fill='#D8C7A1' stroke='#73181F' stroke-width='0.5'/>`).join('');
+  return `<svg width='${sz}' height='${sz}' viewBox='0 0 ${sz} ${sz}' xmlns='http://www.w3.org/2000/svg'>`+
+    `<defs><linearGradient id='dg${v}' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='#2a1005'/><stop offset='100%' stop-color='#0e0402'/></linearGradient></defs>`+
+    `<rect width='${sz}' height='${sz}' rx='${sz*.16}' fill='url(#dg${v})'/>` +
+    `<rect x='2' y='2' width='${sz-4}' height='${sz-4}' rx='${sz*.13}' fill='none' stroke='#73181F' stroke-width='2'/>` +
+    `${pips}</svg>`;
 }
 function _showSimpleDiceModal(numDice,title,subtitle,mode,statValue,values,total){
   // dieSVG() defined above
@@ -1998,8 +2030,10 @@ function initAE(adv){
 }
 function initAP(adv,charId){
   const ch=S.chars.find(c=>c.id===charId);
+  const sessId='SESS-'+Math.random().toString(36).substr(2,9).toUpperCase();
   return{adv,charId,char:ch?JSON.parse(JSON.stringify(ch)):null,
-    currPara:adv.startParagraph||adv.paragraphs[0]?.id,codes:[],history:[]};
+    currPara:adv.startParagraph||adv.paragraphs[0]?.id,codes:[],history:[],
+    sessId,showBreadcrumb:false,showCharSheet:false};
 }
 
 // ─── RENDER: LISTA AVVENTURE ──────────────────────────────────────────────────
@@ -2410,14 +2444,39 @@ function renderAdvPlay(){
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
         ${codes.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;max-width:220px;justify-content:flex-end">${codes.map(co=>`<span style="background:#18732D;color:white;font-size:.64rem;padding:2px 8px;border-radius:12px;font-family:monospace;font-weight:bold;cursor:pointer" onclick="apRemoveCode('${co}')" title="Clicca per rimuovere">${esc(co)} ×</span>`).join('')}</div>`:''}
-        ${history.length?`<button onclick="apBack()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">❮ Indietro</button>`:''}
+        <button onclick="S.ap.showCharSheet=!S.ap.showCharSheet;render()" title="Scheda personaggio" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+        ${history.length?`<button onclick="apBack()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">&#10094;</button>`:''}
         <button onclick="if(confirm('Abbandonare la partita?'))nav('adv-list')" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">Abbandona</button>
       </div>
     </div>
+    ${S.ap.showCharSheet&&char?`
+    <div onclick="S.ap.showCharSheet=false;render()" style="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:0">
+      <div onclick="event.stopPropagation()" style="background:#D8C7A1;border-top:3px solid #73181F;border-radius:12px 12px 0 0;padding:22px 20px 32px;width:100%;max-width:500px;max-height:80svh;overflow-y:auto;font-family:'Times New Roman',Georgia,serif">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #73181F">
+          <div>
+            <div style="font-weight:bold;font-size:1.1rem;color:#73181F">${esc(char.name)}</div>
+            <div style="font-size:.75rem;opacity:.6">${[char.heritage,char.childhood,char.profession].filter(Boolean).map(v=>esc(v)).join(' · ')} · Lv.${char.level}</div>
+          </div>
+          <button onclick="S.ap.showCharSheet=false;render()" style="background:transparent;border:none;font-size:1.4rem;cursor:pointer;color:#73181F;padding:4px 8px">✕</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+          ${[['VIG',char.vig],['IST',char.ins],['MEN',char.min]].map(([l,v])=>`<div style="text-align:center;background:rgba(115,24,31,.07);border:1.5px solid rgba(115,24,31,.2);border-radius:8px;padding:10px 6px"><div style="font-size:.7rem;letter-spacing:1px;opacity:.6">${l}</div><div style="font-size:1.6rem;font-weight:bold;color:#73181F">${v}</div></div>`).join('')}
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:.7rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:6px">SALUTE</div>
+          <div style="height:22px;border-radius:5px;overflow:hidden;border:1px solid rgba(0,0,0,.2);position:relative"><div style="height:100%;background:#18732D;width:${char.hpMax>0?Math.min(100,char.hpCurr/char.hpMax*100):0}%"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:bold;color:white;text-shadow:0 1px 2px rgba(0,0,0,.5)">${char.hpCurr}/${char.hpMax}</div></div>
+          <div style="font-size:.7rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin:8px 0 6px">ENERGIA</div>
+          <div style="height:22px;border-radius:5px;overflow:hidden;border:1px solid rgba(0,0,0,.2);position:relative"><div style="height:100%;background:#182473;width:${char.enMax>0?Math.min(100,char.enCurr/char.enMax*100):0}%"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:bold;color:white;text-shadow:0 1px 2px rgba(0,0,0,.5)">${char.enCurr}/${char.enMax}</div></div>
+        </div>
+        ${char.talents&&char.talents.length?`<div style="margin-bottom:10px"><div style="font-size:.7rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:6px">TALENTI</div>${char.talents.map(t=>`<div style="font-size:.82rem;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.07)">▸ ${esc(t.talent_name)}</div>`).join('')}</div>`:''}
+        ${char.abilities&&char.abilities.length?`<div><div style="font-size:.7rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:6px">ABILITÀ</div>${char.abilities.map(a=>`<div style="font-size:.82rem;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.07)">◆ ${esc(a.ability_name)}</div>`).join('')}</div>`:''}
+        ${S.ap.codes&&S.ap.codes.length?`<div style="margin-top:12px;border-top:1px solid rgba(115,24,31,.2);padding-top:10px"><div style="font-size:.7rem;color:#18732D;font-weight:bold;letter-spacing:1px;margin-bottom:6px">CODICI RACCOLTI</div><div style="display:flex;gap:5px;flex-wrap:wrap">${S.ap.codes.map(co=>`<span style="font-family:monospace;background:#18732D;color:white;padding:2px 10px;border-radius:12px;font-size:.78rem;font-weight:bold">${esc(co)}</span>`).join('')}</div></div>`:''}
+      </div>
+    </div>`:''}
     <div style="flex:1;max-width:680px;width:100%;margin:0 auto;padding:26px 20px">
       <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(115,24,31,.3)">
         <div style="font-family:monospace;font-size:2.2rem;font-weight:bold;color:#73181F">${para.id}</div>
-        ${para.name?`<div style="font-size:1rem;opacity:.65;font-style:italic">${esc(para.name)}</div>`:''}
+        
       </div>
       <div style="font-size:1.05rem;line-height:1.75;margin-bottom:22px">${paraText}</div>
       ${codeGrantsHtml}
@@ -2575,14 +2634,52 @@ function apStart(advId,charId){
   const adv=(S.adventures||[]).find(a=>a.id===advId);
   if(!adv){alert('Avventura non trovata.');return;}
   S.ap=initAP(adv,charId);
+  apSaveSession();
   nav('adv-play');
 }
 function apGoTo(paraId){
   if(!S.ap||!paraId)return;
   S.ap.history.push(S.ap.currPara);
   S.ap.currPara=paraId;
+  apSaveSession();
   window.scrollTo(0,0);render();
 }
+function apSaveSession(){
+  if(!S.ap)return;
+  const{adv,char,currPara,codes,history}=S.ap;
+  const existing=S.sessions.findIndex(s=>s.sessId===S.ap.sessId);
+  const rec={
+    sessId:S.ap.sessId,
+    advId:adv.id,advTitle:adv.title,
+    charId:char?.id,charName:char?.name||'—',charLevel:char?.level||1,
+    currPara,codes:[...codes],history:[...history],
+    hpCurr:char?.hpCurr??0,hpMax:char?.hpMax??0,
+    enCurr:char?.enCurr??0,enMax:char?.enMax??0,
+    savedAt:Date.now()
+  };
+  if(existing>=0)S.sessions[existing]=rec;
+  else S.sessions.unshift(rec);
+  if(S.sessions.length>20)S.sessions=S.sessions.slice(0,20);
+  persist();
+}
+function apResumeSession(sessId){
+  const sess=S.sessions.find(s=>s.sessId===sessId);
+  if(!sess)return;
+  const adv=(S.adventures||[]).find(a=>a.id===sess.advId);
+  if(!adv){alert('Avventura non trovata o eliminata.');return;}
+  const ch=S.chars.find(c=>c.id===sess.charId);
+  S.ap={
+    adv,charId:sess.charId,
+    char:ch?JSON.parse(JSON.stringify(ch)):null,
+    currPara:sess.currPara,
+    codes:[...(sess.codes||[])],
+    history:[...(sess.history||[])],
+    sessId:sess.sessId,
+    showBreadcrumb:false,showCharSheet:false
+  };
+  nav('adv-play');
+}
+
 function apBack(){
   if(!S.ap||!S.ap.history.length)return;
   S.ap.currPara=S.ap.history.pop();
