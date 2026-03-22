@@ -327,7 +327,7 @@ const GUIDE={
   2:{title:'Origini e Caratteristiche (2/5)',text:'Ogni personaggio in SAGA ha tre caratteristiche base:\n- Vigore (VIG): forza fisica e resistenza.\n- Istinto (IST): agilità, riflessi e spirito di osservazione.\n- Mente (MEN): conoscenze, studio e persuasione.\n\nLe tue Caratteristiche sono influenzate dalle tue Origini (Lignaggio, Infanzia e Professione). Scegli con attenzione perché non è possibile modificarle una volta creato il personaggio.'},
   5:{title:'Talenti (3/5)',text:'I Talenti definiscono le capacità uniche del tuo Eroe. Puoi sceglierne fino a 3. Alcuni richiedono statistiche minime specifiche.\n\nLe categorie bloccate si aprono con il tasto "mostra" se vuoi comunque visualizzarle.'},
   6:{title:'Abilità Istantanee (4/5)',text:'Le Abilità Istantanee sono poteri psichici fuori dal comune.\n\nPer acquisirle è obbligatorio possedere il talento "Abile nella Psiche". Ogni istanza garantisce 3 abilità.'},
-  7:{title:'Crediti ed Equipaggiamento (5/5)',text:'Lancia 4d6 × 10 per determinare i tuoi Crediti iniziali, poi spendili per acquistare armi, protezioni e dotazione base.\n\nAttenzione ai requisiti di talento per alcune armi e armature!'},
+  7:{title:'Crediti ed Equipaggiamento (5/5)',text:'Lancia i dadi, poi fai acquisti.\nL\’equipaggiamento potrebbe offrire diverse risorse in aggiunta alle tue caratteristiche e ai talenti.\n\nGli oggetti in elenco sono riferimenti adattabili: forma e descrizione possono cambiare in base all’ambientazione. Sentiti libero di personalizzare l’equipaggiamento per adattarlo alla tua storia!'},
 };
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -836,8 +836,9 @@ function renderCCCredits(cs){
   <h3 style="color:#73181F;margin-bottom:14px">Crediti Iniziali</h3>
   <div style="text-align:center;padding:28px 16px;border:2px dashed #73181F;border-radius:12px;background:rgba(115,24,31,.04)">
     ${!cs.hasRolled
-      ?`<p style="margin-bottom:18px;opacity:.8">Tira 4d6 per determinare i tuoi crediti iniziali (risultato × 10).</p>
-         <button class="btn btn-primary" style="max-width:220px;margin:0 auto" onclick="ccRollCredits()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dices-icon lucide-dices"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg> LANCIA I DADI</button>`
+      ?`<p style="margin-bottom:18px;opacity:.8">Lancia 4d6 × 10 per determinare i tuoi Crediti iniziali, poi spendili per acquistare armi, protezioni e dotazione base.</p> 
+         <button class="btn btn-primary" style="max-width:220px;margin:0 auto" onclick="ccRollCredits()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dices-icon lucide-dices"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg> LANCIA I DADI</button>
+         <p style="margin-top:18px;opacity:.8">Attenzione ai requisiti di talento per alcune armi e armature!</p>`
       :`<p style="margin-bottom:8px;opacity:.8">Il destino ha parlato!</p>
         <div style="font-size:4rem;color:#73181F;font-weight:bold;margin:10px 0">${cs.credits}</div>
         <p>Hai ottenuto <strong>${cs.credits}</strong> Crediti.</p>`}
