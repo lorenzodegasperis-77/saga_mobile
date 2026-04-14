@@ -2299,7 +2299,7 @@ function mkExit(type){
   if(type==='code_check')return{...b,code:'',label:'',to:'',elseTo:''};
   if(type==='code_grant')return{...b,code:'',label:''};
   if(type==='end')return{...b,label:"Fine dell'avventura"};
-  if(type==='encounter')return{...b,npcId:NEMICI_PREDEFINITI[0]?.id||'',label:'',to:''};
+  if(type==='encounter')return{...b,npcId:NEMICI_PREDEFINITI[0]?.id||'',label:'',to:'',defeatTo:''};
   if(type==='exp_grant')return{...b,exp:10,label:'',to:''};
   if(type==='rest')return{...b,restType:'daily',to:''};
   return b;
@@ -2478,13 +2478,19 @@ function renderParaEditor(p,adv){
     }else if(e.type==='end'){
       flds=`<div style="margin-top:6px"><input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Messaggio di fine avventura..." style="width:100%;${iS}"></div>`;
     }else if(e.type==='encounter'){
-      flds=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center">
-        <select onchange="aeUE(${idx},'npcId',this.value)" style="${sS}">
-          ${allNpcs().map(n=>`<option value="${esc(n.id)}" ${e.npcId===n.id?'selected':''}>${esc(n.nome)} (Grado ${n.grado})</option>`).join('')}
-        </select>
-        <input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Testo del bottone (es: Attacca il Coboldo)" style="flex:2;min-width:120px;${iS}">
-        <span style="color:#73181F;font-weight:bold">→</span>
-        <input value="${esc(e.to)}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID dopo" style="width:52px;font-family:monospace;${iS}" maxlength="3">
+      flds=`<div style="display:flex;flex-direction:column;gap:7px;margin-top:6px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <select onchange="aeUE(${idx},'npcId',this.value)" style="flex:2;${sS}">
+            ${allNpcs().map(n=>`<option value="${esc(n.id)}" ${e.npcId===n.id?'selected':''}>${esc(n.nome)} (Grado ${n.grado})</option>`).join('')}
+          </select>
+          <input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Testo bottone (es: Attacca il Coboldo)" style="flex:3;min-width:120px;${iS}">
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:.72rem;color:#18732D;font-weight:bold;min-width:64px">✓ Vittoria→</span>
+          <input value="${esc(e.to||'')}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID paragrafo" style="width:60px;font-family:monospace;${iS}" maxlength="3">
+          <span style="font-size:.72rem;color:#d32f2f;font-weight:bold;min-width:64px;margin-left:8px">✗ Sconfitta→</span>
+          <input value="${esc(e.defeatTo||'')}" oninput="aeUE(${idx},'defeatTo',this.value)" placeholder="ID paragrafo" style="width:60px;font-family:monospace;${iS}" maxlength="3">
+        </div>
       </div>`;
     }else if(e.type==='exp_grant'){
       flds=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center">
@@ -2749,13 +2755,18 @@ function renderAdvPlay(){
   const encountersHtml=encounters.map(e=>{
     const npc=allNpcs().find(n=>n.id===e.npcId)||allNpcs()[0];
     const btnLabel=e.label||`Affronta ${npc?.nome||'il nemico'}`;
+    const hasOutcomes = e.to || e.defeatTo;
     return`
     <div style="background:rgba(138,31,31,.07);border:1.5px solid #8a1f1f;border-radius:8px;padding:12px;margin-bottom:7px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
         <span style="font-weight:bold;color:#8a1f1f;font-size:.9rem;display:flex;align-items:center;gap:5px">${SVG.sword} Scontro</span>
         ${npc?`<span class="badge" style="background:#8a1f1f;font-size:.65rem">${esc(npc.nome)} — Grado ${npc.grado}</span>`:''}
       </div>
-      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}')" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px"style="display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
+      ${hasOutcomes?`<div style="display:flex;gap:8px;margin-bottom:8px;font-size:.74rem;opacity:.7;flex-wrap:wrap">
+        ${e.to?`<span style="color:#18732D;font-weight:bold">✓ Vittoria → §${esc(e.to)}</span>`:''}
+        ${e.defeatTo?`<span style="color:#d32f2f;font-weight:bold">✗ Sconfitta → §${esc(e.defeatTo)}</span>`:''}
+      </div>`:''}
+      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}')" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
     </div>`;
   }).join('');
 
@@ -3363,11 +3374,12 @@ const COMBAT_TUTORIAL_STEPS = [
   }
 ];
 
-function apStartCombat(npcId, toPara){
+function apStartCombat(npcId, toPara, defeatTo){
   // Set the pending NPC on the play state so openCombat picks it up
   if(S.ap){
     S.ap.pendingNpcId = npcId || (NEMICI_PREDEFINITI[0]?.id||'');
     S.ap.pendingCombatReturnPara = toPara || null;
+    S.ap.pendingCombatDefeatPara = defeatTo || null;
   }
   openCombat();
 }
@@ -3552,21 +3564,36 @@ function apDoRest(type, toPara){
   }
 }
 
+function combatEndWith(outcome){
+  // Force PC hp to signal outcome to closeCombat
+  if(S.combat){
+    if(outcome==='defeat') S.combat.pc.hp = 0;
+    else S.combat.pc.hp = Math.max(1, S.combat.pc.hp); // ensure > 0
+  }
+  closeCombat();
+}
+
 function closeCombat(){
   // sync HP/EN back to S.ap.char if we are in an adventure
   if(S.ap && S.ap.char && S.combat){
     S.ap.char.hpCurr = S.combat.pc.hp;
     S.ap.char.enCurr = S.combat.pc.en;
   }
+  const pcHp = S.combat?.pc?.hp ?? 1;
   S.combat = null;
   if(S.ap){
-    // If we came from an encounter node with a return paragraph, go there
-    const returnPara = S.ap.pendingCombatReturnPara;
+    const victoryPara  = S.ap.pendingCombatReturnPara;
+    const defeatPara   = S.ap.pendingCombatDefeatPara;
     S.ap.pendingNpcId = null;
     S.ap.pendingCombatReturnPara = null;
-    if(returnPara){
+    S.ap.pendingCombatDefeatPara = null;
+    // Choose outcome: defeat if PC hp reached 0, victory otherwise
+    const destPara = (pcHp <= 0 && defeatPara) ? defeatPara : victoryPara;
+    if(destPara){
       S.ap.history.push(S.ap.currPara);
-      S.ap.currPara = returnPara;
+      S.ap.currPara = destPara;
+      const _p=(S.ap.adv.paragraphs||[]).find(p=>p.id===destPara);
+      S.ap.currentRestExits=(_p?.exits||[]).filter(e=>e.type==='rest');
     }
     S.page='adv-play';
   } else {
@@ -3818,7 +3845,11 @@ function renderCombat(){
       <div style="color:#D8C7A1;font-weight:bold;font-size:.95rem;letter-spacing:2px">⚔ COMBATTIMENTO</div>
       <div style="display:flex;gap:8px">
         <button onclick="combatShowTutorial()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.85rem;font-weight:bold;display:flex;align-items:center;justify-content:center" title="Regole combattimento">i</button>
-        <button onclick="closeCombat()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:.78rem;font-family:inherit">✕ Chiudi</button>
+        <div style="display:flex;gap:6px">
+          ${S.ap?.pendingCombatReturnPara?`<button onclick="combatEndWith('victory')" style="background:#18732D;border:none;color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.72rem;font-family:inherit;min-height:30px">✓ Vittoria</button>`:''}
+          ${S.ap?.pendingCombatDefeatPara?`<button onclick="combatEndWith('defeat')" style="background:#c0392b;border:none;color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.72rem;font-family:inherit;min-height:30px">✗ Sconfitta</button>`:''}
+          <button onclick="closeCombat()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.78rem;font-family:inherit">✕ Chiudi</button>
+        </div>
       </div>
     </div>
     <div style="flex:1;max-width:720px;width:100%;margin:0 auto;padding:18px 14px">

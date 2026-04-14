@@ -172,6 +172,19 @@ input,select,textarea{font-size:16px !important;}
 <audio id="bgMusic" src="music/Whisper in the Shadows_1.mp3" loop></audio>
 <script>
 'use strict';
+// ─── SVG ICONS ────────────────────────────────────────────────────────────────
+const SVG = {
+  rest:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 0 4H7"/><path d="M2 12h20"/><path d="M7 16h15"/></svg>',
+  moon:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
+  exp:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  npc:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 19a6 6 0 0 0-12 0"/><circle cx="8" cy="9" r="4"/><path d="M22 19a6 6 0 0 0-6-6 4 4 0 0 0 0-8"/></svg>',
+  sword:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg>',
+  plus:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
+  trash:   '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>',
+  edit:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>',
+  copy:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>',
+};
+
 // ─── UTILS ────────────────────────────────────────────────────────────────────
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function genId(){return 'PG-'+Math.random().toString(36).substr(2,9).toUpperCase();}
@@ -592,6 +605,8 @@ let S={
   adventures:[],ae:null,ap:null,
   // combat
   combat:null,
+  // npc database
+  npcs:[],npcEdit:null,
 };
 
 function initCC(){
@@ -644,6 +659,7 @@ function persist(){
     _sset('saga-sessions',JSON.stringify(S.sessions));
     _sset('saga-settings',JSON.stringify(S.settings));
     _sset('saga-adventures',JSON.stringify(S.adventures));
+    _sset('saga-npcs',JSON.stringify(S.npcs));
   }catch(e){}
 }
 function load(){
@@ -652,6 +668,7 @@ function load(){
     const s=_sget('saga-sessions');if(s)S.sessions=JSON.parse(s);
     const st=_sget('saga-settings');if(st)S.settings=JSON.parse(st);
     const av=_sget('saga-adventures');if(av)S.adventures=JSON.parse(av);
+    const nv=_sget('saga-npcs');if(nv)S.npcs=JSON.parse(nv);
   }catch(e){}
   S.loaded=true;
 }
@@ -701,6 +718,8 @@ function render(){
   else if(S.page==='adv-char-select')html=renderAdvCharSelect();
   else if(S.page==='adv-play')html=renderAdvPlay();
   else if(S.page==='combat')html=renderCombat();
+  else if(S.page==='npc-db')html=renderNpcDb();
+  else if(S.page==='npc-edit')html=renderNpcEdit();
 
   app.innerHTML=html;
 
@@ -740,6 +759,7 @@ function renderHome(){
     <div class="home-subtitle" style="color:#73181F;font-style:italic;margin-bottom:32px">Avventure Interattive</div>
     <div class="menu-c">
       <button class="btn btn-primary" onclick="nav('adventures')">► Nuova Avventura</button>
+      <button class="btn btn-secondary" onclick="nav('npc-db')" style="display:flex;align-items:center;justify-content:center;gap:8px">${SVG.npc} Database PNG</button>
       <button class="btn btn-secondary" onclick="nav('characters')"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg> I miei personaggi</button>
       <button class="btn btn-secondary" onclick="nav('adv-list')"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg> Scrivi avventura</button>
       <button class="btn btn-secondary" onclick="alert('Funzione in arrivo — scarica avventure create dalla community!')"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-from-line-icon lucide-arrow-down-from-line"><path d="M19 3H5"/><path d="M12 21V7"/><path d="m6 15 6 6 6-6"/></svg> Scarica Avventura</button>
@@ -768,7 +788,7 @@ function renderHome(){
     </button>
   `).join('')}
 </div>
-    <div style="font-size:.78rem;opacity:.55;color:#73181F;margin-top:14px">Versione 1.1</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:14px"><div style="font-size:.78rem;opacity:.55;color:#73181F">Versione 1.2</div><button onclick="showOnboardingManual()" style="background:transparent;border:1px solid rgba(115,24,31,.4);color:#73181F;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:.78rem;font-weight:bold;font-family:inherit;display:flex;align-items:center;justify-content:center" title="Tutorial">?</button></div>
   </div>`;
 }
 
@@ -2246,7 +2266,7 @@ load();
 
 // Splash
 const splashEl=document.getElementById('splash');
-setTimeout(()=>splashEl.classList.add('fade'),1800);
+setTimeout(()=>{splashEl.classList.add('fade');setTimeout(showOnboarding,600);},1800);
 setTimeout(()=>{
   splashEl.style.display='none';
   applyMusic();
@@ -2460,7 +2480,7 @@ function renderParaEditor(p,adv){
     }else if(e.type==='encounter'){
       flds=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center">
         <select onchange="aeUE(${idx},'npcId',this.value)" style="${sS}">
-          ${NEMICI_PREDEFINITI.map(n=>`<option value="${esc(n.id)}" ${e.npcId===n.id?'selected':''}>${esc(n.nome)} (Grado ${n.grado})</option>`).join('')}
+          ${allNpcs().map(n=>`<option value="${esc(n.id)}" ${e.npcId===n.id?'selected':''}>${esc(n.nome)} (Grado ${n.grado})</option>`).join('')}
         </select>
         <input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Testo del bottone (es: Attacca il Coboldo)" style="flex:2;min-width:120px;${iS}">
         <span style="color:#73181F;font-weight:bold">→</span>
@@ -2507,7 +2527,7 @@ function renderParaEditor(p,adv){
     <div class="sec-hdr">USCITE (${(p.exits||[]).length})</div>
     ${exitsHtml}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
-      ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['talent_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Talento'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg> Fine'],['encounter','⚔ Scontro'],['exp_grant','⭐ Esperienza'],['rest','🛌 Riposo']].map(([t,l])=>`
+      ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['talent_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Talento'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg> Fine'],['encounter','⚔ Scontro'],['exp_grant',`${SVG.exp} Esperienza`],['rest',`${SVG.rest} Riposo`]].map(([t,l])=>`
       <button onclick="aeAE('${t}')" style="padding:7px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
     </div>
   </div>`;
@@ -2727,15 +2747,15 @@ function renderAdvPlay(){
   </div>`).join('');
 
   const encountersHtml=encounters.map(e=>{
-    const npc=NEMICI_PREDEFINITI.find(n=>n.id===e.npcId)||NEMICI_PREDEFINITI[0];
+    const npc=allNpcs().find(n=>n.id===e.npcId)||allNpcs()[0];
     const btnLabel=e.label||`Affronta ${npc?.nome||'il nemico'}`;
     return`
     <div style="background:rgba(138,31,31,.07);border:1.5px solid #8a1f1f;border-radius:8px;padding:12px;margin-bottom:7px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
-        <span style="font-weight:bold;color:#8a1f1f;font-size:.9rem">⚔ Scontro</span>
+        <span style="font-weight:bold;color:#8a1f1f;font-size:.9rem;display:flex;align-items:center;gap:5px">${SVG.sword} Scontro</span>
         ${npc?`<span class="badge" style="background:#8a1f1f;font-size:.65rem">${esc(npc.nome)} — Grado ${npc.grado}</span>`:''}
       </div>
-      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}')" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px">⚔ ${esc(btnLabel)}</button>
+      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}')" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px"style="display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
     </div>`;
   }).join('');
 
@@ -2744,10 +2764,10 @@ function renderAdvPlay(){
     return`
     <div style="background:rgba(26,74,122,.07);border:1.5px solid #1a4a7a;border-radius:8px;padding:12px;margin-bottom:7px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
-        <span style="font-weight:bold;color:#1a4a7a;font-size:.9rem">⭐ ${esc(e.label||'Esperienza guadagnata')}</span>
+        <span style="font-weight:bold;color:#1a4a7a;font-size:.9rem;display:flex;align-items:center;gap:6px">${SVG.exp} ${esc(e.label||'Esperienza guadagnata')}</span>
         <span class="badge" style="background:#1a4a7a">+${expVal} EXP</span>
       </div>
-      <button onclick="apGrantExp(${expVal},'${e.to||''}')" class="btn btn-primary" style="background:#1a4a7a;border-color:#1a4a7a;width:100%;font-size:.88rem;min-height:40px">⭐ Raccogli ${expVal} EXP</button>
+      <button onclick="apGrantExp(${expVal},'${e.to||''}')" class="btn btn-primary" style="background:#1a4a7a;border-color:#1a4a7a;width:100%;font-size:.88rem;min-height:40px"style="display:flex;align-items:center;justify-content:center;gap:6px">${SVG.exp} Raccogli ${expVal} EXP</button>
     </div>`;
   }).join('');
 
@@ -2766,8 +2786,8 @@ function renderAdvPlay(){
         ${codes.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;max-width:220px;justify-content:flex-end">${codes.map(co=>`<span style="background:#18732D;color:white;font-size:.64rem;padding:2px 8px;border-radius:12px;font-family:monospace;font-weight:bold;cursor:pointer" onclick="apRemoveCode('${co}')" title="Clicca per rimuovere">${esc(co)} ×</span>`).join('')}</div>`:''}
         <button onclick="S.ap.showCharSheet=!S.ap.showCharSheet;render()" title="Scheda personaggio" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
         ${history.length?`<button onclick="apBack()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">&#10094;</button>`:''}
-        <button onclick="openCombat()" style="background:rgba(115,24,31,.25);border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit" title="Avvia combattimento">⚔</button>
-        ${restExits.length?`<button onclick="openRestModal()" style="background:rgba(74,122,26,.25);border:1px solid #4a7a1a;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit" title="Riposo">🛌</button>`:''}
+        <button onclick="openCombat()" style="background:rgba(115,24,31,.25);border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit" title="Avvia combattimento" style="display:flex;align-items:center;justify-content:center">${SVG.sword}</button>
+        ${restExits.length?`<button onclick="openRestModal()" style="background:rgba(74,122,26,.25);border:1px solid #4a7a1a;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit" title="Riposo" style="display:flex;align-items:center;justify-content:center">${SVG.rest}</button>`:''}
         <button onclick="if(confirm('Abbandonare la partita?'))nav('adv-list')" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">Abbandona</button>
       </div>
     </div>
@@ -3372,7 +3392,7 @@ function openCombat(){
   const tutorialKey = S.ap ? 'saga-combat-tut-' + (S.ap.charId||'') + '-' + (S.ap.adv?.id||'') : null;
   const firstTime = tutorialKey && !_sget(tutorialKey);
   const pendingId = S.ap?.pendingNpcId;
-  const npcTemplate = (pendingId && NEMICI_PREDEFINITI.find(n=>n.id===pendingId)) || NEMICI_PREDEFINITI[0];
+  const npcTemplate = (pendingId && allNpcs().find(n=>n.id===pendingId)) || allNpcs()[0];
   const defaultNpc = _buildNpcFromTemplate(npcTemplate);
   S.combat = {
     pc: char ? {
@@ -3411,7 +3431,7 @@ function openCombat(){
 }
 
 function combatSelectNpc(id){
-  const t = NEMICI_PREDEFINITI.find(n=>n.id===id);
+  const t = allNpcs().find(n=>n.id===id);
   if(!t || !S.combat) return;
   S.combat.npc = _buildNpcFromTemplate(t);
   render();
@@ -3456,7 +3476,7 @@ function openRestModal(){
     const dailyExit = exits.find(e=>e.restType==='daily');
     dailyHtml = `
     <div style="border:1.5px solid ${canDaily?'#4a7a1a':'#ccc'};border-radius:8px;padding:14px;margin-bottom:10px;opacity:${canDaily?1:.6}">
-      <div style="font-weight:bold;color:#4a7a1a;margin-bottom:6px;font-size:.9rem">🛌 Riposo Giornaliero</div>
+      <div style="font-weight:bold;color:#4a7a1a;margin-bottom:6px;font-size:.9rem;display:flex;align-items:center;gap:6px">${SVG.rest} Riposo Giornaliero</div>
       <div style="font-size:.78rem;opacity:.65;margin-bottom:8px">Richiede 1 Razione — recupera metà Salute ed Energia</div>
       ${statRow('Salute', ch.hpCurr, ch.hpMax, canDaily?dailyHPGain:0)}
       ${statRow('Energia', ch.enCurr, ch.enMax, canDaily?dailyENGain:0)}
@@ -3473,7 +3493,7 @@ function openRestModal(){
     const prolExit = exits.find(e=>e.restType==='prolonged');
     prolongedHtml = `
     <div style="border:1.5px solid ${canProl?'#18732D':'#ccc'};border-radius:8px;padding:14px;margin-bottom:10px;opacity:${canProl?1:.6}">
-      <div style="font-weight:bold;color:#18732D;margin-bottom:6px;font-size:.9rem">🌙 Riposo Prolungato</div>
+      <div style="font-weight:bold;color:#18732D;margin-bottom:6px;font-size:.9rem;display:flex;align-items:center;gap:6px">${SVG.moon} Riposo Prolungato</div>
       <div style="font-size:.78rem;opacity:.65;margin-bottom:8px">Richiede 2 Razioni — recupero completo</div>
       ${statRow('Salute', ch.hpCurr, ch.hpMax, canProl?prolHPGain:0)}
       ${statRow('Energia', ch.enCurr, ch.enMax, canProl?prolENGain:0)}
@@ -3487,7 +3507,7 @@ function openRestModal(){
   d.innerHTML = `
     <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #4a7a1a;border-radius:12px;padding:22px 20px;width:100%;max-width:460px;max-height:90svh;overflow-y:auto">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #4a7a1a">
-        <h3 style="color:#4a7a1a;margin:0;font-size:1rem;letter-spacing:2px">🛌 RIPOSO</h3>
+        <h3 style="color:#4a7a1a;margin:0;font-size:1rem;letter-spacing:2px;display:flex;align-items:center;gap:8px">${SVG.rest} RIPOSO</h3>
         <button onclick="closeRestModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#4a7a1a;padding:2px 8px">✕</button>
       </div>
       ${dailyHtml}${prolongedHtml}
@@ -3782,7 +3802,7 @@ function renderCombat(){
         <div style="margin-top:10px">
           <div style="font-size:.6rem;opacity:.5;letter-spacing:1px;margin-bottom:4px">SCEGLI NEMICO</div>
           <select onchange="combatSelectNpc(this.value)" style="width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid #8a3000;padding:8px 7px;font-family:'Times New Roman',serif;font-size:.84rem;color:#1a1007;outline:none;cursor:pointer">
-            ${NEMICI_PREDEFINITI.map(n=>`<option value="${esc(n.id)}" ${data.id===n.id?'selected':''}>${esc(n.nome)} — Grado ${n.grado}</option>`).join('')}
+            ${allNpcs().map(n=>`<option value="${esc(n.id)}" ${data.id===n.id?'selected':''}>${esc(n.nome)} — Grado ${n.grado}</option>`).join('')}
           </select>
         </div>
       </div>`;
@@ -3829,6 +3849,411 @@ function renderCombat(){
     </div>
   </div>`;
 }
+
+// ─── NPC DATABASE ─────────────────────────────────────────────────────────────
+function mkNpc(){
+  return {
+    id:'NPC-'+Math.random().toString(36).substr(2,9).toUpperCase(),
+    nome:'Nuovo PNG', grado:1,
+    vig:5, ist:5, men:5,
+    hp:10, hpMax:10,
+    en:0, enMax:0,
+    dmg:2, prot:0,
+    note:'',
+    abilita:[],
+    bersaglio:[],
+    ambientazioni:[], // [] = tutte
+  };
+}
+
+function npcNew(){
+  const n=mkNpc();
+  S.npcs.push(n);
+  persist();
+  npcOpenEdit(n.id);
+}
+
+function npcOpenEdit(id){
+  const n=S.npcs.find(x=>x.id===id);
+  if(!n)return;
+  S.npcEdit=JSON.parse(JSON.stringify(n));
+  S.page='npc-edit';S.params={};window.scrollTo(0,0);render();
+}
+
+function npcSaveEdit(){
+  if(!S.npcEdit)return;
+  const idx=S.npcs.findIndex(x=>x.id===S.npcEdit.id);
+  if(idx>=0)S.npcs[idx]=JSON.parse(JSON.stringify(S.npcEdit));
+  else S.npcs.push(JSON.parse(JSON.stringify(S.npcEdit)));
+  persist();
+  nav('npc-db');
+}
+
+function npcDelete(id){
+  if(!confirm('Eliminare questo PNG dal database?'))return;
+  S.npcs=S.npcs.filter(x=>x.id!==id);
+  persist();render();
+}
+
+function npcDuplicate(id){
+  const n=S.npcs.find(x=>x.id===id);
+  if(!n)return;
+  const copy=JSON.parse(JSON.stringify(n));
+  copy.id='NPC-'+Math.random().toString(36).substr(2,9).toUpperCase();
+  copy.nome=n.nome+' (copia)';
+  S.npcs.push(copy);
+  persist();render();
+}
+
+function npcEditField(field,val){
+  if(!S.npcEdit)return;
+  if(['vig','ist','men','hp','hpMax','en','enMax','dmg','prot','grado'].includes(field)){
+    S.npcEdit[field]=Math.max(0,parseInt(val)||0);
+    // sync hp/en max automatically if user edits the stat
+    if(field==='hpMax' && S.npcEdit.hp>S.npcEdit.hpMax) S.npcEdit.hp=S.npcEdit.hpMax;
+    if(field==='enMax' && S.npcEdit.en>S.npcEdit.enMax) S.npcEdit.en=S.npcEdit.enMax;
+  } else {
+    S.npcEdit[field]=val;
+  }
+}
+
+function npcEditAddAbility(){
+  if(!S.npcEdit)return;
+  S.npcEdit.abilita.push({ability_name:'Nuova abilità',ability_description:'',ability_cost:'2 EN'});
+  render();
+}
+
+function npcEditUpdateAbility(idx,field,val){
+  if(!S.npcEdit||!S.npcEdit.abilita[idx])return;
+  S.npcEdit.abilita[idx][field]=val;
+}
+
+function npcEditRemoveAbility(idx){
+  if(!S.npcEdit)return;
+  S.npcEdit.abilita.splice(idx,1);
+  render();
+}
+
+function npcEditAddTarget(){
+  if(!S.npcEdit)return;
+  S.npcEdit.bersaglio.push('');
+  render();
+}
+
+function npcEditUpdateTarget(idx,val){
+  if(!S.npcEdit)return;
+  S.npcEdit.bersaglio[idx]=val;
+}
+
+function npcEditRemoveTarget(idx){
+  if(!S.npcEdit)return;
+  S.npcEdit.bersaglio.splice(idx,1);
+  render();
+}
+
+function npcExport(id){
+  const n=S.npcs.find(x=>x.id===id);
+  if(!n)return;
+  const blob=new Blob([JSON.stringify(n,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`${n.nome.replace(/\W+/g,'_')}.npc.json`;
+  a.click();URL.revokeObjectURL(url);
+}
+
+function npcImport(ev){
+  const file=ev.target.files[0];
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      // Accept single NPC or array
+      const list=Array.isArray(data)?data:[data];
+      let added=0;
+      for(const n of list){
+        if(!n.nome||!n.vig)continue;
+        // Generate fresh ID to avoid collision
+        n.id='NPC-'+Math.random().toString(36).substr(2,9).toUpperCase();
+        if(!n.abilita)n.abilita=[];
+        if(!n.bersaglio)n.bersaglio=[];
+        if(!n.hpMax)n.hpMax=n.hp||10;
+        if(!n.enMax)n.enMax=n.en||0;
+        S.npcs.push(n);
+        added++;
+      }
+      persist();render();
+      alert(`${added} PNG importat${added===1?'o':'i'} con successo.`);
+    }catch(err){alert('File non valido: '+err.message);}
+  };
+  r.readAsText(file);
+  ev.target.value='';
+}
+
+// Build a NEMICI_PREDEFINITI-compatible object from a user NPC (for combat)
+function npcToTemplate(n){
+  return{
+    id:n.id, nome:n.nome, grado:n.grado||1,
+    vig:n.vig||5, ist:n.ist||5, men:n.men||5,
+    hp:n.hpMax||10, hpMax:n.hpMax||10,
+    en:n.enMax||0, enMax:n.enMax||0,
+    dmg:n.dmg||1, prot:n.prot||0,
+    bersaglio:n.bersaglio||[],
+    abilita:n.abilita||[],
+  };
+}
+
+// Get the full available NPC list (predefined + user DB)
+function allNpcs(){
+  return [...NEMICI_PREDEFINITI, ...S.npcs.map(npcToTemplate)];
+}
+
+function renderNpcDb(){
+  const iS='background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:7px 9px;font-family:\'Times New Roman\',serif;font-size:.88rem;color:#1a1007;outline:none;width:100%';
+  const npcs=S.npcs;
+  const builtinCards=NEMICI_PREDEFINITI.map(n=>`
+    <div style="background:rgba(196,176,138,.25);border:1.5px solid #73181F;border-radius:8px;padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div>
+          <span style="font-weight:bold;font-size:.92rem">${esc(n.nome)}</span>
+          <span style="font-size:.7rem;opacity:.5;margin-left:6px">Grado ${n.grado} · Predefinito</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.78rem;opacity:.75">
+        <span>VIG ${n.vig}</span><span>IST ${n.ist}</span><span>MEN ${n.men}</span>
+        <span>❤ ${n.hpMax}</span><span>⚡ ${n.enMax}</span><span>DMG ${n.dmg}</span><span>PROT ${n.prot}</span>
+      </div>
+    </div>`).join('');
+
+  const userCards=npcs.length===0
+    ?'<p style="font-size:.84rem;opacity:.5;font-style:italic;text-align:center;padding:14px 0">Nessun PNG nel database. Creane uno!</p>'
+    :npcs.map(n=>`
+    <div style="background:rgba(196,176,138,.2);border:2px solid #73181F;border-radius:8px;padding:12px 14px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div>
+          <span style="font-weight:bold;font-size:.92rem">${esc(n.nome)}</span>
+          <span class="badge" style="font-size:.63rem;margin-left:6px">Grado ${n.grado||1}</span>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0">
+          <button onclick="npcDuplicate('${n.id}')" title="Duplica" style="background:transparent;border:1px solid #73181F;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#73181F">${SVG.copy}</button>
+          <button onclick="npcExport('${n.id}')" title="Esporta JSON" style="background:transparent;border:1px solid #73181F;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#73181F">↓</button>
+          <button onclick="npcOpenEdit('${n.id}')" title="Modifica" style="background:#73181F;border:none;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white">${SVG.edit}</button>
+          <button onclick="npcDelete('${n.id}')" title="Elimina" style="background:transparent;border:1px solid #d32f2f;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#d32f2f">${SVG.trash}</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.78rem;opacity:.75">
+        <span>VIG ${n.vig}</span><span>IST ${n.ist}</span><span>MEN ${n.men}</span>
+        <span>❤ ${n.hpMax}</span><span>⚡ ${n.enMax}</span><span>DMG ${n.dmg}</span><span>PROT ${n.prot}</span>
+        ${n.abilita?.length?`<span style="color:#73181F">${n.abilita.length} abilità</span>`:''}
+      </div>
+      ${n.note?`<div style="font-size:.76rem;opacity:.6;margin-top:5px;font-style:italic">${esc(n.note)}</div>`:''}
+    </div>`).join('');
+
+  return`
+  <div class="frame sh-frame" style="width:min(640px,95vw);text-align:left;padding:24px 28px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #73181F">
+      <span style="color:#73181F">${SVG.npc.replace('16','32').replace('16','32')}</span>
+      <div>
+        <h2 style="font-size:1.4rem;letter-spacing:3px;margin:0">DATABASE PNG</h2>
+        <div style="color:#73181F;font-style:italic;font-size:.85rem">Personaggi Non Giocanti</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="npcNew()" style="flex:2;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.plus} Nuovo PNG</button>
+      <label class="btn btn-secondary" style="flex:1;min-width:100px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px">↑ Importa<input type="file" accept=".json" onchange="npcImport(event)" style="display:none"></label>
+    </div>
+
+    <div style="font-size:.7rem;color:#73181F;letter-spacing:2px;font-weight:bold;margin-bottom:8px">PREDEFINITI (${NEMICI_PREDEFINITI.length})</div>
+    ${builtinCards}
+
+    <div style="font-size:.7rem;color:#73181F;letter-spacing:2px;font-weight:bold;margin:14px 0 8px">PERSONALI (${npcs.length})</div>
+    ${userCards}
+
+    <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:14px">❮ TORNA AL MENU</button>
+  </div>`;
+}
+
+function renderNpcEdit(){
+  const n=S.npcEdit;
+  if(!n)return`<div class="frame">Errore.<br><button class="btn btn-secondary" onclick="nav('npc-db')">Indietro</button></div>`;
+
+  const iS='background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:8px 9px;font-family:\'Times New Roman\',serif;font-size:.9rem;color:#1a1007;outline:none;width:100%';
+  const numS=iS.replace('width:100%','width:100%;text-align:center');
+
+  const statBlock=(label,field,min=0,max=30)=>`
+    <div style="flex:1;min-width:70px">
+      <div style="font-size:.65rem;letter-spacing:1px;opacity:.6;margin-bottom:3px">${label}</div>
+      <input type="number" value="${n[field]||0}" min="${min}" max="${max}" oninput="npcEditField('${field}',this.value)" style="${numS}">
+    </div>`;
+
+  const abilityRows=(n.abilita||[]).map((a,i)=>`
+    <div style="background:rgba(255,255,255,.3);border:1.5px solid rgba(115,24,31,.25);border-radius:6px;padding:10px;margin-bottom:7px">
+      <div style="display:flex;gap:6px;margin-bottom:6px">
+        <input value="${esc(a.ability_name)}" oninput="npcEditUpdateAbility(${i},'ability_name',this.value)" placeholder="Nome abilità" style="flex:2;${iS}">
+        <input value="${esc(a.ability_cost||'')}" oninput="npcEditUpdateAbility(${i},'ability_cost',this.value)" placeholder="Costo (es. 2 EN)" style="flex:1;min-width:70px;${iS}">
+        <button onclick="npcEditRemoveAbility(${i})" style="background:transparent;border:1px solid #d32f2f;color:#d32f2f;border-radius:5px;width:30px;height:34px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">${SVG.trash}</button>
+      </div>
+      <textarea oninput="npcEditUpdateAbility(${i},'ability_description',this.value)" placeholder="Descrizione dell\'abilità..." style="width:100%;min-height:54px;background:rgba(0,0,0,.03);border:1px solid rgba(115,24,31,.2);border-radius:4px;padding:7px;font-family:\'Times New Roman\',serif;font-size:.82rem;color:#1a1007;resize:vertical;outline:none">${esc(a.ability_description||'')}</textarea>
+    </div>`).join('');
+
+  const targetRows=(n.bersaglio||[]).map((b,i)=>`
+    <div style="display:flex;gap:6px;margin-bottom:5px;align-items:center">
+      <span style="opacity:.4;font-size:.8rem;min-width:16px">${['①','②','③'][i]||'•'}</span>
+      <input value="${esc(b)}" oninput="npcEditUpdateTarget(${i},this.value)" placeholder="Criterio di bersaglio..." style="flex:1;${iS}">
+      <button onclick="npcEditRemoveTarget(${i})" style="background:transparent;border:1px solid #d32f2f;color:#d32f2f;border-radius:5px;width:30px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">${SVG.trash}</button>
+    </div>`).join('');
+
+  return`
+  <div class="frame sh-frame" style="width:min(640px,95vw);text-align:left;padding:22px 26px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid #73181F">
+      <span style="color:#73181F">${SVG.npc.replace('16','28').replace('16','28')}</span>
+      <div style="flex:1">
+        <h2 style="font-size:1.3rem;letter-spacing:3px;margin:0">MODIFICA PNG</h2>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary" onclick="nav('npc-db')" style="min-width:80px;min-height:38px;font-size:.82rem">Annulla</button>
+        <button class="btn btn-primary" onclick="npcSaveEdit()" style="min-width:80px;min-height:38px;font-size:.82rem">Salva</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div class="sec-hdr" style="margin-top:0">IDENTITÀ</div>
+      <input value="${esc(n.nome)}" oninput="npcEditField('nome',this.value)" placeholder="Nome del PNG" style="${iS};margin-bottom:8px;font-size:1rem;font-weight:bold">
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="flex:1">${statBlock('GRADO','grado',1,10)}</div>
+        <div style="flex:3">
+          <div style="font-size:.65rem;letter-spacing:1px;opacity:.6;margin-bottom:3px">NOTE</div>
+          <input value="${esc(n.note||'')}" oninput="npcEditField('note',this.value)" placeholder="Note libere sull\'incontro..." style="${iS}">
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div class="sec-hdr">CARATTERISTICHE</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${statBlock('VIG','vig')}
+        ${statBlock('IST','ist')}
+        ${statBlock('MEN','men')}
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div class="sec-hdr">COMBATTIMENTO</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${statBlock('SALUTE MAX','hpMax',1)}
+        ${statBlock('ENERGIA MAX','enMax',0)}
+        ${statBlock('DANNO','dmg',0)}
+        ${statBlock('PROTEZIONE','prot',0)}
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div class="sec-hdr" style="justify-content:space-between">
+        <span>BERSAGLIO</span>
+        <button onclick="npcEditAddTarget()" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:.78rem;display:flex;align-items:center;gap:4px;font-family:inherit">${SVG.plus} Aggiungi</button>
+      </div>
+      ${targetRows||'<p style="font-size:.8rem;opacity:.5;font-style:italic">Nessun criterio definito.</p>'}
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div class="sec-hdr" style="justify-content:space-between">
+        <span>ABILITÀ (${(n.abilita||[]).length})</span>
+        <button onclick="npcEditAddAbility()" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:.78rem;display:flex;align-items:center;gap:4px;font-family:inherit">${SVG.plus} Aggiungi</button>
+      </div>
+      ${abilityRows||'<p style="font-size:.8rem;opacity:.5;font-style:italic">Nessuna abilità.</p>'}
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-secondary" onclick="nav('npc-db')" style="flex:1">Annulla</button>
+      <button class="btn btn-primary" onclick="npcSaveEdit()" style="flex:2">Salva PNG</button>
+    </div>
+  </div>`;
+}
+
+
+// ─── ONBOARDING TUTORIAL ──────────────────────────────────────────────────────
+const ONBOARDING_STEPS = [
+  {
+    title: 'Benvenuto in SAGA',
+    icon: 'M12 2L5 6v7c0 5 3.5 9.7 7 11 3.5-1.3 7-6 7-11V6l-7-4z',
+    text: 'SAGA — Avventure Interattive è un\'app per giocare e creare avventure nel sistema di gioco di ruolo SAGA. In pochi passi imparerai a creare un personaggio, esplorare un\'avventura e affrontare i combattimenti.',
+  },
+  {
+    title: 'Crea il tuo personaggio',
+    icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+    text: 'Ogni personaggio ha tre caratteristiche fondamentali:\n<br><br>• <strong>VIG (Vigore)</strong> — forza fisica e resistenza al danno<br>• <strong>IST (Istinto)</strong> — agilità, riflessi e percezione<br>• <strong>MEN (Mente)</strong> — intelligenza, volontà e carisma\n<br><br>Vai su <em>I miei personaggi → Nuovo personaggio</em> per iniziare.',
+  },
+  {
+    title: 'Prove caratteristica',
+    icon: 'M5 12h14M12 5l7 7-7 7',
+    text: 'Ogni azione difficile richiede una <strong>prova caratteristica</strong>: lancia 2 dadi a 6 facce (2d6) e confronta il totale con la caratteristica rilevante.\n<br><br>• Risultato <strong>≤ caratteristica</strong> → Successo ✓<br>• Risultato <strong>&gt; caratteristica</strong> → Fallimento ✗\n<br><br>Con <strong>doppio 1</strong> ottieni un Successo Critico — in combattimento il danno è raddoppiato.',
+  },
+  {
+    title: 'Avventure e paragrafi',
+    icon: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
+    text: 'Le avventure sono racconti interattivi divisi in <strong>paragrafi</strong>. Ad ogni paragrafo puoi:\n<br><br>• Fare una <strong>scelta</strong> narrativa<br>• Tentare una <strong>prova caratteristica</strong><br>• Affrontare uno <strong>scontro</strong> contro un PNG<br>• <strong>Riposare</strong> per recuperare forze<br>• Guadagnare <strong>Esperienza</strong>\n<br><br>Puoi anche creare le tue avventure con l\'editor integrato!',
+  },
+  {
+    title: 'Combattimento',
+    icon: 'M14.5 17.5 3 6 3 3 6 3 17.5 14.5M13 19l6-6M16 16l4 4M19 21l2-2',
+    text: 'Il combattimento si divide in <strong>round</strong> (tutti agiscono) e <strong>turni</strong> (il singolo PG o PNG).\n<br><br>• Ogni PG ha <strong>2 azioni</strong> per turno, ogni PNG <strong>1 azione</strong><br>• Per attaccare: prova di <strong>VIG</strong> (mischia) o <strong>IST</strong> (distanza)<br>• Il danno inflitto è ridotto dalla <strong>Protezione</strong> del bersaglio<br><br>Durante le avventure usa il pulsante ⚔ per accedere alla schermata di combattimento.',
+  },
+  {
+    title: 'Pronto all\'avventura!',
+    icon: 'M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6z',
+    text: 'Sei pronto per iniziare!\n<br><br><strong>Da qui puoi:</strong><br>• Creare il tuo primo personaggio<br>• Esplorare le avventure disponibili<br>• Creare un\'avventura personalizzata<br>• Gestire il database dei PNG\n<br><br>Buona avventura!',
+  },
+];
+
+function showOnboarding(){
+  if(_sget('saga-onboarding-done')==='1') return;
+  _showOnboardingStep(0);
+}
+
+function _showOnboardingStep(step){
+  const existing = document.getElementById('onboarding-overlay');
+  if(existing) existing.remove();
+
+  const steps = ONBOARDING_STEPS;
+  if(step < 0 || step >= steps.length) {
+    _sset('saga-onboarding-done','1');
+    return;
+  }
+  const s = steps[step];
+  const isLast = step === steps.length - 1;
+  const total = steps.length;
+
+  const d = document.createElement('div');
+  d.id = 'onboarding-overlay';
+  d.style.cssText = 'position:fixed;inset:0;background:rgba(12,8,5,.88);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:\'Times New Roman\',Georgia,serif';
+
+  const dotsHtml = steps.map((_,i)=>`<div style="width:${i===step?20:8}px;height:8px;border-radius:4px;transition:width .3s;background:${i===step?'#73181F':'rgba(115,24,31,.3)'}"></div>`).join('');
+
+  d.innerHTML = `
+    <div style="background:#D8C7A1;border:2px solid #73181F;border-radius:14px;padding:28px 24px;max-width:420px;width:100%;position:relative">
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(115,24,31,.1);border:2px solid #73181F;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${s.icon}"/></svg>
+        </div>
+        <h2 style="color:#73181F;margin:0;font-size:1.15rem;letter-spacing:2px">${s.title}</h2>
+        <div style="font-size:.72rem;opacity:.45;margin-top:4px">${step+1} / ${total}</div>
+      </div>
+      <p style="font-size:.88rem;line-height:1.7;margin:0 0 20px;text-align:center">${s.text}</p>
+      <div style="display:flex;justify-content:center;gap:6px;margin-bottom:18px">${dotsHtml}</div>
+      <div style="display:flex;gap:10px">
+        <button onclick="_sset('saga-onboarding-done','1');document.getElementById('onboarding-overlay').remove()" style="flex:1;padding:10px;border:1.5px solid rgba(115,24,31,.4);border-radius:8px;background:transparent;color:#1a1007;cursor:pointer;font-family:inherit;font-size:.82rem;min-height:42px">Salta</button>
+        <button onclick="_showOnboardingStep(${step+1})" style="flex:2;padding:10px;border:none;border-radius:8px;background:#73181F;color:white;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.9rem;min-height:42px">${isLast?'Inizia! ►':'Avanti ►'}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(d);
+}
+
+function showOnboardingManual(){
+  document.getElementById('onboarding-overlay')?.remove();
+  _showOnboardingStep(0);
+}
+
 
 </script>
 <!-- CREDITS OVERLAY -->
