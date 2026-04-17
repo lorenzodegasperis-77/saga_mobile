@@ -174,6 +174,9 @@ input,select,textarea{font-size:16px !important;}
 'use strict';
 // ─── SVG ICONS ────────────────────────────────────────────────────────────────
 const SVG = {
+  dice:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="10" width="12" height="12" rx="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg>',
+  sword2:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg>',
+  shield:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
   rest:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 0 4H7"/><path d="M2 12h20"/><path d="M7 16h15"/></svg>',
   moon:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
   exp:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
@@ -740,22 +743,16 @@ function renderHome(){
   const sessionRows=S.sessions.length===0
     ?`<p style="font-size:.84rem;opacity:.55;font-style:italic;text-align:center;padding:10px 0">Nessuna partita in corso.</p>`
     :S.sessions.map(s=>`
-      <div style="padding:8px 4px;border-bottom:1px solid rgba(0,0,0,.07);border-radius:4px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
-          <div onclick="apResumeSession('${s.sessId}')" style="flex:1;cursor:pointer" onmouseover="this.parentElement.parentElement.style.background='rgba(115,24,31,.06)'" onmouseout="this.parentElement.parentElement.style.background=''">
-            <span style="font-weight:bold;color:#73181F;font-size:.9rem">${esc(s.advTitle||s.adventureName||'—')}</span>
-            <span style="opacity:.5;font-size:.72rem;margin-left:6px">§${esc(s.currPara||s.currentParagraph||'—')}</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <span class="badge" style="font-size:.65rem">Lv.${esc(s.charLevel)}</span>
-            <button onclick="event.stopPropagation();deleteSession('${s.sessId}')" title="Elimina partita" style="background:transparent;border:1px solid rgba(115,24,31,.4);color:#73181F;border-radius:5px;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">✕</button>
-          </div>
+      <div onclick="apResumeSession('${s.sessId}')" style="padding:7px 4px;border-bottom:1px solid rgba(0,0,0,.07);border-radius:4px;cursor:pointer;display:flex;align-items:center;gap:8px;flex-wrap:nowrap" onmouseover="this.style.background='rgba(115,24,31,.06)'" onmouseout="this.style.background=''">
+        <div style="min-width:0;flex:1;overflow:hidden">
+          <span style="font-weight:bold;color:#73181F;font-size:.84rem">${esc(s.advTitle||s.adventureName||'—')}</span>
+          <span style="opacity:.45;font-size:.7rem;margin-left:5px">§${esc(s.currPara||'—')}</span>
+          <span style="opacity:.6;font-size:.76rem;margin-left:8px">${esc(s.charName)}</span>
+          ${s.hpMax?`<span style="opacity:.6;font-size:.7rem;margin-left:6px">❤${s.hpCurr}/${s.hpMax}</span>`:''}
         </div>
-        <div onclick="apResumeSession('${s.sessId}')" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer">
-          <span style="font-size:.78rem;opacity:.7">${esc(s.charName)}</span>
-          ${s.hpMax?`<span style="font-size:.73rem;opacity:.75">❤ ${s.hpCurr}/${s.hpMax}</span>`:''}
-          ${s.enMax?`<span style="font-size:.73rem;opacity:.75">⚡ ${s.enCurr}/${s.enMax}</span>`:''}
-          <span style="font-size:.65rem;opacity:.38;margin-left:auto">${s.savedAt?new Date(s.savedAt).toLocaleDateString('it',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):''}</span>
+        <div style="display:flex;align-items:center;gap:5px;flex-shrink:0">
+          <span class="badge" style="font-size:.62rem">Lv.${esc(s.charLevel)}</span>
+          <button onclick="event.stopPropagation();deleteSession('${s.sessId}')" title="Elimina" style="background:transparent;border:1px solid rgba(115,24,31,.4);color:#73181F;border-radius:4px;width:22px;height:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0">✕</button>
         </div>
       </div>`).join('');
   return`
@@ -763,10 +760,10 @@ function renderHome(){
     <h1 class="home-title" style="font-size:3.2rem;letter-spacing:8px;color:#1a1007;margin:0 0 4px">SAGA</h1>
     <div class="home-subtitle" style="color:#73181F;font-style:italic;margin-bottom:32px">Avventure Interattive</div>
     <div class="menu-c">
-      <button class="btn btn-primary" onclick="nav('adventures')">► Nuova Avventura</button>
+      <button class="btn btn-primary" onclick="nav('adventures')">► Nuova avventura</button>
       <button class="btn btn-secondary" onclick="nav('characters')" style="display:flex;align-items:center;justify-content:center;gap:8px"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg> I miei personaggi</button>
       <button class="btn btn-secondary" onclick="nav('stories')" style="display:flex;align-items:center;justify-content:center;gap:8px"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg> Scrivi le tue storie</button>
-      <button class="btn btn-secondary" onclick="alert('Funzione in arrivo — scarica avventure create dalla community!')"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-from-line-icon lucide-arrow-down-from-line"><path d="M19 3H5"/><path d="M12 21V7"/><path d="m6 15 6 6 6-6"/></svg> Scarica Avventura</button>
+      <button class="btn btn-secondary" onclick="alert('Funzione in arrivo — scarica avventure create dalla community!')"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-from-line-icon lucide-arrow-down-from-line"><path d="M19 3H5"/><path d="M12 21V7"/><path d="m6 15 6 6 6-6"/></svg> Scarica avventure</button>
       <div class="btn-group-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <button class="btn btn-secondary" onclick="nav('settings')"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg> Impostazioni</button>
         <button class="btn btn-secondary" onclick="showCreditsOv()"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-text-align-center-icon lucide-text-align-center"><path d="M21 5H3"/><path d="M17 12H7"/><path d="M19 19H5"/></svg> Crediti</button>
@@ -2352,7 +2349,7 @@ function initAP(adv,charId){
   const sessId='SESS-'+Math.random().toString(36).substr(2,9).toUpperCase();
   return{adv,charId,char:ch?JSON.parse(JSON.stringify(ch)):null,
     currPara:adv.startParagraph||adv.paragraphs[0]?.id,codes:[],history:[],
-    sessId,showBreadcrumb:false,showCharSheet:false};
+    sessId,showBreadcrumb:false,showCharSheet:false,sheetTab:'generale'};
 }
 
 // ─── RENDER: LISTA AVVENTURE ──────────────────────────────────────────────────
@@ -2795,7 +2792,9 @@ function renderAdvPlay(){
     <button onclick="nav('adv-list')" class="btn btn-secondary" style="max-width:220px;margin:0 auto">Torna alle avventure</button>
   </div>`).join('');
 
-  const encountersHtml=encounters.map(e=>{
+  // Cache victoryMsgs to avoid quote issues in onclick attributes
+  if(S.ap) S.ap._encounterVictoryMsgs = encounters.map(e=>e.victoryMsg||'');
+  const encountersHtml=encounters.map((e,_eIdx)=>{
     const npc=allNpcs().find(n=>n.id===e.npcId)||allNpcs()[0];
     const btnLabel=e.label||`Affronta ${npc?.nome||'il nemico'}`;
     const hasOutcomes = e.to || e.defeatTo;
@@ -2809,7 +2808,7 @@ function renderAdvPlay(){
         ${e.to?`<span style="color:#18732D;font-weight:bold">✓ Vittoria → §${esc(e.to)}</span>`:''}
         ${e.defeatTo?`<span style="color:#d32f2f;font-weight:bold">✗ Sconfitta → §${esc(e.defeatTo)}</span>`:''}
       </div>`:''}
-      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${JSON.stringify(e.victoryMsg||'')})" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
+      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${_eIdx})" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
     </div>`;
   }).join('');
 
@@ -2846,50 +2845,112 @@ function renderAdvPlay(){
       </div>
     </div>
     ${S.ap.showCharSheet&&char?`
-    <div onclick="S.ap.showCharSheet=false;render()" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px">
-      <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:20px 18px 24px;width:100%;max-width:520px;max-height:90svh;overflow-y:auto;font-family:'Times New Roman',Georgia,serif">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #73181F">
+    <div onclick="S.ap.showCharSheet=false;render()" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:12px">
+      <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;width:100%;max-width:620px;max-height:93svh;overflow-y:auto;font-family:'Times New Roman',Georgia,serif;display:flex;flex-direction:column">
+        <!-- Header -->
+        <div style="padding:16px 18px 10px;border-bottom:2px solid #73181F;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;position:sticky;top:0;background:#D8C7A1;z-index:10;border-radius:12px 12px 0 0">
           <div>
-            <div style="font-weight:bold;font-size:1rem;color:#73181F">${esc(char.name)} <span style="font-size:.68rem;opacity:.5;font-weight:normal">— solo questa avventura</span></div>
-            <div style="font-size:.72rem;opacity:.6">${[char.heritage,char.childhood,char.profession].filter(Boolean).map(v=>esc(v)).join(' · ')} · Lv.${char.level}</div>
+            <div style="font-size:1.2rem;font-weight:bold;color:#73181F">${esc(char.name)}</div>
+            <div style="font-size:.7rem;opacity:.6">${[char.heritage,char.childhood,char.profession].filter(Boolean).map(v=>esc(v)).join(' · ')} · Lv.${char.level}</div>
+            <div style="font-size:.65rem;color:#73181F;margin-top:2px;font-style:italic">Le modifiche valgono solo per questa avventura</div>
           </div>
-          <button onclick="S.ap.showCharSheet=false;render()" style="background:transparent;border:none;font-size:1.4rem;cursor:pointer;color:#73181F;padding:4px 8px">✕</button>
+          <button onclick="S.ap.showCharSheet=false;render()" style="background:transparent;border:none;font-size:1.4rem;cursor:pointer;color:#73181F;padding:2px 6px;flex-shrink:0">✕</button>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-          ${[['VIG',char.vig],['IST',char.ins],['MEN',char.min]].map(([l,v])=>`<div style="text-align:center;background:rgba(115,24,31,.07);border:1.5px solid rgba(115,24,31,.2);border-radius:8px;padding:8px 4px"><div style="font-size:.65rem;letter-spacing:1px;opacity:.6">${l}</div><div style="font-size:1.5rem;font-weight:bold;color:#73181F">${v}</div></div>`).join('')}
+        <!-- Tabs -->
+        <div style="display:flex;gap:6px;padding:10px 18px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none">
+          ${['generale','inventario','talenti','abilità'].map(t=>`<button onclick="S.ap.sheetTab='${t}';render()" style="padding:6px 14px;border:2px solid #73181F;border-radius:6px;background:${(S.ap.sheetTab||'generale')===t?'#73181F':'transparent'};color:${(S.ap.sheetTab||'generale')===t?'white':'#1a1007'};cursor:pointer;font-family:inherit;font-weight:bold;font-size:.78rem;letter-spacing:1px;white-space:nowrap;flex-shrink:0">${t.toUpperCase()}</button>`).join('')}
         </div>
-        <div style="margin-bottom:14px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-            <span style="font-size:.7rem;color:#73181F;font-weight:bold;letter-spacing:1px">SALUTE</span>
-            <div style="display:flex;gap:5px;align-items:center">
-              <button onclick="apAdjChar('hpCurr',-1)" style="width:28px;height:28px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold">−</button>
-              <span style="font-size:.9rem;font-weight:bold;min-width:52px;text-align:center">${char.hpCurr} / ${char.hpMax}</span>
-              <button onclick="apAdjChar('hpCurr',1)" style="width:28px;height:28px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold">+</button>
-            </div>
-          </div>
-          <div style="height:16px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15)"><div style="height:100%;background:#18732D;width:${char.hpMax>0?Math.min(100,char.hpCurr/char.hpMax*100):0}%;transition:width .25s"></div></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0 5px">
-            <span style="font-size:.7rem;color:#73181F;font-weight:bold;letter-spacing:1px">ENERGIA</span>
-            <div style="display:flex;gap:5px;align-items:center">
-              <button onclick="apAdjChar('enCurr',-1)" style="width:28px;height:28px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold">−</button>
-              <span style="font-size:.9rem;font-weight:bold;min-width:52px;text-align:center">${char.enCurr} / ${char.enMax}</span>
-              <button onclick="apAdjChar('enCurr',1)" style="width:28px;height:28px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold">+</button>
-            </div>
-          </div>
-          <div style="height:16px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15)"><div style="height:100%;background:#182473;width:${char.enMax>0?Math.min(100,char.enCurr/char.enMax*100):0}%;transition:width .25s"></div></div>
+        <!-- Body -->
+        <div style="padding:14px 18px 20px;flex:1">
+          ${(()=>{
+            const L=char;
+            const cKey=k=>'c'+k[0].toUpperCase()+k.slice(1);
+            const eff=k=>(L[k]||0)-(L[cKey(k)]||0);
+            const eqNames=[L.mainHand,L.offHand,L.body,L.slot1,L.slot2,L.slot3].filter(Boolean);
+            const {dmg,prot}=calcCombat(eqNames,L);
+            const twpEff=calcTwoWeaponEffects(L);
+            const tab=S.ap.sheetTab||'generale';
+
+            if(tab==='generale'){
+              const dots=(k,max=2)=>[...Array(max)].map((_,g)=>{
+                const gi=g+1;const active=(L[cKey(k)]||0)>=gi;
+                return '<span class="dot '+(active?'on':'')+'" onclick="apShToggleCond(\''+k+'\','+gi+')" title="Condizione '+gi+'"></span>';
+              }).join('');
+              const penalty=(twpEff&&twpEff.vigPenalty>0)?twpEff.vigPenalty:0;
+              return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+                +'<div>'
+                +'<div style="font-size:.75rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:10px">CARATTERISTICHE</div>'
+                +[['vig','VIG'],['ins','IST'],['min','MEN']].map(([k,l])=>{
+                  const p=(k==='vig'&&penalty)?penalty:0;
+                  const val=eff(k)-p;
+                  const bad=(L[cKey(k)]||0)>0||p>0;
+                  return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'
+                    +'<span style="font-weight:bold;width:32px">'+l+'</span>'
+                    +'<div style="border:2px solid #73181F;border-radius:6px;padding:3px 10px;min-width:40px;text-align:center;font-weight:bold;font-size:1.15rem;color:'+(bad?'#ff4d4d':'#73181F')+'">'+val+'</div>'
+                    +'<div style="display:flex;gap:5px">'+dots(k)+'</div>'
+                    +'</div>';
+                }).join('')
+                +'</div>'
+                +'<div>'
+                +'<div style="font-size:.75rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:10px">COMBATTIMENTO</div>'
+                +'<div style="font-size:.7rem;color:#73181F;font-weight:bold;margin-bottom:3px">SALUTE</div>'
+                +'<div class="bar-outer"><div class="bar-inner" style="width:'+((L.hpMax>0?Math.min(100,L.hpCurr/L.hpMax*100):0))+'%;background:#18732D"></div><div class="bar-label">'+L.hpCurr+' / '+L.hpMax+'</div></div>'
+                +'<div style="display:flex;gap:6px;margin-bottom:10px">'
+                +'<button onclick="apAdjChar(\'hpCurr\',-1)" style="background:#73181F;color:white;border:none;border-radius:5px;padding:5px 12px;cursor:pointer;font-weight:bold">−</button>'
+                +'<button onclick="apAdjChar(\'hpCurr\',1)" style="background:#73181F;color:white;border:none;border-radius:5px;padding:5px 12px;cursor:pointer;font-weight:bold">+</button>'
+                +'</div>'
+                +'<div style="font-size:.7rem;color:#73181F;font-weight:bold;margin-bottom:3px">ENERGIA</div>'
+                +'<div class="bar-outer"><div class="bar-inner" style="width:'+((L.enMax>0?Math.min(100,L.enCurr/L.enMax*100):0))+'%;background:#182473"></div><div class="bar-label">'+L.enCurr+' / '+L.enMax+'</div></div>'
+                +'<div style="display:flex;gap:6px;margin-bottom:10px">'
+                +'<button onclick="apAdjChar(\'enCurr\',-1)" style="background:#182473;color:white;border:none;border-radius:5px;padding:5px 12px;cursor:pointer;font-weight:bold">−</button>'
+                +'<button onclick="apAdjChar(\'enCurr\',1)" style="background:#182473;color:white;border:none;border-radius:5px;padding:5px 12px;cursor:pointer;font-weight:bold">+</button>'
+                +'</div>'
+                +'<div style="display:flex;justify-content:space-around;padding:8px 0;background:rgba(115,24,31,.05);border-radius:8px">'
+                +'<div style="text-align:center;font-size:.82rem">DANNO<br><strong style="font-size:1.1rem;color:#73181F">'+dmg+'</strong></div>'
+                +'<div style="text-align:center;font-size:.82rem">PROTEZIONE<br><strong style="font-size:1.1rem;color:#73181F">'+prot+'</strong></div>'
+                +'</div>'
+                +'</div>'
+                +'</div>';
+            }
+            if(tab==='inventario'){
+              const equipSlots=[['Mano principale','mainHand'],['Mano secondaria','offHand'],['Corpo','body'],['Slot 1','slot1'],['Slot 2','slot2'],['Slot 3','slot3']];
+              const inv=L.inventory||[];
+              return '<div>'
+                +'<div style="font-size:.75rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:10px">EQUIPAGGIAMENTO ATTIVO</div>'
+                +equipSlots.map(([lbl,slot])=>{
+                  const occupied=['mainHand','offHand','body','slot1','slot2','slot3'].filter(s=>s!==slot).map(s=>L[s]).filter(Boolean);
+                  const avail=inv.filter(it=>{const cnt=occupied.filter(u=>u===it.item).length;return(it.quantity||1)>cnt||L[slot]===it.item;});
+                  return '<div style="margin-bottom:8px"><div style="font-size:.65rem;color:#73181F;font-weight:bold;margin-bottom:2px">'+lbl+'</div>'
+                    +'<select onchange="apSetEquip(\"'+slot+'\",this.value)" style="width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:7px 9px;font-family:Times New Roman,serif;font-size:.83rem;color:#1a1007;outline:none">'
+                    +'<option value="">— nessuno —</option>'
+                    +avail.map(it=>'<option value="'+esc(it.item)+'"'+(L[slot]===it.item?' selected':'')+'>'+esc(it.item)+'</option>').join('')
+                    +'</select></div>';
+                }).join('')
+                +'<div style="margin-top:12px"><div style="font-size:.75rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:8px">INVENTARIO ('+inv.length+' oggetti)</div>'
+                +inv.map(it=>'<div style="font-size:.8rem;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.06);display:flex;justify-content:space-between"><span>'+esc(it.item)+(it.quantity>1?' ×'+it.quantity:'')+'</span><span style="opacity:.55;font-size:.72rem">'+esc(it.description||'')+'</span></div>').join('')
+                +'</div>'
+                +'</div>';
+            }
+            if(tab==='talenti'){
+              if(!(L.talents&&L.talents.length)) return '<p style="opacity:.5;font-style:italic;font-size:.85rem">Nessun talento acquisito.</p>';
+              return '<div>'+L.talents.map(t=>'<div style="padding:8px 0;border-bottom:1px solid rgba(115,24,31,.12)">'
+                +'<div style="font-weight:bold;font-size:.88rem">▸ '+esc(t.talent_name)+'</div>'
+                +'<div style="font-size:.78rem;opacity:.7;margin-top:2px;line-height:1.4">'+esc(t.talent_description||'')+'</div>'
+                +(t.talent_cost&&t.talent_cost!=='Passivo'?'<div style="font-size:.7rem;color:#73181F;margin-top:2px">'+esc(t.talent_cost)+'</div>':'')
+                +'</div>').join('')+'</div>';
+            }
+            if(tab==='abilità'){
+              if(!(L.abilities&&L.abilities.length)) return '<p style="opacity:.5;font-style:italic;font-size:.85rem">Nessuna abilità acquisita.</p>';
+              return '<div>'+L.abilities.map(a=>'<div style="padding:8px 0;border-bottom:1px solid rgba(115,24,31,.12)">'
+                +'<div style="font-weight:bold;font-size:.88rem">◆ '+esc(a.ability_name)+'</div>'
+                +'<div style="font-size:.78rem;opacity:.7;margin-top:2px;line-height:1.4">'+esc(a.ability_description||'')+'</div>'
+                +'<div style="font-size:.7rem;color:#73181F;margin-top:2px">'+esc(a.ability_cost||'')+'</div>'
+                +'</div>').join('')+'</div>';
+            }
+            return '';
+          })()}
+          ${S.ap.codes&&S.ap.codes.length?`<div style="margin-top:12px;border-top:1px solid rgba(115,24,31,.2);padding-top:10px"><div style="font-size:.7rem;color:#18732D;font-weight:bold;margin-bottom:5px">CODICI RACCOLTI</div><div style="display:flex;gap:5px;flex-wrap:wrap">${S.ap.codes.map(co=>`<span style="font-family:monospace;background:#18732D;color:white;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:bold">${esc(co)}</span>`).join('')}</div></div>`:''}
         </div>
-        <div style="margin-bottom:14px">
-          <div style="font-size:.7rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:8px">EQUIPAGGIAMENTO ATTIVO</div>
-          ${[['Mano principale','mainHand'],['Mano secondaria','offHand'],['Corpo','body'],['Slot 1','slot1'],['Slot 2','slot2'],['Slot 3','slot3']].map(([lbl,slot])=>{
-            const inv=char.inventory||[];
-            const occupied=['mainHand','offHand','body','slot1','slot2','slot3'].filter(s=>s!==slot).map(s=>char[s]).filter(Boolean);
-            const avail=inv.filter(it=>{const cnt=occupied.filter(u=>u===it.item).length;return(it.quantity||1)>cnt||char[slot]===it.item;});
-            return `<div style="margin-bottom:6px"><div style="font-size:.65rem;color:#73181F;font-weight:bold;margin-bottom:2px">${lbl}</div><select onchange="apSetEquip('${slot}',this.value)" style="width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:7px 9px;font-family:'Times New Roman',serif;font-size:.83rem;color:#1a1007;outline:none;cursor:pointer"><option value="">— nessuno —</option>${avail.map(it=>`<option value="${esc(it.item)}" ${char[slot]===it.item?'selected':''}>${esc(it.item)}</option>`).join('')}</select></div>`;
-          }).join('')}
-        </div>
-        ${char.talents&&char.talents.length?`<div style="margin-bottom:10px"><div style="font-size:.7rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:5px">TALENTI</div>${char.talents.map(t=>`<div style="font-size:.8rem;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.06)">▸ ${esc(t.talent_name)}</div>`).join('')}</div>`:''}
-        ${char.abilities&&char.abilities.length?`<div style="margin-bottom:10px"><div style="font-size:.7rem;color:#73181F;font-weight:bold;letter-spacing:1px;margin-bottom:5px">ABILITÀ</div>${char.abilities.map(a=>`<div style="font-size:.8rem;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.06)">◆ ${esc(a.ability_name)}</div>`).join('')}</div>`:''}
-        ${S.ap.codes&&S.ap.codes.length?`<div style="margin-top:10px;border-top:1px solid rgba(115,24,31,.2);padding-top:10px"><div style="font-size:.7rem;color:#18732D;font-weight:bold;letter-spacing:1px;margin-bottom:5px">CODICI RACCOLTI</div><div style="display:flex;gap:5px;flex-wrap:wrap">${S.ap.codes.map(co=>`<span style="font-family:monospace;background:#18732D;color:white;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:bold">${esc(co)}</span>`).join('')}</div></div>`:''}
       </div>
     </div>`:''}
     <div style="flex:1;max-width:680px;width:100%;margin:0 auto;padding:26px 20px">
@@ -3136,7 +3197,7 @@ function apResumeSession(sessId){
     codes:[...(sess.codes||[])],
     history:[...(sess.history||[])],
     sessId:sess.sessId,
-    showBreadcrumb:false,showCharSheet:false
+    showBreadcrumb:false,showCharSheet:false,sheetTab:'generale'
   };
   const _startP=(adv.paragraphs||[]).find(p=>p.id===S.ap.currPara);
   S.ap.currentRestExits=(_startP?.exits||[]).filter(e=>e.type==='rest');
@@ -3168,6 +3229,16 @@ function apRollStat(stat,statVal,successTo,failTo){
 }
 
 // ─── PER-ADVENTURE CHAR ADJUSTMENTS ──────────────────────────────
+function apShToggleCond(stat, grade){
+  if(!S.ap||!S.ap.char)return;
+  const ch=S.ap.char;
+  const cKey='c'+stat[0].toUpperCase()+stat.slice(1);
+  const cur=ch[cKey]||0;
+  ch[cKey]=cur>=grade?grade-1:grade;
+  if(typeof apSaveSession==='function')apSaveSession();
+  render();
+}
+
 function apAdjChar(field, delta) {
   if (!S.ap || !S.ap.char) return;
   const ch = S.ap.char;
@@ -3364,28 +3435,62 @@ function generateRandomChar() {
 // ─── NEMICI PREDEFINITI ────────────────────────────────────────────────────────
 const NEMICI_PREDEFINITI = [
   {
-    id: 'coboldo',
-    nome: 'Coboldo',
-    grado: 1,
-    vig: 5, ist: 6, men: 5,
-    hp: 10, hpMax: 10,
+    id: 'space-marine-infetto',
+    nome: 'Space Marine Infetto',
+    grado: 3,
+    vig: 7, ist: 6, men: 4,
+    hp: 16, hpMax: 16,
     en: 10, enMax: 10,
-    dmg: 3, prot: 1,
-    bersaglio: ['Nemico isolato (cerca vantaggio numerico)', 'Nemico con meno Protezione'],
+    dmg: 4, prot: 2,
+    bersaglio: ['Attacco Standard'],
     abilita: [
       {
-        ability_name: 'Trappola',
-        ability_description: 'Scatta una trappola. Prova IST dell\'avversario o 3 danni (ignora Protezione).',
+        ability_name: 'Attacco virale',
+        ability_description: 'Quando colpisce infligge 1 danni extra e ripristina 1 energia.',
+        ability_cost: '4 EN',
+      }
+    ]
+  },
+  {
+    id: 'vampiro-minore',
+    nome: 'Vampiro Minore',
+    grado: 3,
+    vig: 7, ist: 7, men: 8,
+    hp: 14, hpMax: 14,
+    en: 16, enMax: 16,
+    dmg: 4, prot: 2,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Risucchio',
+        ability_description: 'Ruba 3 Salute e 1 Energia al bersaglio.',
+        ability_cost: '2 EN',
+      }
+    ]
+  },
+  {
+    id: 'cubo-gelatinoso',
+    nome: 'Cubo Gelatinoso',
+    grado: 2,
+    vig: 8, ist: 3, men: 1,
+    hp: 20, hpMax: 20,
+    en: 8, enMax: 8,
+    dmg: 4, prot: 0,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Digestione',
+        ability_description: 'Ruba 3 Salute e 2 Energia.',
         ability_cost: '3 EN',
       }
     ]
   },
   {
-    id: 'lupo',
+    id: 'lupo-minion',
     nome: 'Lupo',
     grado: 2,
     vig: 8, ist: 7, men: 3,
-    hp: 16, hpMax: 16,
+    hp: 6, hpMax: 6,
     en: 6, enMax: 6,
     dmg: 3, prot: 0,
     bersaglio: ['Nemico più ferito'],
@@ -3397,37 +3502,494 @@ const NEMICI_PREDEFINITI = [
       }
     ]
   },
+  {
+    id: 'gnoll',
+    nome: 'Gnoll',
+    grado: 1,
+    vig: 7, ist: 6, men: 4,
+    hp: 5, hpMax: 5,
+    en: 8, enMax: 8,
+    dmg: 4, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Frenesia',
+        ability_description: 'Se ferisce un nemico, il prossimo attacco fa +1.',
+        ability_cost: '3 EN',
+      }
+    ]
+  },
+  {
+    id: 'orco',
+    nome: 'Orco',
+    grado: 2,
+    vig: 8, ist: 5, men: 4,
+    hp: 16, hpMax: 16,
+    en: 8, enMax: 8,
+    dmg: 5, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Furia',
+        ability_description: 'Quando manca un attacco, il prossimo riceve +2.',
+        ability_cost: '4 EN',
+      }
+    ]
+  },
+  {
+    id: 'gargoyle',
+    nome: 'Gargoyle',
+    grado: 3,
+    vig: 8, ist: 6, men: 5,
+    hp: 16, hpMax: 16,
+    en: 10, enMax: 10,
+    dmg: 4, prot: 2,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Picchiata',
+        ability_description: 'Finché ha Corazza di Pietra infligge +2 danni.',
+        ability_cost: '3 EN',
+      },
+      {
+        ability_name: 'Corazza di Pietra',
+        ability_description: 'Ignora il primo danno subito nello scontro.',
+        ability_cost: 'N/A',
+      }
+    ]
+  },
+  {
+    id: 'ranger',
+    nome: 'Ranger',
+    grado: 2,
+    vig: 6, ist: 7, men: 5,
+    hp: 14, hpMax: 14,
+    en: 12, enMax: 12,
+    dmg: 4, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Colpo Mirato',
+        ability_description: '+2 danni se il bersaglio è isolato o non ingaggiato.',
+        ability_cost: '3 EN',
+      }
+    ]
+  },
+  {
+    id: 'ranger-veterano',
+    nome: 'Ranger Veterano',
+    grado: 3,
+    vig: 6, ist: 8, men: 5,
+    hp: 14, hpMax: 14,
+    en: 14, enMax: 14,
+    dmg: 4, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Colpo Mirato',
+        ability_description: '+2 danni se il bersaglio è isolato o non ingaggiato.',
+        ability_cost: '3 EN',
+      },
+      {
+        ability_name: 'Tiro di Disturbo',
+        ability_description: 'Se colpisce infligge Condizione Gr.1 a IST.',
+        ability_cost: '3 EN',
+      }
+    ]
+  },
+  {
+    id: 'cultista',
+    nome: 'Cultista',
+    grado: 2,
+    vig: 5, ist: 5, men: 7,
+    hp: 10, hpMax: 10,
+    en: 14, enMax: 14,
+    dmg: 3, prot: 1,
+    bersaglio: ['PG con più MEN'],
+    abilita: [
+      {
+        ability_name: 'Ondata oscura',
+        ability_description: 'Prova di VIG o 3 danni a tutti i nemici.',
+        ability_cost: '3 EN',
+      },
+      {
+        ability_name: 'Fanatico',
+        ability_description: 'Quando scende sotto metà Salute, Danno +2.',
+        ability_cost: 'N/A',
+      }
+    ]
+  },
+  {
+    id: 'elementale-fuoco',
+    nome: 'Elementale di Fuoco',
+    grado: 4,
+    vig: 8, ist: 7, men: 6,
+    hp: 16, hpMax: 16,
+    en: 12, enMax: 12,
+    dmg: 6, prot: 2,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Brucia',
+        ability_description: 'L\'attacco aggiunge danno da fuoco per 2 turni.',
+        ability_cost: '2 EN',
+      }
+    ]
+  },
+  {
+    id: 'scheletro',
+    nome: 'Scheletro',
+    grado: 1,
+    vig: 7, ist: 5, men: 2,
+    hp: 5, hpMax: 5,
+    en: 4, enMax: 4,
+    dmg: 3, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Non-morto',
+        ability_description: 'Ignora condizioni di paura e stress.',
+        ability_cost: 'N/A',
+      }
+    ]
+  },
+  {
+    id: 'goblin',
+    nome: 'Goblin',
+    grado: 1,
+    vig: 6, ist: 6, men: 4,
+    hp: 8, hpMax: 8,
+    en: 8, enMax: 8,
+    dmg: 3, prot: 1,
+    bersaglio: ['Nemico più vicino', 'Preferisce basso IST'],
+    abilita: [
+      {
+        ability_name: 'Colpo codardo',
+        ability_description: 'Attacco rapido, ignora la protezione.',
+        ability_cost: '2 EN',
+      }
+    ]
+  },
+  {
+    id: 'spettro',
+    nome: 'Spettro',
+    grado: 2,
+    vig: 6, ist: 8, men: 9,
+    hp: 14, hpMax: 14,
+    en: 16, enMax: 16,
+    dmg: 5, prot: 2,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Tocco Etereo',
+        ability_description: 'Prova MEN. Se colpisce ignora Protezione.',
+        ability_cost: '4 EN',
+      }
+    ]
+  },
+  {
+    id: 'armatura-senziente',
+    nome: 'Armatura Senziente',
+    grado: 3,
+    vig: 9, ist: 4, men: 5,
+    hp: 18, hpMax: 18,
+    en: 8, enMax: 8,
+    dmg: 5, prot: 2,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Corazza Animata',
+        ability_description: 'Riduce di 2 tutti i danni subiti.',
+        ability_cost: 'N/A',
+      }
+    ]
+  },
+  {
+    id: 'troll-giovane',
+    nome: 'Troll Giovane',
+    grado: 3,
+    vig: 8, ist: 6, men: 5,
+    hp: 16, hpMax: 16,
+    en: 10, enMax: 10,
+    dmg: 4, prot: 0,
+    bersaglio: ['Chi occupa più spazio'],
+    abilita: [
+      {
+        ability_name: 'Rigenerazione',
+        ability_description: 'Recupera 4 Salute all\'inizio del turno.',
+        ability_cost: 'N/A',
+      }
+    ]
+  },
+  {
+    id: 'troll-boss',
+    nome: 'Troll (Boss)',
+    grado: 4,
+    vig: 10, ist: 5, men: 4,
+    hp: 22, hpMax: 22,
+    en: 10, enMax: 10,
+    dmg: 6, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Rigenerazione Mostruosa',
+        ability_description: 'Recupera 6 Salute a inizio turno.',
+        ability_cost: 'N/A',
+      }
+    ]
+  },
+  {
+    id: 'zombi',
+    nome: 'Zombi',
+    grado: 1,
+    vig: 9, ist: 4, men: 3,
+    hp: 6, hpMax: 6,
+    en: 6, enMax: 6,
+    dmg: 3, prot: 0,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Rigenerazione',
+        ability_description: 'Recupera 5 Salute all\'inizio del suo turno.',
+        ability_cost: 'N/A',
+      }
+    ]
+  },
+  {
+    id: 'negromante',
+    nome: 'Negromante (Boss)',
+    grado: 4,
+    vig: 5, ist: 7, men: 9,
+    hp: 12, hpMax: 12,
+    en: 20, enMax: 20,
+    dmg: 3, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Richiamo dei Morti',
+        ability_description: 'Evoca 2 Scheletri sotto il suo controllo.',
+        ability_cost: '5 EN',
+      },
+      {
+        ability_name: 'Canalizzazione Oscura',
+        ability_description: 'Quando un non-morto alleato viene distrutto, recupera 1 Energia.',
+        ability_cost: 'N/A',
+      }
+    ]
+  },
+  {
+    id: 'bandito',
+    nome: 'Bandito',
+    grado: 1,
+    vig: 6, ist: 5, men: 5,
+    hp: 4, hpMax: 4,
+    en: 10, enMax: 10,
+    dmg: 4, prot: 2,
+    bersaglio: ['Nemico più fragile', 'Nemico distratto'],
+    abilita: [
+      {
+        ability_name: 'Gioco Sporco',
+        ability_description: 'Attacca. Se colpisci Condizione Gr. 1 a VIG. Per liberarsi prova di MEN.',
+        ability_cost: '4 EN',
+      }
+    ]
+  },
+  {
+    id: 'ameba-senziente',
+    nome: 'Ameba Senziente',
+    grado: 1,
+    vig: 6, ist: 6, men: 4,
+    hp: 4, hpMax: 4,
+    en: 8, enMax: 8,
+    dmg: 3, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Acido nebulizzato',
+        ability_description: 'Attacca. Se colpisci infliggi +1 Danno e Condizione di Gr. 1 IST. Prova VIG per liberarsi.',
+        ability_cost: '2 EN',
+      }
+    ]
+  },
+  {
+    id: 'space-marine',
+    nome: 'Space Marine',
+    grado: 2,
+    vig: 6, ist: 7, men: 6,
+    hp: 12, hpMax: 12,
+    en: 12, enMax: 12,
+    dmg: 4, prot: 2,
+    bersaglio: ['Nemico più ferito', 'Nemico con maggiore danno'],
+    abilita: [
+      {
+        ability_name: 'Fuoco di copertura',
+        ability_description: 'Se colpisce, il bersaglio perde un\'azione.',
+        ability_cost: '3 EN',
+      }
+    ]
+  },
+  {
+    id: 'virus-di-titano',
+    nome: 'Virus di Titano',
+    grado: 2,
+    vig: 6, ist: 7, men: 5,
+    hp: 18, hpMax: 18,
+    en: 10, enMax: 10,
+    dmg: 2, prot: 0,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Infezione',
+        ability_description: 'Quando colpisce infligge condizione Grado 1 a VIG e IST. Prova VIG per liberarsi.',
+        ability_cost: '3 EN',
+      }
+    ]
+  },
+  {
+    id: 'ghoul',
+    nome: 'Ghoul',
+    grado: 3,
+    vig: 7, ist: 6, men: 4,
+    hp: 14, hpMax: 14,
+    en: 10, enMax: 10,
+    dmg: 4, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Morso Paralizzante',
+        ability_description: 'Se colpisce infligge Condizione Gr.1 a VIG.',
+        ability_cost: '3 EN',
+      },
+      {
+        ability_name: 'Assalto Famelico',
+        ability_description: '+2 danni se il bersaglio ha già una Condizione.',
+        ability_cost: '2 EN',
+      }
+    ]
+  },
+  {
+    id: 'demone-oscuro',
+    nome: 'Demone Oscuro (Boss)',
+    grado: 5,
+    vig: 10, ist: 8, men: 9,
+    hp: 20, hpMax: 20,
+    en: 18, enMax: 18,
+    dmg: 7, prot: 3,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Aura di terrore',
+        ability_description: '-2 VIG ai nemici se falliscono MEN.',
+        ability_cost: '3 EN',
+      }
+    ]
+  },
+  {
+    id: 'cultista-capo',
+    nome: 'Cultista Capo (Boss)',
+    grado: 3,
+    vig: 6, ist: 6, men: 9,
+    hp: 14, hpMax: 14,
+    en: 18, enMax: 18,
+    dmg: 4, prot: 2,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Sermone Fanatico',
+        ability_description: 'I nemici fanno prova MEN o subiscono Condizione Gr.1.',
+        ability_cost: '4 EN',
+      },
+      {
+        ability_name: 'Fervore',
+        ability_description: 'All’inizio del combattimento gli alleati ottengono 2 EN.',
+        ability_cost: 'N/A',
+      }
+    ]
+  },
+  {
+    id: 'ragno-gigante',
+    nome: 'Ragno Gigante',
+    grado: 2,
+    vig: 8, ist: 8, men: 5,
+    hp: 16, hpMax: 16,
+    en: 10, enMax: 10,
+    dmg: 6, prot: 1,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Ragnatela',
+        ability_description: 'Infligge Condizione Gr. 2 a IST. Prova VIG per liberarsi.',
+        ability_cost: '4 EN',
+      }
+    ]
+  },
+  {
+    id: 'coboldo-minion',
+    nome: 'Coboldo',
+    grado: 1,
+    vig: 5, ist: 6, men: 5,
+    hp: 4, hpMax: 4,
+    en: 10, enMax: 10,
+    dmg: 3, prot: 1,
+    bersaglio: ['Nemico isolato', 'Nemico con meno Protezione'],
+    abilita: [
+      {
+        ability_name: 'Trappola',
+        ability_description: 'Prova IST dell\'avversario o 3 danni (ignora Protezione).',
+        ability_cost: '3 EN',
+      }
+    ]
+  },
+  {
+    id: 'ameba-divisoria',
+    nome: 'Ameba Divisoria',
+    grado: 1,
+    vig: 7, ist: 6, men: 3,
+    hp: 5, hpMax: 5,
+    en: 6, enMax: 6,
+    dmg: 3, prot: 0,
+    bersaglio: ['Attacco Standard'],
+    abilita: [
+      {
+        ability_name: 'Scissione',
+        ability_description: 'Se colpita genera un\'altra ameba con 5 Salute.',
+        ability_cost: '3 EN',
+      }
+    ]
+  }
 ];
 
 const COMBAT_TUTORIAL_STEPS = [
   {
     title:'Il Combattimento (1/5)',
-    text:'Quando il gioco prevede momenti concitati si entra in combattimento. Il combattimento si divide in <strong>turni</strong> (mosse di un singolo PG o PNG) e <strong>round</strong> (tutti i turni di tutti i combattenti).<br><br>Durante il proprio turno ogni <strong>PG ha 2 azioni</strong>, ogni <strong>PNG 1 sola azione</strong>. Con un\'azione puoi: attaccare, muoverti, usare un oggetto o un\'abilità speciale.'
+    text:'Quando il gioco prevede momenti concitati si entra in combattimento. Il combattimento si divide in <strong>turni</strong> (mosse di un PG o PNG) e <strong>round</strong> (i turni di tutti i combattenti).<br><br>Durante il turno ogni <strong>PG ha 2 azioni</strong>, ogni <strong>PNG 1 sola azione</strong>. Con un\'azione puoi: attaccare, usare un oggetto o un\'abilità speciale.'
   },
   {
     title:'Ordine di turno (2/5)',
-    text:'All\'inizio del combattimento ogni PG effettua una prova di <strong>IST</strong>. Se almeno metà del gruppo ha successo, i <strong>PG agiscono per primi</strong>; altrimenti partono gli avversari, dopodiché i turni si alternano tra PG e PNG.'
+    text:'All\'inizio del combattimento si effettua una prova di <strong>IST</strong>. Se riesce <strong>agisci per primo</strong>; altrimenti parte l\'avversario (o gli avversari), dopodiché i turni si alternano tra PG e PNG.'
   },
   {
     title:'Attaccare (3/5)',
-    text:'Per attaccare, effettua una prova di <strong>VIG</strong> (armi da mischia) o <strong>IST</strong> (armi a distanza). Se il tiro riesce, sottrai il valore <strong>Danno</strong> alla Salute del nemico. Ricorda: la <strong>Protezione</strong> del bersaglio riduce il danno subito.<br><br>Con <strong>due armi</strong> (una per mano) si effettua un solo tiro: se va a segno il danno è la <strong>somma delle due armi</strong>.'
+    text:'Per attaccare, usa un\'azione per effettuare una prova di <strong>VIG</strong> (armi da mischia) o <strong>IST</strong> (armi a distanza). Se il tiro riesce, sottrai il valore <strong>Danno</strong> alla Salute del nemico. Ricorda: la <strong>Protezione</strong> del bersaglio riduce il danno subito.<br><br>Con <strong>due armi</strong> (una per mano) si effettua un solo tiro: se va a segno il danno è la <strong>somma delle due armi</strong>. <br><br>Se non specificato, un PNG sceglie sempre di usare l\'azione per attaccare. Anche al PNG si applicano le stesse regole per il tiro con la differenza che è sempre il giocatore a dover tirare per il PNG.'
   },
   {
     title:'Danni e critici (4/5)',
-    text:'Se ottieni <strong>doppio 1</strong> con i dadi il colpo è <strong>Critico</strong>: il danno base viene raddoppiato (bonus da talenti/abilità esclusi).<br><br>Un attacco da <strong>nascosto</strong> viene eseguito <strong>con vantaggio</strong> (tira due volte, tieni il risultato migliore).'
+    text:'Ottenere <strong>doppio 1</strong> con i dadi il colpo è <strong>Critico</strong> (si applica sia a PG che PNG): il danno base viene raddoppiato (bonus da talenti/abilità esclusi).<br><br>Un attacco da <strong>nascosto</strong> (dipendente da condizioni di gioco particolari) viene eseguito <strong>con vantaggio</strong> (tira due volte, tieni il risultato migliore).'
   },
   {
     title:'Svenimento e morte (5/5)',
-    text:'Quando la Salute scende a <strong>0</strong> il personaggio sviene ed è morente. Nel suo turno effettua un tiro con 2d6: con <strong>7 o meno</strong> è ancora vivo. Il tiro si ripete finché non recupera almeno 1 Salute o il combattimento non termina; se <strong>fallisce</strong> il personaggio muore.<br><br>Il combattimento termina quando i PNG sono sconfitti o quando i PG hanno perso conoscenza o sono morti.'
+    text:'Quando la Salute scende a <strong>0</strong> il personaggio sviene ed è morente. Solitamente in questo caso l\'avventura termina a meno che essa non preveda un qualche scenario particolare se ciò devesse accadere.<br><br>Ora tutto è pronto per cimentarti nel tuo primo combattimento.<br><br>Buona fortuna!'
   }
 ];
 
-function apStartCombat(npcId, toPara, defeatTo, victoryMsg){
+function apStartCombat(npcId, toPara, defeatTo, msgIdx){
   if(S.ap){
     S.ap.pendingNpcId = npcId || (NEMICI_PREDEFINITI[0]?.id||'');
     S.ap.pendingCombatReturnPara = toPara || null;
     S.ap.pendingCombatDefeatPara = defeatTo || null;
-    S.ap.pendingVictoryMsg = victoryMsg || '';
+    S.ap.pendingVictoryMsg = (S.ap._encounterVictoryMsgs && msgIdx >= 0)
+      ? (S.ap._encounterVictoryMsgs[msgIdx] || '')
+      : '';
   }
   openCombat();
 }
@@ -3621,6 +4183,25 @@ function combatEndWith(outcome){
   closeCombat();
 }
 
+function closeAndSaveCombat(){
+  // Sync HP/EN, save session, go home
+  if(S.ap && S.ap.char && S.combat){
+    S.ap.char.hpCurr = S.combat.pc.hp;
+    S.ap.char.enCurr = S.combat.pc.en;
+  }
+  S.combat = null;
+  if(S.ap){
+    // Clear pending combat state
+    S.ap.pendingNpcId = null;
+    S.ap.pendingCombatReturnPara = null;
+    S.ap.pendingCombatDefeatPara = null;
+    S.ap.pendingVictoryMsg = '';
+    // Save session so player returns to same paragraph
+    if(typeof apSaveSession==='function') apSaveSession();
+  }
+  nav('home');
+}
+
 function closeCombat(){
   // sync HP/EN back to S.ap.char if we are in an adventure
   if(S.ap && S.ap.char && S.combat){
@@ -3666,7 +4247,7 @@ function combatRollAndShow(){
   const {d1,d2,total,critical} = combatRoll2d6();
   if(S.combat){
     S.combat.turn = (S.combat.turn||0) + 1;
-    const entry = `T${S.combat.turn} · 🎲 ${d1}+${d2}=${total}${critical?' ⚡CRITICO':''}`;
+    const entry = `T${S.combat.turn} · [d6] ${d1}+${d2}=${total}${critical?' ⚡CRITICO':''}`;
     if(!S.combat.log) S.combat.log=[];
     S.combat.log.push(entry);
     // Re-render log
@@ -3685,7 +4266,7 @@ function combatRollAndShow(){
     <span style="font-size:2.8rem;font-weight:bold;color:#73181F">${total}</span>
   </div>`;
   if(critical){
-    html += `<div style="color:#c0392b;font-weight:bold;font-size:.9rem;text-align:center;padding:4px 10px;background:rgba(192,57,43,.1);border-radius:6px">⚡ DOPPIO 1 — DANNO CRITICO!</div>`;
+    html += `<div style="color:#c0392b;font-weight:bold;font-size:.9rem;text-align:center;padding:4px 10px;background:rgba(192,57,43,.1);border-radius:6px">DANNO CRITICO!</div>`;
   }
   el.innerHTML = html;
 }
@@ -3704,7 +4285,9 @@ function combatNewRound(){
 
 function combatAdjNpc(field, delta){
   if(!S.combat) return;
-  S.combat.npc[field] = Math.max(0, (S.combat.npc[field]||0) + delta);
+  if(field==='hp') S.combat.npc.hp = Math.max(0, Math.min(S.combat.npc.hpMax||999, (S.combat.npc.hp||0) + delta));
+  else if(field==='en') S.combat.npc.en = Math.max(0, Math.min(S.combat.npc.enMax||999, (S.combat.npc.en||0) + delta));
+  else S.combat.npc[field] = Math.max(0, (S.combat.npc[field]||0) + delta);
   render();
 }
 
@@ -3739,6 +4322,27 @@ function combatShowTutorial(){
   if(!S.combat) return;
   S.combat.tutorialStep = 0;
   render();
+}
+
+// ─── COMBAT ITEM INFO MODAL (GLOBAL) ─────────────────────────────────────────
+function openCombatItemModal(name, desc, cost){
+  var existing = document.getElementById('combat-item-info-modal');
+  if(existing){ existing.remove(); return; }
+  if(!name) return;
+  var d = document.createElement('div');
+  d.id = 'combat-item-info-modal';
+  d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Times New Roman,Georgia,serif';
+  d.onclick = function(e){ if(e.target===d) d.remove(); };
+  d.innerHTML =
+    '<div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:20px 18px;max-width:380px;width:100%;max-height:80vh;overflow-y:auto">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1.5px solid #73181F">'
+    +   '<strong style="color:#73181F;font-size:.95rem">' + (name||'') + '</strong>'
+    +   '<button onclick="openCombatItemModal()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#73181F;line-height:1;padding:0 4px">&#x2715;</button>'
+    + '</div>'
+    + (cost ? '<div style="font-size:.72rem;color:#73181F;margin-bottom:8px">' + cost + '</div>' : '')
+    + '<div style="font-size:.84rem;line-height:1.65;opacity:.85">' + (desc||'—') + '</div>'
+    + '</div>';
+  document.body.appendChild(d);
 }
 
 function renderCombat(){
@@ -3817,82 +4421,118 @@ function renderCombat(){
 
 
 
+  // Show info modal for a talent or ability
+  const showCombatItemInfo = (name, desc, cost) => {
+    const existing = document.getElementById('combat-item-info-modal');
+    if(existing) existing.remove();
+    const d = document.createElement('div');
+    d.id = 'combat-item-info-modal';
+    d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Times New Roman,Georgia,serif';
+    d.onclick = e => { if(e.target===d) d.remove(); };
+    d.innerHTML = '<div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:20px 18px;max-width:380px;width:100%">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+      + '<strong style="color:#73181F;font-size:.95rem">' + (name||'') + '</strong>'
+      + '<button onclick="document.getElementById(\'combat-item-info-modal\').remove()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:#73181F;line-height:1;padding:0 4px">✕</button>'
+      + '</div>'
+      + (cost ? '<div style="font-size:.72rem;color:#73181F;margin-bottom:7px">' + cost + '</div>' : '')
+      + '<div style="font-size:.84rem;line-height:1.6;opacity:.85">' + (desc||'—') + '</div>'
+      + '</div>';
+    document.body.appendChild(d);
+  };
+
+
+// openCombatItemModal defined globally below
+
   const combatantBlock = (side, data, isPC) => {
+    const color = isPC ? '#73181F' : '#8a3000';
     const hpPct = data.hpMax > 0 ? Math.min(100, data.hp/data.hpMax*100) : 0;
-    const statBox = (label, val) => `<div style="text-align:center;background:rgba(115,24,31,.07);border:1px solid rgba(115,24,31,.2);border-radius:7px;padding:6px 8px;min-width:46px"><div style="font-size:.58rem;letter-spacing:1px;opacity:.55">${label}</div><div style="font-size:1.3rem;font-weight:bold;color:${isPC?'#73181F':'#8a3000'}">${val}</div></div>`;
+    const enPct = (data.enMax||0) > 0 ? Math.min(100, (data.en||0)/data.enMax*100) : 0;
+
+    const statRow1 = '<div style="display:flex;gap:5px;margin-bottom:5px">'
+      + ['VIG','IST','MEN'].map(function(l){
+          const val = l==='VIG'?data.vig : l==='IST'?data.ist : data.men;
+          return '<div style="flex:1;text-align:center;background:rgba(115,24,31,.07);border:1px solid rgba(115,24,31,.2);border-radius:6px;padding:5px 4px">'
+            + '<div style="font-size:.55rem;letter-spacing:1px;opacity:.55">'+l+'</div>'
+            + '<div style="font-size:1.2rem;font-weight:bold;color:'+color+'">'+val+'</div>'
+            + '</div>';
+        }).join('')
+      + '</div>';
+
+    const statRow2 = '<div style="display:flex;gap:5px;margin-bottom:8px">'
+      + '<div style="flex:1;display:flex;align-items:center;gap:5px;background:rgba(115,24,31,.07);border:1px solid rgba(115,24,31,.2);border-radius:6px;padding:5px 8px">'
+      +   '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg>'
+      +   '<div><div style="font-size:.55rem;opacity:.55">DANNO</div><div style="font-size:1rem;font-weight:bold;color:'+color+'">'+data.dmg+'</div></div>'
+      + '</div>'
+      + '<div style="flex:1;display:flex;align-items:center;gap:5px;background:rgba(115,24,31,.07);border:1px solid rgba(115,24,31,.2);border-radius:6px;padding:5px 8px">'
+      +   '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
+      +   '<div><div style="font-size:.55rem;opacity:.55">PROTEZIONE</div><div style="font-size:1rem;font-weight:bold;color:'+color+'">'+data.prot+'</div></div>'
+      + '</div>'
+      + '</div>';
+
+    function makeHpBar(adjFn){
+      return '<div style="display:flex;gap:6px;align-items:center;margin-top:6px">'
+        + '<button onclick="'+adjFn+'(\'hp\',-1)" style="width:28px;height:28px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
+        + '<span style="font-size:.78px;flex:1;text-align:center;font-weight:bold"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> '+data.hp+'/'+data.hpMax+'</span>'
+        + '<button onclick="'+adjFn+'(\'hp\',1)" style="width:28px;height:28px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">+</button>'
+        + '</div>'
+        + '<div style="height:8px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15);margin-top:4px"><div style="height:100%;background:#18732D;width:'+hpPct+'%;transition:width .25s"></div></div>';
+    }
+
+    function makeEnBar(adjFn){
+      if(!data.enMax) return '';
+      return '<div style="display:flex;gap:6px;align-items:center;margin-top:6px">'
+        + '<button onclick="'+adjFn+'(\'en\',-1)" style="width:28px;height:28px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
+        + '<span style="font-size:.78px;flex:1;text-align:center;font-weight:bold"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> '+(data.en||0)+'/'+data.enMax+'</span>'
+        + '<button onclick="'+adjFn+'(\'en\',1)" style="width:28px;height:28px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">+</button>'
+        + '</div>'
+        + '<div style="height:8px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15);margin-top:4px"><div style="height:100%;background:#182473;width:'+enPct+'%;transition:width .25s"></div></div>';
+    }
+
+    function makeItemList(items, nameKey, descKey, costKey){
+      if(!items||!items.length) return '';
+      return '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">'
+        + items.map(function(it){
+            var n = esc(it[nameKey]||'');
+            var d = esc(it[descKey]||'');
+            var c = esc(it[costKey]||'');
+            // Store data on window so onclick can retrieve it without complex escaping
+            var idx = (window._combatItems = window._combatItems||[]).push({n:it[nameKey]||'',d:it[descKey]||'',c:it[costKey]||''}) - 1;
+            return '<span onclick="openCombatItemModal(window._combatItems['+idx+'].n,window._combatItems['+idx+'].d,window._combatItems['+idx+'].c)" style="font-size:.72rem;padding:3px 8px;background:rgba(115,24,31,.08);border:1px solid rgba(115,24,31,.25);border-radius:12px;cursor:pointer;color:#1a1007" title="Clicca per dettagli">'+n+'</span>';
+          }).join('')
+        + '</div>';
+    }
 
     if(isPC){
-      return `<div style="flex:1;min-width:0;background:rgba(196,176,138,.2);border:2px solid #73181F;border-radius:10px;padding:14px">
-        <div style="font-weight:bold;color:#73181F;font-size:.78rem;letter-spacing:2px;margin-bottom:8px">PG — ${esc(data.name)}</div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
-          ${statBox('VIG', data.vig)}
-          ${statBox('IST', data.ist)}
-          ${statBox('MEN', data.men)}
-          ${statBox('DMG', data.dmg)}
-          ${statBox('PROT', data.prot)}
-        </div>
-        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
-          <button onclick="S.combat.showTalentsModal=true;render()" style="flex:1;padding:6px 8px;border:1.5px solid #73181F;border-radius:6px;background:transparent;color:#1a1007;cursor:pointer;font-family:inherit;font-size:.73rem;min-height:34px">Talenti (${data.talents.length})</button>
-          ${data.abilities && data.abilities.length ? `<button onclick="S.combat.showAbilitiesModal=true;render()" style="flex:1;padding:6px 8px;border:1.5px solid #73181F;border-radius:6px;background:transparent;color:#1a1007;cursor:pointer;font-family:inherit;font-size:.73rem;min-height:34px">Abilità (${data.abilities.length})</button>` : ''}
-        </div>
-        <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
-          <button onclick="combatAdjPc('hp',-1)" style="width:32px;height:32px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">−</button>
-          <span style="font-size:.8rem;flex:1;text-align:center;font-weight:bold">❤ ${data.hp} / ${data.hpMax}</span>
-          <button onclick="combatAdjPc('hp',1)" style="width:32px;height:32px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>
-        </div>
-        <div style="height:10px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15);margin-top:4px"><div style="height:100%;background:#18732D;width:${hpPct}%;transition:width .25s"></div></div>
-        <div style="display:flex;gap:6px;margin-top:7px;align-items:center">
-          <button onclick="combatAdjPc('en',-1)" style="width:32px;height:32px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">−</button>
-          <span style="font-size:.8rem;flex:1;text-align:center;font-weight:bold">⚡ ${data.en} / ${data.enMax}</span>
-          <button onclick="combatAdjPc('en',1)" style="width:32px;height:32px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>
-        </div>
-      </div>`;
+      return '<div style="flex:1;min-width:0;background:rgba(196,176,138,.2);border:2px solid #73181F;border-radius:10px;padding:12px">'
+        + '<div style="font-weight:bold;color:#73181F;font-size:.72rem;letter-spacing:2px;margin-bottom:8px">PG &#8212; '+esc(data.name)+'</div>'
+        + statRow1
+        + statRow2
+        + makeHpBar('combatAdjPc')
+        + makeEnBar('combatAdjPc')
+        + (data.talents&&data.talents.length ? '<div style="margin-top:8px"><div style="font-size:.6rem;opacity:.5;letter-spacing:1px;margin-bottom:3px">TALENTI</div>'+makeItemList(data.talents,'talent_name','talent_description','talent_cost')+'</div>' : '')
+        + (data.abilities&&data.abilities.length ? '<div style="margin-top:6px"><div style="font-size:.6rem;opacity:.5;letter-spacing:1px;margin-bottom:3px">ABILITÀ</div>'+makeItemList(data.abilities,'ability_name','ability_description','ability_cost')+'</div>' : '')
+        + '</div>';
     } else {
-      // NPC panel — read-only stats, HP adjustable, selector
-      return `<div style="flex:1;min-width:0;background:rgba(196,176,138,.2);border:2px solid #8a3000;border-radius:10px;padding:14px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-          <div>
-            <div style="font-weight:bold;color:#8a3000;font-size:.78rem;letter-spacing:2px">${esc(data.nome||data.name||'PNG')}</div>
-            ${data.grado ? `<div style="font-size:.65rem;opacity:.55;margin-top:1px">Grado ${data.grado}</div>` : ''}
-          </div>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">
-          ${statBox('VIG', data.vig)}
-          ${statBox('IST', data.ist)}
-          ${statBox('MEN', data.men)}
-          ${statBox('DMG', data.dmg)}
-          ${statBox('PROT', data.prot)}
-        </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <button onclick="combatAdjNpc('hp',-1)" style="width:32px;height:32px;background:#8a3000;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">−</button>
-          <span style="font-size:.8rem;flex:1;text-align:center;font-weight:bold">❤ ${data.hp} / ${data.hpMax}</span>
-          <button onclick="combatAdjNpc('hp',1)" style="width:32px;height:32px;background:#8a3000;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>
-        </div>
-        <div style="height:10px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15);margin-top:4px"><div style="height:100%;background:#c0392b;width:${hpPct}%;transition:width .25s"></div></div>
-        ${(data.bersaglio||[]).length ? `
-        <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(138,48,0,.18)">
-          <div style="font-size:.6rem;opacity:.5;letter-spacing:1px;margin-bottom:4px">BERSAGLIO</div>
-          ${(data.bersaglio||[]).map((b,i)=>`<div style="font-size:.75rem;padding:1px 0;opacity:.8">${['①','②','③'][i]||'•'} ${esc(b)}</div>`).join('')}
-        </div>` : ''}
-        ${(data.abilita||[]).length ? `
-        <div style="margin-top:8px">
-          <button onclick="S.combat.showNpcAbilitiesModal=true;render()" style="width:100%;padding:6px;border:1.5px solid #8a3000;border-radius:6px;background:transparent;color:#1a1007;cursor:pointer;font-family:inherit;font-size:.73rem;min-height:34px">Abilità (${(data.abilita||[]).length})</button>
-        </div>` : ''}
-        <div style="margin-top:10px">
-          <div style="font-size:.6rem;opacity:.5;letter-spacing:1px;margin-bottom:4px">SCEGLI NEMICO</div>
-          <select onchange="combatSelectNpc(this.value)" style="width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid #8a3000;padding:8px 7px;font-family:'Times New Roman',serif;font-size:.84rem;color:#1a1007;outline:none;cursor:pointer">
-            ${allNpcs().map(n=>`<option value="${esc(n.id)}" ${data.id===n.id?'selected':''}>${esc(n.nome)} — Grado ${n.grado}</option>`).join('')}
-          </select>
-        </div>
-      </div>`;
+      return '<div style="flex:1;min-width:0;background:rgba(196,176,138,.2);border:2px solid #8a3000;border-radius:10px;padding:12px">'
+        + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
+        +   '<div>'
+        +     '<div style="font-weight:bold;color:#8a3000;font-size:.72rem;letter-spacing:2px">'+esc(data.nome||data.name||'PNG')+'</div>'
+        +     (data.grado ? '<div style="font-size:.62rem;opacity:.5;margin-top:1px">Grado '+data.grado+'</div>' : '')
+        +   '</div>'
+        + '</div>'
+        + statRow1
+        + statRow2
+        + makeHpBar('combatAdjNpc')
+        + makeEnBar('combatAdjNpc')
+        + ((data.abilita||[]).length ? '<div style="margin-top:6px"><div style="font-size:.6rem;opacity:.5;letter-spacing:1px;margin-bottom:3px">ABILITÀ</div>'+makeItemList(data.abilita,'ability_name','ability_description','ability_cost')+'</div>' : '')
+        + '</div>';
     }
   };
 
 
-
   return `
   <div style="min-height:100svh;display:flex;flex-direction:column;font-family:'Times New Roman',Georgia,serif;color:#1a1007;background:#D8C7A1">
-    ${tutHtml}${talentsHtml}${abilitiesHtml}${npcAbilHtml}
+    ${tutHtml}
     <div style="background:#120801;border-bottom:2px solid #73181F;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:50">
       <div style="color:#D8C7A1;font-weight:bold;font-size:.95rem;letter-spacing:2px">⚔ COMBATTIMENTO</div>
       <div style="display:flex;gap:8px">
@@ -3900,7 +4540,7 @@ function renderCombat(){
         <div style="display:flex;gap:6px">
           ${S.ap?.pendingCombatReturnPara?`<button onclick="combatEndWith('victory')" style="background:#18732D;border:none;color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.72rem;font-family:inherit;min-height:30px">✓ Vittoria</button>`:''}
           ${S.ap?.pendingCombatDefeatPara?`<button onclick="combatEndWith('defeat')" style="background:#c0392b;border:none;color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.72rem;font-family:inherit;min-height:30px">✗ Sconfitta</button>`:''}
-          <button onclick="closeCombat()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.78rem;font-family:inherit">✕ Chiudi</button>
+          <button onclick="closeAndSaveCombat()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.78rem;font-family:inherit">✕ Chiudi</button>
         </div>
       </div>
     </div>
@@ -3920,7 +4560,7 @@ function renderCombat(){
         <div id="combat-roll-result" style="min-height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:12px">
           <span style="opacity:.4;font-style:italic;font-size:.85rem">Premi il pulsante per lanciare</span>
         </div>
-        <button onclick="combatRollAndShow()" style="background:#73181F;color:white;border:none;border-radius:8px;padding:12px 32px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:1rem;letter-spacing:1px;min-height:48px;width:100%">🎲 LANCIA 2d6</button>
+        <button onclick="combatRollAndShow()" style="background:#73181F;color:white;border:none;border-radius:8px;padding:12px 32px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:1rem;letter-spacing:1px;min-height:48px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px">${SVG.dice.replace('currentColor','white')} LANCIA 2d6</button>
         <p style="font-size:.72rem;opacity:.5;margin-top:10px;line-height:1.5">Confronta con VIG o IST. Sottrai il Danno alla Salute del bersaglio riducendolo della Protezione.</p>
         <div style="margin-top:12px;text-align:left">
           <div style="font-size:.65rem;color:#73181F;letter-spacing:1px;font-weight:bold;margin-bottom:5px">LOG TURNI</div>
@@ -4099,12 +4739,12 @@ function renderNpcDb(){
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
         <div>
           <span style="font-weight:bold;font-size:.92rem">${esc(n.nome)}</span>
-          <span style="font-size:.7rem;opacity:.5;margin-left:6px">Grado ${n.grado} · Predefinito</span>
+          <span style="font-size:.7rem;opacity:.5;margin-left:6px">Grado ${n.grado}</span>
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.78rem;opacity:.75">
         <span>VIG ${n.vig}</span><span>IST ${n.ist}</span><span>MEN ${n.men}</span>
-        <span>❤ ${n.hpMax}</span><span>⚡ ${n.enMax}</span><span>DMG ${n.dmg}</span><span>PROT ${n.prot}</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> ${n.hpMax}</span><span><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> ${n.enMax}</span><span>DMG ${n.dmg}</span><span>PROT ${n.prot}</span>
       </div>
     </div>`).join('');
 
@@ -4126,7 +4766,8 @@ function renderNpcDb(){
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:.78rem;opacity:.75">
         <span>VIG ${n.vig}</span><span>IST ${n.ist}</span><span>MEN ${n.men}</span>
-        <span>❤ ${n.hpMax}</span><span>⚡ ${n.enMax}</span><span>DMG ${n.dmg}</span><span>PROT ${n.prot}</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> ${n.hpMax}</span><span><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+ ${n.enMax}</span><span>DMG ${n.dmg}</span><span>PROT ${n.prot}</span>
         ${n.abilita?.length?`<span style="color:#73181F">${n.abilita.length} abilità</span>`:''}
       </div>
       ${n.note?`<div style="font-size:.76rem;opacity:.6;margin-top:5px;font-style:italic">${esc(n.note)}</div>`:''}
@@ -4260,17 +4901,12 @@ const ONBOARDING_STEPS = [
   {
     title: 'Benvenuto in SAGA',
     icon: 'M12 2L5 6v7c0 5 3.5 9.7 7 11 3.5-1.3 7-6 7-11V6l-7-4z',
-    text: 'SAGA — Avventure Interattive è un\'app per giocare e creare avventure nel sistema di gioco di ruolo SAGA. In pochi passi imparerai a creare un personaggio, esplorare un\'avventura e affrontare i combattimenti.',
+    text: 'SAGA — Avventure Interattive è un\'app per giocare e creare avventure nel sistema di gioco di ruolo SAGA. <br><br>In pochi passi imparerai a creare un personaggio, esplorare un\'avventura e affrontare i combattimenti.',
   },
   {
     title: 'Crea il tuo personaggio',
     icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
     text: 'Ogni personaggio ha tre caratteristiche fondamentali:\n<br><br>• <strong>VIG (Vigore)</strong> — forza fisica e resistenza al danno<br>• <strong>IST (Istinto)</strong> — agilità, riflessi e percezione<br>• <strong>MEN (Mente)</strong> — intelligenza, volontà e carisma\n<br><br>Vai su <em>I miei personaggi → Nuovo personaggio</em> per iniziare.',
-  },
-  {
-    title: 'Prove caratteristica',
-    icon: 'M5 12h14M12 5l7 7-7 7',
-    text: 'Ogni azione difficile richiede una <strong>prova caratteristica</strong>: lancia 2 dadi a 6 facce (2d6) e confronta il totale con la caratteristica rilevante.\n<br><br>• Risultato <strong>≤ caratteristica</strong> → Successo ✓<br>• Risultato <strong>&gt; caratteristica</strong> → Fallimento ✗\n<br><br>Con <strong>doppio 1</strong> ottieni un Successo Critico — in combattimento il danno è raddoppiato.',
   },
   {
     title: 'Avventure e paragrafi',
@@ -4280,7 +4916,7 @@ const ONBOARDING_STEPS = [
   {
     title: 'Combattimento',
     icon: 'M14.5 17.5 3 6 3 3 6 3 17.5 14.5M13 19l6-6M16 16l4 4M19 21l2-2',
-    text: 'Il combattimento si divide in <strong>round</strong> (tutti agiscono) e <strong>turni</strong> (il singolo PG o PNG).\n<br><br>• Ogni PG ha <strong>2 azioni</strong> per turno, ogni PNG <strong>1 azione</strong><br>• Per attaccare: prova di <strong>VIG</strong> (mischia) o <strong>IST</strong> (distanza)<br>• Il danno inflitto è ridotto dalla <strong>Protezione</strong> del bersaglio<br><br>Durante le avventure usa il pulsante ⚔ per accedere alla schermata di combattimento.',
+    text: 'In SAGA alcune volte sarà necessario ricorrere al combattimento per risolvere alcune situazioni. <br>Durante le avventure usa il pulsante <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"></polyline><line x1="13" x2="19" y1="19" y2="13"></line><line x1="16" x2="20" y1="16" y2="20"></line><line x1="19" x2="21" y1="21" y2="19"></line></svg> per accedere alla schermata di combattimento.',
   },
   {
     title: 'Pronto all\'avventura!',
@@ -4373,7 +5009,7 @@ function renderStories(){
       </div>
       <div class="card" style="cursor:pointer" onclick="nav('npc-db')">
         <div style="display:flex;align-items:center;gap:12px">
-          ${SVG.npc.replace('width="16"','width="26"').replace('height="16"','height="26"')}
+          ${SVG.npc.replace('width="16"','width="26"').replace('height="16"','height="26"').replace('stroke="currentColor"','stroke="#73181F"')}
           <div>
             <div style="font-weight:bold;font-size:.95rem;color:#73181F">Personaggi</div>
             <div style="font-size:.78rem;opacity:.65;margin-top:2px">Gestisci il database dei Personaggi Non Giocanti</div>
