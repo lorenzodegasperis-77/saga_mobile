@@ -1052,7 +1052,6 @@ function renderCharacters(){
     <div style="display:flex;flex-direction:column;gap:0;margin-bottom:16px">${charCards}</div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <button class="btn btn-secondary" style="border:2px dashed #73181F;opacity:.85" onclick="nav('create')">+ Nuovo personaggio</button>
-      <button class="btn btn-secondary" style="border:2px dashed #73181F;opacity:.85" onclick="generateRandomChar()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>Personaggio casuale</button>
       <button class="btn btn-secondary" onclick="nav('home')">❮ TORNA AL MENU</button>
     </div>
   </div>`;
@@ -1157,8 +1156,11 @@ function renderCCSetting(cs){
       </div>`;
     }).join('')}
   </div>
-  <div style="display:flex;justify-content:flex-end;margin-top:20px;border-top:1px solid #84785E;padding-top:14px">
-    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.setting){ccAlertSetting();return;}ccGoStep(1)">IL TUO EROE ❯</button>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px;flex-wrap:wrap">
+    ${cs.setting
+      ? `<button class="btn btn-secondary" style="flex:1;max-width:220px;border:2px dashed #73181F" onclick="generateRandomChar(S.cc.cs.setting)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>Casuale</button>`
+      : `<div></div>`}
+    <button class="btn btn-primary" style="flex:1;max-width:220px" onclick="if(!S.cc.cs.setting){ccAlertSetting();return;}ccGoStep(1)">IL TUO EROE ❯</button>
   </div>`;
 }
 
@@ -3972,7 +3974,7 @@ function showTemporalInfoModal(disciplinaFilter) {
 }
 
 // ─── RANDOM CHARACTER GENERATOR ───────────────────────────────────
-function generateRandomChar() {
+function generateRandomChar(setting) {
   function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
   const lineage   = rnd(DB.heritage);
@@ -4024,7 +4026,7 @@ function generateRandomChar() {
   const SEXES = ['Maschio','Femmina','Altro'];
 
   const char = {
-    id: genId(), name: rnd(NAMES), sex: rnd(SEXES), setting: rnd(Object.keys(SETTINGS)),
+    id: genId(), name: rnd(NAMES), sex: rnd(SEXES), setting: setting || rnd(Object.keys(SETTINGS)),
     level: 1, exp: 0,
     vig: st.vig, ins: st.ins, min: st.min,
     cVig: 0, cIns: 0, cMin: 0,
