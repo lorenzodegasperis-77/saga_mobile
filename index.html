@@ -753,8 +753,8 @@ function homeShare(){
     {label:'Copia link', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>',action:'copy'},
   ];
   const d=document.createElement('div');
-  d.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom)';
-  d.innerHTML='<div style="background:#D8C7A1;border-radius:16px 16px 0 0;padding:20px 18px 24px;width:min(480px,100vw);max-height:85vh;overflow-y:auto">'
+  d.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:16px';
+  d.innerHTML='<div style="background:#D8C7A1;border-radius:16px;padding:24px 20px;width:min(480px,100%);max-height:85vh;overflow-y:auto">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(115,24,31,.2)">'
     +'<span style="font-weight:bold;font-size:1rem;color:#73181F">Condividi SAGA</span>'
     +'<button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:transparent;border:none;font-size:1.4rem;cursor:pointer;color:#1a1007;line-height:1">×</button>'
