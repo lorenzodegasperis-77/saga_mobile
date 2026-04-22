@@ -1,0 +1,892 @@
+{
+  "id": "ADV-0AX4629EM",
+  "title": "Il parcheggio",
+  "desc": "Una mattina qualunque — o quasi.",
+  "author": "LDG",
+  "startParagraph": "001",
+  "setting": "moderno",
+  "paragraphs": [
+    {
+      "id": "001",
+      "name": "Uscita",
+      "text": "Il portone di ferro si chiude con un rimbombo metallico che sembra deriderti. È la seconda volta in dieci minuti.\nLa prima risalita è stata per le chiavi dell’auto. Ti sei dato dell'idiota mentre frugavi svogliatamente tra i mobili del corridoio: \"Come pensavi di arrivarci al lavoro, per telepatia?\".\nOra, eccoti di nuovo qui, con il fiato leggermente corto e la borsa del pranzo stretta in mano come un trofeo di cui faresti volentieri a meno. \"Non sarebbe stata la fine del mondo restare digiuno\", mastichi tra i denti, \"ma visto che sono qui...\".\nIl tempo però non è tuo amico. L’orologio sul polso sembra correre più veloce del normale e la riunione di stamattina non ammette ritardi: è uno di quei momenti \"dentro o fuori\" per la tua carriera.\nMentre ti lanci giù per le scale, cercando di recuperare i secondi perduti, un ostacolo imprevisto compare sul pianerottolo del secondo piano: la signora Nina. È ferma lì, lenta nei movimenti, l'incarnazione stessa della calma che tu, in questo momento, non puoi permetterti.",
+      "exits": [
+        {
+          "id": "PG-XAJI0Y6DP",
+          "type": "choice",
+          "label": "Le rivolgi un saluto cordiale e un sorriso smagliante.",
+          "to": "030"
+        },
+        {
+          "id": "PG-BHSAHXTHV",
+          "type": "choice",
+          "label": "Tiri dritto ignorandola. L’ultima volta ha finto di non vederti e oggi non hai proprio intenzione di sprecare fiato.",
+          "to": "739"
+        }
+      ]
+    },
+    {
+      "id": "030",
+      "name": "Saluto",
+      "text": "«Buongiorno, signora Nina!» esclami, cercando di non far trapelare l’urgenza che ti preme nel petto.\nLa donna si volta lentamente. Il riflesso della luce sulle sue lenti spesse rivela uno sguardo stanco, segnato da una notte difficile. Ai suoi piedi, due sacchetti della spesa carichi all'inverosimile sembrano ancore di piombo sul vecchio marmo del pianerottolo.\n«Oh, buongiorno caro...» risponde lei, con un soffio di voce. Tenta di afferrare i manici di plastica che le tagliano le dita nodose. «Che mattinata... mio nipote doveva passare ad aiutarmi, ma si è fatto vivo solo ora con un messaggio. Dice che ha un imprevisto. I giovani d'oggi vivono dentro quei telefoni, sai?»\nTi guarda, e in quel momento senti il peso del tuo orologio. Le 08:05. La riunione inizia tra meno di un'ora e il traffico cittadino non avrà pietà.",
+      "exits": [
+        {
+          "id": "PG-3A3ZMF8MD",
+          "type": "choice",
+          "label": "Aiuti la signora Nina con le borse della spesa.",
+          "to": "101"
+        },
+        {
+          "id": "PG-D4V30T9NT",
+          "type": "choice",
+          "label": "La saluti ma non ti fermi. ",
+          "to": "945"
+        }
+      ]
+    },
+    {
+      "id": "055",
+      "name": "Passo oltre",
+      "text": "Il portiere, un uomo dai lineamenti scavati che sembra far parte dell'arredamento dell'atrio, solleva appena lo sguardo dal suo giornale. «Bella giornata», mormora con un tono che non ammette repliche, nonostante sopra i tetti della città si stia stendendo una coltre di nuvole color piombo, pesanti come cenere.\nAppena metti piede fuori, l'aria gelida ti schiaffeggia. È un freddo secco, pungente, che ti entra nelle narici e ti pulisce i polmoni, scacciando via gli ultimi rimasugli di sonno. Il rumore dei clacson in lontananza e il fumo degli scarichi che danza nell'aria fredda ti ricordano che il mondo non ha aspettato i tuoi ritardi.\nTi fermi un istante sul marciapiede, con le chiavi dell'auto che pesano nella tasca e il dubbio che ti morde lo stomaco.",
+      "exits": [
+        {
+          "id": "PG-3W5UZBIKC",
+          "type": "choice",
+          "label": "Vai verso il garage. Se il traffico che ti assiste, potresti ancora farcela a parcheggiare e correre in ufficio prima della riunione.",
+          "to": "026"
+        },
+        {
+          "id": "PG-IDKWNNHJ7",
+          "type": "choice",
+          "label": "Decidi di prendere l'autobus. Hai uno strano presentimento, forse è meglio che qualcun altro combatta il caos urbano oggi.",
+          "to": "121"
+        }
+      ]
+    },
+    {
+      "id": "101",
+      "name": "Aiuto Nina",
+      "text": " Cerchi di fare un sorriso: «Non si preoccupi signora, la aiuto io». \nAfferri le borse con un gesto deciso. Sono più pesanti di quanto sembrassero: dentro senti il rumore di barattoli di vetro e il peso sordo delle patate. Nina ti guarda come se fossi un angelo sceso in terra, accompagnandoti verso la sua porta con una litania di ringraziamenti.\n«Sei proprio un bravo ragazzo,» ti sussurra mentre depositi il carico sul tavolo della cucina, saturo di odore di lavanda e caffè vecchio. Ti allunga un biscotto fatto in mano, ma tu, con un gesto educato e il cuore che batte già al ritmo della riunione, declini. «Grazie Nina, ma devo proprio volare!»\nEsci dall'appartamento sentendo il suo sguardo benevolo seguirti. Hai perso minuti preziosi, ma c'è una strana leggerezza nel tuo passo. Chissà se la gratitudine della vecchia signora attirerà un po' di fortuna sulla tua giornata, o se sarà stata solo la goccia che farà traboccare il vaso del tuo ritardo.\n- Segna una stanghetta sulla tua scheda",
+      "exits": [
+        {
+          "id": "PG-XVG0FN9XU",
+          "type": "choice",
+          "label": "Scendi i gradini rapidamente. I tuoi passi rimbombano nel vano condominiale. Arrivi nell'atrio, la mano già pronta sulla maniglia pesante del portone di casa.",
+          "to": "055"
+        }
+      ]
+    },
+    {
+      "id": "121",
+      "name": "Attacco del gabbiano",
+      "text": "Mentre cammini a passo svelto lungo il marciapiede, un'ombra grigia e bianca si staglia davanti a te. Un gabbiano reale, di dimensioni quasi preistoriche, ha preso possesso del cemento. Non è il solito uccello spaventato che vola via al primo passo; questo animale sembra un piccolo dinosauro metropolitano.\nLe sue ali sono leggermente divaricate, i muscoli pronti allo scatto, e le zampe palmate artigliano il bordo del marciapiede con una sicurezza inquietante. Ti fissa con un occhio giallo, vitreo e privo di empatia, emettendo un verso strozzato che suona terribilmente come una sfida. Sembra quasi che stia presidiando un confine invisibile.\nIl tempo scorre, l'autobus potrebbe passare da un momento all'altro e questo bizzarro duello visivo sta diventando assurdo.",
+      "exits": [
+        {
+          "id": "PG-Y41IBLJH7",
+          "type": "choice",
+          "label": "Procedi dritto senza rallentare. È solo un uccello troppo cresciuto e tu hai una riunione che vale il tuo futuro. Non permetterai a un pennuto di intimidirti. Lo ignori, convinto che si sposterà all'ultimo secondo.",
+          "to": "158"
+        },
+        {
+          "id": "PG-5LXO6QJIU",
+          "type": "choice",
+          "label": "Allunghi il passo e cambi marciapiede. C’è qualcosa di sinistro nel modo in cui ti guarda. Hai già avuto una mattinata strana, non hai bisogno di un attacco aereo o di finire con i pantaloni rovinati proprio oggi. Meglio fare il giro largo e non sfidare la natura.",
+          "to": "165"
+        }
+      ]
+    },
+    {
+      "id": "158",
+      "name": "Combattimento col gabbiano",
+      "text": "Non rallenti. Stringi la presa sulla valigetta e punti dritto verso il volatile, cercando di proiettare tutta l'autorità di cui sei capace. Il gabbiano però non batte ciglio: spalanca le ali in un’apertura quasi spaventosa e lancia un grido acuto, un suono primordiale che rimbalza tra i palazzi e fa sobbalzare due passanti dall'altra parte della strada.\nÈ un momento sospeso nel tempo: tu contro la bestia.",
+      "exits": [
+        {
+          "id": "PG-JV6OH9SDB",
+          "type": "encounter",
+          "npcId": "NPC-ZIE2OZM91",
+          "label": "Scontro con il gabbiano sul marciapiede",
+          "successTo": "172",
+          "failTo": "050",
+          "to": "172",
+          "defeatTo": "050",
+          "victoryMsg": "Mentre il volatile si sporge in avanti, impettito e minaccioso, fai scattare la valigetta con un colpo secco e preciso, come uno scudo spartano. Il cuoio colpisce il petto piumato dell'animale con un \"tump\" sordo. Il gabbiano, colto di sorpresa da tanta audacia, perde l'equilibrio per un istante, emette un verso strozzato di indignazione e batte freneticamente le ali per ritirarsi verso il bordo del marciapiede.\n\nLo superi a testa alta, sentendo il suo sguardo giallo bruciarti la schiena, ma non ti volti. Hai vinto tu."
+        }
+      ]
+    },
+    {
+      "id": "165",
+      "name": "Cambio marciapiede",
+      "text": "Ti sposti dall'altro lato della strada, tenendo d'occhio il gabbiano che ti fissa con aria di palese trionfo. Piccolo stronzo.\nLa strada lunga ti porta comunque alla fermata, anche se hai perso qualche minuto prezioso e un bel po' di dignità. Segna una stanghetta.",
+      "exits": [
+        {
+          "id": "PG-DW2PCN9T8",
+          "type": "choice",
+          "label": "Arrivi alla fermata.",
+          "to": "172"
+        }
+      ]
+    },
+    {
+      "id": "172",
+      "name": "Fila biglietti",
+      "text": "Raggiungi la fermata con il respiro ancora corto. Il display luminoso indica 4 minuti all'arrivo del bus. Ti avvicini alla macchinetta obliteratrice per fare il biglietto, ma uno schermo nero con la scritta \"Fuori Servizio\" ti accoglie con gelida indifferenza.\nTi volti verso l'unico tabaccaio della zona. Davanti alla porta c'è una piccola colonna di sei persone che sembrano avere tutto il tempo del mondo: c'è chi discute dei numeri del lotto e chi conta meticolosamente i centesimi per un pacchetto di caramelle. Il costo del biglietto è di 1,10 €.\nIl tempo stringe. Quei quattro minuti pesano come ore.",
+      "exits": [
+        {
+          "id": "PG-4AZYTJXEP",
+          "type": "choice",
+          "label": "Fai la fila per bene. Ti metti in coda e aspetti il tuo turno, cercando di soffocare l'ansia.",
+          "to": "189"
+        },
+        {
+          "id": "PG-Q85JSG65K",
+          "type": "choice",
+          "label": "Provi a convincere qualcuno a farti passare avanti con una scusa credibile.",
+          "to": "191"
+        },
+        {
+          "id": "PG-XVF1T2TAL",
+          "type": "choice",
+          "label": "Vedi un altro tabaccaio dall'altra parte della carreggiata. Sembra vuoto. Devi decidere in un istante se sfidare il traffico e correre là prima che il bus arrivi.",
+          "to": "204"
+        },
+        {
+          "id": "PG-A753LC58D",
+          "type": "choice",
+          "label": "Chiudi la borsa, raddrizzi la cravatta e decidi di rischiare. Sali senza biglietto. Tanto, con questa fortuna, che probabilità ci sono di incontrare un controllore proprio oggi?",
+          "to": "213"
+        }
+      ]
+    },
+    {
+      "id": "189",
+      "name": "Fila ok",
+      "text": "Ti rassegni alla fila. Davanti a te, un signore anziano discute animatamente sulle percentuali di vincita di un \"Gratta e Vinci\", mentre la commessa cerca con estrema calma un rotolo di carta per la cassa. Ogni secondo trascorso è un colpo di martello sulla tua tabella di marcia.\n\"Scusi... permesso...\" mormori, ma la folla è un muro di indifferenza. Finalmente tocca a te. Posi la moneta da un euro e i dieci centesimi sul bancone, afferri il pezzetto di carta colorata e ti volti proprio mentre lo stridore dei freni annuncia l'arrivo del mezzo.\n- Segna una stanghetta e il codice BUS.\nTi lanci fuori dal tabaccaio e balzi sulla pedana dell'autobus un istante prima che le porte a soffietto si chiudano con un sospiro pneumatico.",
+      "exits": [
+        {
+          "id": "PG-RC11ERTJ5",
+          "type": "code_grant",
+          "code": "BUS",
+          "label": "Ottieni il codice BUS"
+        },
+        {
+          "id": "PG-PHT0HL9XP",
+          "type": "choice",
+          "label": "Sali sull'autobus.",
+          "to": "213"
+        }
+      ]
+    },
+    {
+      "id": "191",
+      "name": "Fila MEN",
+      "text": "Ti rivolgi alla coda con un sorriso tirato e gli occhi lucidi di chi sta per vedere il proprio futuro andare in fumo.\n«Signori, vi prego, ho una riunione tra pochi minuti che deciderà se avrò ancora un ufficio domani o se finirò a vendere enciclopedie porta a porta. Potrei passare avanti? È solo un biglietto da un euro e dieci!»",
+      "exits": [
+        {
+          "id": "PG-SEIMVIHCW",
+          "type": "stat_check",
+          "stat": "MEN",
+          "label": "Convinci la fila a farti passare",
+          "successTo": "193",
+          "failTo": "202"
+        }
+      ]
+    },
+    {
+      "id": "193",
+      "name": "Fila MEN ok",
+      "text": "La signora in cima alla fila, una donna minuta con un cappello di feltro che ricorda vagamente la signora Nina, si scosta con un gesto materno. «Oh, povero caro, passi pure! Anche mio figlio è sempre di corsa». Gli altri borbottano qualcosa, ma nessuno ha il coraggio di opporsi alla benevolenza della \"capofila\".\nIn meno di trenta secondi hai il tuo biglietto in mano. Senti quasi un'aura di potere circondarti: ce l'hai fatta, hai risparmiato tempo prezioso e la tua dignità è uscita quasi indenne da questo scambio.\n- Ottieni il codice BUS",
+      "exits": [
+        {
+          "id": "PG-I64CIYHE7",
+          "type": "code_grant",
+          "code": "BUS",
+          "label": "Ottieni il codice BUS"
+        },
+        {
+          "id": "PG-UR23GDPPQ",
+          "type": "choice",
+          "label": "Sali sull'autobus.",
+          "to": "213"
+        }
+      ]
+    },
+    {
+      "id": "202",
+      "name": "Fila MEN ko",
+      "text": "Ti schiarisci la voce, pronto a sfoderare il tuo miglior tono da \"giovane professionista in crisi\".\n«Signori, chiedo scusa, è un'emergenza assoluta... se non prendo quel bus la mia carriera è finita, qualcuno sarebbe così gentile da lasciarmi passare?»\n\nStamattina non ne va proprio bene una... La signora in cima alla fila si stringe nelle spalle e si scosta appena per proteggere il suo spazio vitale, mentre un uomo corpulento dietro di lei borbotta: «Eh, caro mio, siamo tutti di corsa. C'è chi va a lavorare e chi va in ospedale, faccia la fila come tutti».\n\nLa signora davanti a te inizia a chiedere informazioni dettagliate su ogni singola marca di sigarette, rallentando vistosamente il ritmo. Senti il sudore freddo scivolarti lungo la schiena mentre guardi l'autobus accostare alla fermata fuori dalla vetrina.\n\nAlla fine, riesci a ottenere il maledetto biglietto, ma paghi il prezzo più alto: il tuo tempo.\n\n- Segna una stanghetta sulla scheda e il codice BUS",
+      "exits": [
+        {
+          "id": "PG-0Y9DOM5IG",
+          "type": "code_grant",
+          "code": "BUS",
+          "label": "Ottieni il codice BUS"
+        },
+        {
+          "id": "PG-QPKI7P5TB",
+          "type": "choice",
+          "label": "Sali sull'autobus.",
+          "to": "213"
+        }
+      ]
+    },
+    {
+      "id": "204",
+      "name": "Fila IST",
+      "text": "Vedi le insegne del tabaccaio dall'altra parte della strada. Puoi farcela.\nProva di IST per attraversare di corsa senza inciampare, evitare i passanti e arrivare in tempo prima del bus.",
+      "exits": [
+        {
+          "id": "PG-94874FRHO",
+          "type": "stat_check",
+          "stat": "IST",
+          "label": "Corri al tabaccaio attraversando la strada",
+          "successTo": "207",
+          "failTo": "210"
+        }
+      ]
+    },
+    {
+      "id": "207",
+      "name": "Fila IST ok",
+      "text": "Corri, schiacci il semaforo, superi una nonna con il carrello, entri di slancio nel tabaccaio. Arrivi alla fermata di corsa proprio mentre il bus apre le porte. Perfetto. Segna il codice BUS sulla scheda.",
+      "exits": [
+        {
+          "id": "PG-CN9J2QP89",
+          "type": "code_grant",
+          "code": "BUS",
+          "label": "Ottieni il codice BUS"
+        },
+        {
+          "id": "PG-UZFK8UT0C",
+          "type": "choice",
+          "label": "Sali sull'autobus.",
+          "to": "213"
+        }
+      ]
+    },
+    {
+      "id": "210",
+      "name": "Fila IST ko",
+      "text": "Arrivi alla fermata ansimante con una scarpa allentata. Il bus è già lì ad aspettarti — o forse ti prende in giro.\nSegna una stanghetta. Segna comunque il codice BUS sulla scheda.",
+      "exits": [
+        {
+          "id": "PG-VS4F8CGVY",
+          "type": "code_grant",
+          "code": "BUS",
+          "label": "Ottieni il codice BUS"
+        },
+        {
+          "id": "PG-IE6IVWPVS",
+          "type": "choice",
+          "label": "Sali sull'autobus.",
+          "to": "213"
+        }
+      ]
+    },
+    {
+      "id": "213",
+      "name": "Vado in autobus",
+      "text": "Sali sull'autobus strapieno. A pochi centimetri da te c'è un tipo con cappotto invernale e cuffie giganti che emana un odore... particolare. Potente. Inconfondibile.\nFai un tiro di VIG per resistere.",
+      "exits": [
+        {
+          "id": "PG-7HZIOYKL1",
+          "type": "stat_check",
+          "stat": "VIG",
+          "label": "Resisti all'odore",
+          "successTo": "218",
+          "failTo": "221"
+        },
+        {
+          "id": "PG-CQ99CHJ75",
+          "type": "choice",
+          "label": "Fallimento ma resti: decidi di resistere comunque. Eroico. O masochista.",
+          "to": "219"
+        }
+      ]
+    },
+    {
+      "id": "218",
+      "name": "Resto in autobus",
+      "text": "Resti in autobus stringendo i denti. Ti concentri sul paesaggio fuori dal finestrino, poi sul soffitto, poi su una pubblicità di yogurt.\nFunziona. O quasi. Potresti anche farcela, questa mattina.",
+      "exits": [
+        {
+          "id": "PG-5NF4ZW9XA",
+          "type": "choice",
+          "label": "Sale il controllore.",
+          "to": "220"
+        }
+      ]
+    },
+    {
+      "id": "219",
+      "name": "Resto in autobus VIG",
+      "text": "Decidi di restare. La testa comincia a girarti leggermente. Prendi una condizione su IST — il tuo cervello sta usando tutte le risorse disponibili per non pensare all'odore.\nCe la stai facendo. Non bene, ma ce la stai facendo.",
+      "exits": [
+        {
+          "id": "PG-3KX7EEDTJ",
+          "type": "choice",
+          "label": "Sale il controllore.",
+          "to": "220"
+        }
+      ]
+    },
+    {
+      "id": "221",
+      "name": "Prendo la metro",
+      "text": "Segna una stanghetta. Scendi dall'autobus e ti infili nelle scale della metropolitana. C'è una folla compatta, il rumore è assordante, qualcuno urla dentro una cuffia.\nSali su un vagone già pieno.",
+      "exits": [
+        {
+          "id": "PG-VZHWJR64D",
+          "type": "choice",
+          "label": "Sale il controllore.",
+          "to": "220"
+        }
+      ]
+    },
+    {
+      "id": "220",
+      "name": "Controllo biglietto",
+      "text": "Una figura in divisa grigia si fa strada tra la folla stringendo un palmare. Controllore ATM.\nI suoi occhi scansionano il vagone con la sistematicità di un metal detector umano. Si avvicina.\n\"Biglietti, prego.\"",
+      "exits": [
+        {
+          "id": "PG-PJA1WJ0TP",
+          "type": "code_check",
+          "code": "BUS",
+          "label": "Mostra il biglietto timbrato.",
+          "to": "024",
+          "elseTo": ""
+        },
+        {
+          "id": "PG-AC56T4UFE",
+          "type": "choice",
+          "label": "Non hai il biglietto: inventi una scusa convincente. Prova di MEN.",
+          "to": "223"
+        },
+        {
+          "id": "PG-L6246HID2",
+          "type": "choice",
+          "label": "Non hai il biglietto: paghi la multa senza storie. Segna una stanghetta.",
+          "to": "009"
+        },
+        {
+          "id": "PG-5OWF75935",
+          "type": "choice",
+          "label": "Non hai il biglietto: ti lanci verso le porte e corri. Prova di VIG.",
+          "to": "227"
+        }
+      ]
+    },
+    {
+      "id": "223",
+      "name": "Controllo MEN",
+      "text": "Prova di MEN.\n\"Guardi, ho timbrato ma la macchinetta ha fatto una cosa strana, senta che rumore faceva...\" — balle cosmiche, ma dette con la giusta faccia.\nSe riesce: il controllore storce il naso ma lascia perdere.",
+      "exits": [
+        {
+          "id": "PG-A0L7253J2",
+          "type": "stat_check",
+          "stat": "MEN",
+          "label": "Convinci il controllore",
+          "successTo": "024",
+          "failTo": "009"
+        }
+      ]
+    },
+    {
+      "id": "009",
+      "name": "Controllo paga",
+      "text": "Paghi. Il controllore strappa la ricevuta con la soddisfazione di chi fa il suo lavoro.\n\"Buona giornata.\" — detto con un tono che non augura proprio nulla di buono.\nSegna una stanghetta.",
+      "exits": [
+        {
+          "id": "PG-D54I3QK2I",
+          "type": "choice",
+          "label": "Squilla il telefono. Rispondi.",
+          "to": "025"
+        }
+      ]
+    },
+    {
+      "id": "227",
+      "name": "Controllo fuga",
+      "text": "Prova di VIG.\nTi lanci verso le porte che si stanno chiudendo, le forzi con la spalla e schizzi fuori alla fermata successiva come un tappo di champagne.\nIl controllore grida qualcosa ma sei già fuori. Da qui vai a piedi.",
+      "exits": [
+        {
+          "id": "PG-AGL58KXO9",
+          "type": "stat_check",
+          "stat": "VIG",
+          "label": "Forza le porte e scappa",
+          "successTo": "043",
+          "failTo": "009"
+        }
+      ]
+    },
+    {
+      "id": "024",
+      "name": "Chiamata ok",
+      "text": "La chiamata va a buon fine. Il capo conferma gli orari della riunione — nessuna sorpresa, nessun cambio dell'ultimo minuto. Un piccolo miracolo.\nScendi alla tua fermata, fai due respiri e vedi un bar.",
+      "exits": [
+        {
+          "id": "PG-T7E8G8JDP",
+          "type": "choice",
+          "label": "Vai al bar prima di entrare in ufficio. Ci vuole un caffè.",
+          "to": "042"
+        },
+        {
+          "id": "PG-0LVSNUJZA",
+          "type": "choice",
+          "label": "Tiri dritto verso l'ufficio. Niente distrazioni.",
+          "to": "043"
+        }
+      ]
+    },
+    {
+      "id": "025",
+      "name": "Chiamata ko",
+      "text": "Non hai capito nulla e il capo ha riattaccato. Hai sentito solo parole sparse nel rumore: \"...presentazione... anticipa... alle nove\".\nAlle nove. Sono le 8:47. Scendi alla fermata con il cuore in gola.",
+      "exits": [
+        {
+          "id": "PG-7TZ0YNCXL",
+          "type": "choice",
+          "label": "Entri al bar. Hai bisogno di qualcosa di caldo prima di affrontare qualunque cosa.",
+          "to": "042"
+        },
+        {
+          "id": "PG-L4ZKLOOKE",
+          "type": "choice",
+          "label": "Tiri dritto verso l'ufficio. Non c'è un secondo da perdere.",
+          "to": "043"
+        }
+      ]
+    },
+    {
+      "id": "026",
+      "name": "Vai al garage",
+      "text": "Scendi al garage sotterraneo. L'odore di cemento umido e benzina, le luci al neon che sfarfallano. Trovi la tua auto al solito posto.\nLe chiavi girano, il motore borbotta un attimo — un attimo che ti sembra lunghissimo — poi parte. Sei già in ritardo.",
+      "exits": [
+        {
+          "id": "PG-P7Y6WKTAK",
+          "type": "choice",
+          "label": "Esci subito dal parcheggio e imbocchi la via principale.",
+          "to": "029"
+        },
+        {
+          "id": "PG-PUXQPHR62",
+          "type": "stat_check",
+          "stat": "MEN",
+          "label": "Prima di partire controlli livelli e pressione gomme. Prova di MEN.",
+          "successTo": "027",
+          "failTo": "028"
+        }
+      ]
+    },
+    {
+      "id": "027",
+      "name": "Controllo auto ok",
+      "text": "C'è un chiodo conficcato nella gomma posteriore destra. Lo guardi incredulo per un secondo.\nPer fortuna hai la schiuma sigillante nel bagagliaio. Estrai il chiodo con cura, sigilli il foro. Dovrai passare dal gommista al più presto, ma per oggi dovrebbe reggere.\nSegna una stanghetta e il codice MELA sulla tua scheda.",
+      "exits": [
+        {
+          "id": "PG-GDSWM31YI",
+          "type": "code_grant",
+          "code": "MELA",
+          "label": "Ottieni il codice MELA"
+        },
+        {
+          "id": "PG-HAIR4COWG",
+          "type": "choice",
+          "label": "Parti ora per il lavoro. Hai già perso abbastanza tempo.",
+          "to": "029"
+        }
+      ]
+    },
+    {
+      "id": "028",
+      "name": "Controllo auto ko",
+      "text": "Il computer di bordo non segnala nulla di anomalo. Tutto verde, tutto nella norma.\nEppure qualcosa non ti convince. Hai quella sensazione — quella che ti fa guardare due volte prima di attraversare.",
+      "exits": [
+        {
+          "id": "PG-ZRIXA11DP",
+          "type": "stat_check",
+          "stat": "IST",
+          "label": "Fai un giro dell'auto a piedi. Segna una stanghetta. Prova di IST.",
+          "successTo": "027",
+          "failTo": "029"
+        }
+      ]
+    },
+    {
+      "id": "029",
+      "name": "Traffico",
+      "text": "Imbocchi la strada principale verso l'ufficio. Il traffico del mattino è già bello ingolfato: code lunghe, clacson sporadici, un furgone bianco in doppia fila che blocca tutto.",
+      "exits": [
+        {
+          "id": "PG-G8SBI4Q2Y",
+          "type": "choice",
+          "label": "Se hai almeno una stanghetta sulla scheda vai a",
+          "to": "034"
+        },
+        {
+          "id": "PG-9V86WZS3T",
+          "type": "choice",
+          "label": "Altrimenti vai a",
+          "to": "069"
+        }
+      ]
+    },
+    {
+      "id": "069",
+      "name": "Polizia",
+      "text": "Ti stai incolonnando lentamente nel traffico. Stai valutando — male — di superare il tipo davanti da destra quando noti una paletta arancione alzarsi sul marciapiede. Polizia stradale. Ti hanno visto.",
+      "exits": [
+        {
+          "id": "PG-60RJIW1SW",
+          "type": "stat_check",
+          "stat": "MEN",
+          "label": "Provi a spiegare la situazione con calma. Prova di MEN.",
+          "successTo": "031",
+          "failTo": "032"
+        },
+        {
+          "id": "PG-JCKJLTEIY",
+          "type": "choice",
+          "label": "Ti arrendi subito. Nessun dramma: paghi e basta.",
+          "to": "033"
+        }
+      ]
+    },
+    {
+      "id": "031",
+      "name": "Ragione valida",
+      "text": "L'agente ti ascolta, valuta, e alla fine fa un mezzo sorriso.\n\"Va bene, stavolta. Ma stia più attento.\" Poi abbassa la voce: \"Prenda la scorciatoia per via Roma — c'è un incidente più avanti, faranno un'ora di coda.\"",
+      "exits": [
+        {
+          "id": "PG-ZCOTOHP6V",
+          "type": "choice",
+          "label": "Ringrazi e prosegui lungo la strada principale.",
+          "to": "040"
+        },
+        {
+          "id": "PG-Z41NAM148",
+          "type": "choice",
+          "label": "Prendi la scorciatoia. Il consiglio sembra genuino.",
+          "to": "035"
+        }
+      ]
+    },
+    {
+      "id": "032",
+      "name": "Ragione non valida",
+      "text": "\"Documenti, prego.\"\nL'agente non sente ragioni. Anzi, la tua spiegazione sembra averlo irritato ulteriormente. Compila il verbale con metodica lentezza. Ogni secondo che passa ti brucia.\nSegna una stanghetta sulla tua scheda.",
+      "exits": [
+        {
+          "id": "PG-P0TVHHPBM",
+          "type": "choice",
+          "label": "Riparti a testa bassa e tieni gli occhi sulla strada.",
+          "to": "040"
+        }
+      ]
+    },
+    {
+      "id": "033",
+      "name": "Pago la multa",
+      "text": "Alzi le mani. \"Ha ragione, pago e non se ne parla più.\"\nL'agente apprezza e, mentre firma la ricevuta, ti sussurra: \"Prenda la scorciatoia per via Roma. C'è un incidente più avanti.\"",
+      "exits": [
+        {
+          "id": "PG-YOFQEWAOU",
+          "type": "choice",
+          "label": "Prosegui lungo la strada principale.",
+          "to": "040"
+        },
+        {
+          "id": "PG-AXEQBNHL1",
+          "type": "choice",
+          "label": "Prendi la scorciatoia consigliata.",
+          "to": "035"
+        }
+      ]
+    },
+    {
+      "id": "034",
+      "name": "Strada principale",
+      "text": "Sei quasi all'ufficio ma fermo nel traffico da dieci minuti buoni. Segna una stanghetta.\nUn camion dei traslochi si è fermato a metà carreggiata e il tipo alla guida non sembra avere nessuna fretta.",
+      "exits": [
+        {
+          "id": "PG-N13JCAT9M",
+          "type": "stat_check",
+          "stat": "VIG",
+          "label": "Provi a passare sul marciapiede con una manovra coraggiosa. Prova di VIG.",
+          "successTo": "037",
+          "failTo": "038"
+        },
+        {
+          "id": "PG-X2X18HAFE",
+          "type": "choice",
+          "label": "Aspetti con pazienza buddhista. Prima o poi si muove.",
+          "to": "036"
+        }
+      ]
+    },
+    {
+      "id": "035",
+      "name": "Strada 2",
+      "text": "La scorciatoia attraversa un piccolo parco urbano — alberi, qualche panchina, un cane che corre libero. È quasi piacevole.\nRimuovi una stanghetta dalla tua scheda.\nQuasi all'uscita del parco vedi un collega — Lorenzo? Luca? — in piedi accanto alla sua bici con una ruota a terra.",
+      "exits": [
+        {
+          "id": "PG-YUHZ1GV0E",
+          "type": "choice",
+          "label": "Ti fermi ad aiutarlo. Non puoi fare finta di non averlo visto.",
+          "to": "039"
+        },
+        {
+          "id": "PG-38DALY8OZ",
+          "type": "choice",
+          "label": "Tiri dritto. Sei già al limite e lui ha le gambe.",
+          "to": "043"
+        }
+      ]
+    },
+    {
+      "id": "036",
+      "name": "Ritardo ufficio",
+      "text": "Ti metti l'anima in pace. Il camion si sposta dopo un'eternità, trovi parcheggio a tre isolati dall'ufficio e percorri il resto a piedi, la giacca svolazzante e la borsa che balla sul fianco.\nArrivi con il fiatone e un leggero sudore. Segna una stanghetta.",
+      "exits": [
+        {
+          "id": "PG-CYWD14VE9",
+          "type": "choice",
+          "label": "Entra nell'edificio.",
+          "to": "043"
+        }
+      ]
+    },
+    {
+      "id": "037",
+      "name": "Sorpasso",
+      "text": "Manovra da manuale! Con una precisione che non sapevi di avere, monti sul marciapiede, superi il camion nel varco stretto e rientri in carreggiata con un fischio di gomme.\nIl portiere dell'ufficio ti guarda dalla porta a vetri con un'espressione difficile da interpretare.",
+      "exits": [
+        {
+          "id": "PG-2MPNSM43D",
+          "type": "choice",
+          "label": "Entra nell'edificio prima che ti faccia domande.",
+          "to": "043"
+        }
+      ]
+    },
+    {
+      "id": "038",
+      "name": "Sorpasso fallito",
+      "text": "Crack. Un suono secco e doloroso.\nHai strisciato contro lo specchietto del camion. Il camionista scende lentamente, con la faccia di uno che ha tutto il tempo del mondo.",
+      "exits": [
+        {
+          "id": "PG-8W3ZP08J3",
+          "type": "choice",
+          "label": "Ti fermi con calma, scendi, e cominciate a compilare il CID. Noioso, ma necessario. Segna una stanghetta.",
+          "to": "043"
+        },
+        {
+          "id": "PG-TRP0J43D5",
+          "type": "choice",
+          "label": "Il camionista ti ha aperto la portiera in faccia mentre stavi per superarlo. Scendi anche tu per dirgliene quattro.",
+          "to": "048"
+        }
+      ]
+    },
+    {
+      "id": "039",
+      "name": "Aiuto collega",
+      "text": "Freni, abbasso il finestrino. \"Dai, sali, ti porto io.\"\nIl collega ti guarda sollevato come se gli avessi salvato la vita. Carica la bici nel portabagagli e ti ringrazia per tutto il tragitto.\nÈ un momento umano in una mattinata di caos. Rimuovi una stanghetta.",
+      "exits": [
+        {
+          "id": "PG-IQVNB4GH2",
+          "type": "choice",
+          "label": "Entra nell'edificio.",
+          "to": "043"
+        }
+      ]
+    },
+    {
+      "id": "040",
+      "name": "Buca pericolosa",
+      "text": "Stavi quasi rilassandoti quando — SBAM. Una buca enorme, nascosta da una pozzanghera. L'auto sobbalza, il volante strappa.",
+      "exits": [
+        {
+          "id": "PG-M5ZJA8DZR",
+          "type": "code_check",
+          "code": "MELA",
+          "label": "La toppa tiene — se hai il codice MELA tiri un sospiro di sollievo, altrimenti la gomma esplode.",
+          "to": "034",
+          "elseTo": "041"
+        }
+      ]
+    },
+    {
+      "id": "041",
+      "name": "Gomma esplosa",
+      "text": "Accosti piano piano sul bordo della strada. La ruota posteriore destra è completamente a terra. La guardi. Lei ti guarda. È un disastro.",
+      "exits": [
+        {
+          "id": "PG-1YXR2DHYL",
+          "type": "choice",
+          "label": "Tiri fuori il cric dal bagagliaio e ti rimbocchi le maniche. Ci vuole un quarto d'ora ma ce la fai. Segna 2 stanghette.",
+          "to": "034"
+        },
+        {
+          "id": "PG-URTP0LZJJ",
+          "type": "choice",
+          "label": "Non hai né il tempo né la voglia. Chiami il carro attrezzi, abbandoni l'auto e corri verso la metro. Segna 1 stanghetta.",
+          "to": "221"
+        }
+      ]
+    },
+    {
+      "id": "042",
+      "name": "Pausa bar",
+      "text": "Il bar è piccolo, caldo, con la radio a bassa voce e il barista che ti prepara il caffè senza che tu debba dire niente — ti ha già visto altre mattine.\n\"Bella giornata,\" dice lui, senza ironia. Rimani lì trenta secondi in silenzio a berlo.\nRimuovi una Condizione. Aggiungi 1 stanghetta — hai perso un po' di tempo, ma ne valeva la pena.",
+      "exits": [
+        {
+          "id": "PG-EGET1GHR0",
+          "type": "choice",
+          "label": "Metti giù la tazzina e vai.",
+          "to": "043"
+        }
+      ]
+    },
+    {
+      "id": "043",
+      "name": "Zanzara ascensore",
+      "text": "Sei in ascensore. Manca un piano. Le porte si stanno per aprire.\nPoi la senti: un ronzio acuto, insistente, troppo vicino all'orecchio. Una zanzara tigre — gigantesca, determinata, chiaramente in ritardo quanto te.\nCombattimento obbligatorio.",
+      "exits": [
+        {
+          "id": "PG-9SKDGIGAT",
+          "type": "encounter",
+          "npcId": "zanzara_tigre",
+          "label": "Scontro con la zanzara tigre in ascensore",
+          "successTo": "045",
+          "failTo": "044",
+          "defeatTo": "044",
+          "to": "045"
+        }
+      ]
+    },
+    {
+      "id": "044",
+      "name": "Zanzara perdi",
+      "text": "La zanzara ti ha punto sulla fronte — ci vorrebbe il ghiaccio — ma il problema vero è altro.\nQuando l'hai schiacciata, era già sazia. C'è una macchia di sangue grande come una moneta sul bavero della tua giacca.\nLe porte si aprono. Hai esattamente trenta secondi prima che qualcuno ti veda.\nSegna una stanghetta e corri in bagno a lavare via la macchia — o almeno a tamponarla con carta bagnata e speranza.",
+      "exits": [
+        {
+          "id": "PG-J9TZE5R5U",
+          "type": "choice",
+          "label": "Dopo cinque minuti di operazione salvataggio, esci dal bagno con una giacca umida ma presentabile.",
+          "to": "045"
+        }
+      ]
+    },
+    {
+      "id": "045",
+      "name": "Ultimo tratto",
+      "text": "Sei quasi arrivato in ufficio. Conti le stanghette sulla tua scheda mentre aspetti l'ascensore.\nI numeri parlano chiaro.",
+      "exits": [
+        {
+          "id": "PG-QPGB7R3OC",
+          "type": "choice",
+          "label": "Se hai 0 o 1 stanghette vai a",
+          "to": "049"
+        },
+        {
+          "id": "PG-WBFUK9E1V",
+          "type": "choice",
+          "label": "Se hai da 2 a 4 stanghette vai a",
+          "to": "047"
+        },
+        {
+          "id": "PG-2ISQP49KW",
+          "type": "choice",
+          "label": "Se hai 5 o più stanghette vai a",
+          "to": "046"
+        }
+      ]
+    },
+    {
+      "id": "046",
+      "name": "Epilogo negativo",
+      "text": "Arrivi quando la riunione è già iniziata. Il capo ti lancia un'occhiataccia che vale più di mille parole.\nTi siedi in silenzio. Ci sarà di cui parlare dopo.",
+      "exits": [
+        {
+          "id": "PG-V08HHXFGC",
+          "type": "end",
+          "label": "Fine dell'avventura"
+        }
+      ]
+    },
+    {
+      "id": "047",
+      "name": "Epilogo positivo",
+      "text": "Arrivi un istante prima che la riunione inizi. Giusto il tempo di appoggiarti allo stipite e riprendere fiato.\n\"Ah, eccoti.\" dice il capo. Per fortuna il tono è neutro. Ce l'hai fatta — per un pelo.",
+      "exits": [
+        {
+          "id": "PG-AQVKIZZQY",
+          "type": "end",
+          "label": "Fine dell'avventura"
+        }
+      ]
+    },
+    {
+      "id": "048",
+      "name": "Epilogo rissa",
+      "text": "La discussione con il camionista degenera al punto che lui recupera un crick dal vano posteriore con l'intento di dartelo nei denti. Fortunatamente arriva la polizia... Meno fortunatamente i due agenti fermano entrambi e vi fanno salire sulla volante. La tua riunione a quanto pare dovrà aspettare. Avrai un bel po' da spiegare al capo.",
+      "exits": [
+        {
+          "id": "PG-72WX7PTX6",
+          "type": "end",
+          "label": "Fine dell'avventura"
+        }
+      ]
+    },
+    {
+      "id": "049",
+      "name": "Epilogo tranquillo",
+      "text": "Arrivi ben prima che inizi la tua riunione, metti a posto la presentazione e hai il tempo di rivedere la tua esposizione. Una mattinata tranquilla dopotutto... E dire che sarebbe potuta andare molto peggio!",
+      "exits": [
+        {
+          "id": "PG-3CFL0UKEY",
+          "type": "end",
+          "label": "Fine dell'avventura"
+        }
+      ]
+    },
+    {
+      "id": "050",
+      "name": "Epilogo ospedale",
+      "text": "Non riesci nemmeno a capire come sia successo. Forse hai messo un piede in fallo su una piastrella sconnessa proprio mentre il gabbiano faceva uno scatto in avanti con il becco spalancato, o forse l'impeto dell'animale ti ha semplicemente colto di sorpresa. Senti un colpo secco, il fruscio violento delle piume che ti schiaffeggiano il viso e poi... il vuoto.\n\nTi ritrovi steso a terra, la schiena che protesta contro il cemento freddo e la valigetta finita a un paio di metri di distanza. La testa ti fischia come una pentola a pressione. Senti delle voci confuse sopra di te: «Ehi, tutto bene?», «Ma l'ha colpito davvero?». Qualcuno sta già tirando fuori il telefono per chiamare i soccorsi.\n\nRiesci a sollevare a fatica il braccio per guardare l'orologio. Le cifre digitali sembrano riderti in faccia: 09:15.\n\nLa riunione è iniziata da un pezzo. Il tuo posto a quel tavolo è vuoto e tu sei sul marciapiede, sconfitto da un pennuto, con una spiegazione che nessun capo sano di mente accetterebbe mai senza licenziarti sul posto.",
+      "exits": [
+        {
+          "id": "PG-Z7SRCBPLJ",
+          "type": "end",
+          "label": "Fine dell'avventura"
+        }
+      ]
+    },
+    {
+      "id": "945",
+      "name": "Non ti fermi",
+      "text": "Le rivolgi un sorriso di circostanza mentre superi il pianerottolo. «Mi dispiace tantissimo signora ma sono davvero in ritardo per il lavoro! Buona giornata!». \nScendi i gradini a due a due, cercando di ignorare il tonfo sordo di una borsa che cade alle tue spalle. Il rumore dei tuoi passi rimbomba nel vano condominiale silenzioso. Arrivi nell'atrio, la mano già pronta sulla maniglia pesante del portone di casa. ",
+      "exits": [
+        {
+          "id": "PG-Z7DRYDD4N",
+          "type": "choice",
+          "label": "Esci",
+          "to": "055"
+        }
+      ]
+    },
+    {
+      "id": "739",
+      "name": "Non saluti",
+      "text": "Scendi i gradini rapidamente, ignorando il tonfo sordo di una borsa che cade alle tue spalle. I tuoi passi rimbombano nel vano condominiale. Arrivi nell'atrio, la mano già pronta sulla maniglia pesante del portone di casa.",
+      "exits": [
+        {
+          "id": "PG-MG4TP7MA1",
+          "type": "choice",
+          "label": "Esci",
+          "to": "055"
+        }
+      ]
+    }
+  ]
+}

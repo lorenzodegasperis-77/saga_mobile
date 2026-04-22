@@ -2452,7 +2452,7 @@ function mkAdv(){
     title:'Nuova Avventura',desc:'',setting:null,
     author:'',startParagraph:null,paragraphs:[],created:Date.now()};
 }
-function mkPara(used){return{id:genParaId(used),name:'',text:'',exits:[]};}
+function mkPara(used){return{id:genParaId(used),name:'',text:'',exits:[],notes:'',tags:[]};}
 function mkExit(type){
   const b={id:genId(),type};
   if(type==='choice')return{...b,label:'',to:''};
@@ -2468,7 +2468,15 @@ function mkExit(type){
 }
 function initAE(adv){
   return{adv:JSON.parse(JSON.stringify(adv)),
-    selPara:adv.paragraphs[0]?.id||null,viewMode:'edit'};
+    selPara:adv.paragraphs[0]?.id||null,
+    viewMode:'edit',
+    undoStack:[],redoStack:[],
+    paraHistory:[],
+    searchQuery:'',
+    showDiagnostics:false,
+    autoSaveStatus:'saved',
+    previewMode:false
+  };
 }
 function initAP(adv,charId){
   const ch=S.chars.find(c=>c.id===charId);
@@ -2534,54 +2542,135 @@ function renderAdvList(){
 // ─── RENDER: EDITOR AVVENTURA ─────────────────────────────────────────────────
 function renderAdvEdit(){
   if(!S.ae)return`<div class="frame">Errore.<br><button class="btn btn-secondary" onclick="nav('adv-list')">Indietro</button></div>`;
-  const{adv,selPara,viewMode}=S.ae;
+  const{adv,selPara,viewMode,searchQuery,previewMode}=S.ae;
   const selP=adv.paragraphs.find(p=>p.id===selPara);
+  const diagIssues=aeGetDiagnostics(adv);
+  const stats=aeGetStats(adv);
+  const hasBroken=diagIssues.some(i=>i.type==='broken');
+  const sq=(searchQuery||'').toLowerCase();
+
+  // Filtra paragrafi per ricerca
+  const filteredParas=sq
+    ?adv.paragraphs.filter(p=>
+        p.id.includes(sq)||
+        (p.name||'').toLowerCase().includes(sq)||
+        (p.text||'').toLowerCase().includes(sq)||
+        (p.tags||[]).some(t=>t.toLowerCase().includes(sq)))
+    :adv.paragraphs;
+
+  // Diagnostica rapida per para
+  const brokenParas=new Set(diagIssues.filter(i=>i.type==='broken').map(i=>i.paraId));
+  const orphanParas=new Set(diagIssues.filter(i=>i.type==='orphan').map(i=>i.paraId));
+  const deadParas=new Set(diagIssues.filter(i=>i.type==='deadend').map(i=>i.paraId));
 
   const paraList=adv.paragraphs.length===0
     ?`<div style="font-size:.82rem;opacity:.55;font-style:italic;padding:10px 4px;line-height:1.5">Nessun paragrafo.<br>Aggiungi il primo!</div>`
-    :adv.paragraphs.map(p=>`
-    <div onclick="aeSelectParaAndEdit('${p.id}')" style="padding:7px 9px;border-radius:6px;cursor:pointer;border:1.5px solid ${p.id===selPara?'#73181F':'transparent'};background:${p.id===selPara?'rgba(115,24,31,.1)':'transparent'};margin-bottom:3px;display:flex;align-items:center;gap:5px;font-size:.82rem">
-      ${p.id===adv.startParagraph?`<span style="font-size:.55rem;background:#18732D;color:white;border-radius:3px;padding:1px 4px;flex-shrink:0">▶</span>`:`<span style="font-size:.55rem;opacity:0;flex-shrink:0">▶</span>`}
-      <span style="font-family:monospace;font-weight:bold;color:${p.id===adv.startParagraph?'#18732D':'#73181F'};flex-shrink:0">${p.id}</span>
-      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;opacity:.75">${p.name||'—'}</span>
-      <span style="font-size:.62rem;opacity:.4;flex-shrink:0">${(p.exits||[]).length}↗</span>
-    </div>`).join('');
+    :filteredParas.length===0
+    ?`<div style="font-size:.8rem;opacity:.5;font-style:italic;padding:8px 4px">Nessun risultato.</div>`
+    :filteredParas.map(p=>{
+      const isSel=p.id===selPara;
+      const hasErr=brokenParas.has(p.id)||deadParas.has(p.id);
+      const isOrphan=orphanParas.has(p.id);
+      return`<div onclick="aeSelectParaAndEdit('${p.id}')" style="padding:7px 9px;border-radius:6px;cursor:pointer;border:1.5px solid ${isSel?'#73181F':hasErr?'rgba(192,57,43,.4)':isOrphan?'rgba(130,130,130,.35)':'transparent'};background:${isSel?'rgba(115,24,31,.1)':hasErr?'rgba(192,57,43,.05)':'transparent'};margin-bottom:3px;display:flex;align-items:center;gap:5px;font-size:.82rem">
+        ${p.id===adv.startParagraph?`<span style="font-size:.55rem;background:#18732D;color:white;border-radius:3px;padding:1px 4px;flex-shrink:0">▶</span>`:`<span style="font-size:.55rem;opacity:0;flex-shrink:0">▶</span>`}
+        <span style="font-family:monospace;font-weight:bold;color:${p.id===adv.startParagraph?'#18732D':isSel?'#73181F':'#73181F'};flex-shrink:0">${p.id}</span>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;opacity:.75">${esc(p.name||'—')}</span>
+        <span style="font-size:.6rem;flex-shrink:0">${hasErr?'🔴':isOrphan?'⚫':''}</span>
+        <span style="font-size:.62rem;opacity:.4;flex-shrink:0">${(p.exits||[]).length}↗</span>
+      </div>`;
+    }).join('');
 
   const mainContent=viewMode==='tree'
     ?renderAdvTree(adv,selPara)
-    :selP?renderParaEditor(selP,adv)
+    :selP?renderParaEditor(selP,adv,previewMode)
     :`<div style="text-align:center;padding:60px 20px;opacity:.6"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.35;margin-bottom:12px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg><p>${adv.paragraphs.length?'Seleziona un paragrafo dalla lista.':'Aggiungi il tuo primo paragrafo con il pulsante a sinistra!'}</p></div>`;
+
+  // Pannello diagnostica
+  const diagPanel=S.ae.showDiagnostics?`
+  <div style="border-top:1px solid rgba(115,24,31,.2);padding:10px 8px;background:rgba(192,57,43,.05)">
+    <div style="font-size:.68rem;letter-spacing:2px;color:#c0392b;font-weight:bold;margin-bottom:6px">DIAGNOSTICA</div>
+    ${diagIssues.length===0
+      ?`<div style="font-size:.76rem;color:#18732D;opacity:.8">✓ Nessun problema trovato</div>`
+      :diagIssues.map(i=>`
+        <div onclick="${i.paraId?`aeSelectParaAndEdit('${i.paraId}')`:''}" style="font-size:.72rem;color:${i.type==='broken'?'#c0392b':i.type==='orphan'?'#555':'#8a6000'};margin-bottom:4px;cursor:${i.paraId?'pointer':'default'};padding:2px 4px;border-radius:3px" onmouseover="${i.paraId?"this.style.background='rgba(0,0,0,.06)'":''}" onmouseout="${i.paraId?"this.style.background=''":''}">${i.type==='broken'?'🔴':i.type==='orphan'?'⚫':i.type==='deadend'?'🟡':'⚠'} ${i.msg}</div>`).join('')}
+    <button onclick="S.ae.showDiagnostics=false;render()" style="margin-top:6px;font-size:.68rem;background:transparent;border:none;color:#888;cursor:pointer;padding:0">Chiudi</button>
+  </div>`:''
+
+  // Pannello statistiche
+  const statsPanel=S.ae.showStats?`
+  <div style="border-top:1px solid rgba(115,24,31,.2);padding:10px 8px;background:rgba(216,199,161,.3)">
+    <div style="font-size:.68rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:6px">STATISTICHE</div>
+    <div style="font-size:.75rem;display:flex;flex-direction:column;gap:3px;opacity:.85">
+      <div>📄 <strong>${stats.paraCount}</strong> paragrafi</div>
+      <div>↗ <strong>${stats.totalExits}</strong> uscite totali</div>
+      <div>📝 <strong>${stats.wordCount}</strong> parole</div>
+      <div>🔀 <strong>${stats.hasBranchCount}</strong> bivi</div>
+    </div>
+    <button onclick="S.ae.showStats=false;render()" style="margin-top:6px;font-size:.68rem;background:transparent;border:none;color:#888;cursor:pointer;padding:0">Chiudi</button>
+  </div>`:''
+
+  const hasHistory=S.ae.paraHistory&&S.ae.paraHistory.length>0;
 
   return`
   <div style="width:100vw;max-width:1100px;display:flex;flex-direction:column;z-index:1;font-family:'Times New Roman',Georgia,serif;color:#1a1007;min-height:100svh;background:#D8C7A1">
-    <div style="background:#D8C7A1;border-bottom:2px solid #73181F;padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.12)">
-      <button onclick="nav('adv-list')" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:1.2rem;padding:4px 8px;line-height:1">❮</button>
-      <input id="ae-title" value="${esc(adv.title)}" oninput="aeSetMeta('title',this.value)" style="flex:1;min-width:100px;background:transparent;border:none;border-bottom:2px solid #73181F;padding:5px 6px;font-size:1rem;font-family:inherit;font-weight:bold;color:#1a1007;outline:none">
-      <input value="${esc(adv.author||'')}" oninput="aeSetMeta('author',this.value)" placeholder="Autore..." style="width:110px;background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.8rem;font-family:inherit;color:#1a1007;outline:none">
-      <select onchange="aeSetMeta('setting',this.value||null)" style="background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.78rem;font-family:inherit;color:#1a1007;outline:none;cursor:pointer">
+    <!-- HEADER -->
+    <div style="background:#D8C7A1;border-bottom:2px solid #73181F;padding:8px 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.12)">
+      <button onclick="nav('adv-list')" title="Torna alla lista" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:1.2rem;padding:4px 6px;line-height:1;flex-shrink:0">❮</button>
+      <input id="ae-title" value="${esc(adv.title)}" oninput="aeSetMeta('title',this.value)" style="flex:1;min-width:80px;background:transparent;border:none;border-bottom:2px solid #73181F;padding:5px 6px;font-size:1rem;font-family:inherit;font-weight:bold;color:#1a1007;outline:none">
+      <input value="${esc(adv.author||'')}" oninput="aeSetMeta('author',this.value)" placeholder="Autore..." style="width:100px;background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.78rem;font-family:inherit;color:#1a1007;outline:none">
+      <select onchange="aeSetMeta('setting',this.value||null)" style="background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.76rem;font-family:inherit;color:#1a1007;outline:none;cursor:pointer">
         <option value="" ${!adv.setting?'selected':''}>— Ambientazione —</option>
         ${Object.keys(SETTINGS).map(k=>`<option value="${k}" ${adv.setting===k?'selected':''}>${SETTINGS[k].label}</option>`).join('')}
       </select>
       ${adv.setting?settingBadge(adv.setting):''}
-      <div style="display:flex;gap:6px;flex-shrink:0">
-        <button onclick="aeSaveAdv()" class="btn btn-primary" style="padding:6px 14px;font-size:.8rem;min-height:34px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save-icon lucide-save"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg> Salva</button>
-        <button onclick="aeExport(S.ae.adv.id)" class="btn btn-secondary" style="padding:6px 10px;font-size:.8rem;min-height:34px" title="Esporta JSON"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-up-icon lucide-file-up"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg></button>
+      <!-- Undo/Redo -->
+      <div style="display:flex;gap:2px;flex-shrink:0">
+        <button onclick="aeUndo()" title="Annulla (Ctrl+Z)" style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.85rem;line-height:1;min-height:30px" ${(!S.ae.undoStack||!S.ae.undoStack.length)?'disabled style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.85rem;line-height:1;min-height:30px;opacity:.35"':''}>↩</button>
+        <button onclick="aeRedo()" title="Ripristina (Ctrl+Y)" style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.85rem;line-height:1;min-height:30px" ${(!S.ae.redoStack||!S.ae.redoStack.length)?'disabled style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.85rem;line-height:1;min-height:30px;opacity:.35"':''}>↪</button>
+      </div>
+      <!-- Autosave indicator -->
+      <span id="ae-save-ind" style="font-size:.72rem;color:${S.ae.autoSaveStatus==='saved'?'#18732D':'#c0392b'};flex-shrink:0;white-space:nowrap">${S.ae.autoSaveStatus==='saved'?'✓ Salvato':'● Non salvato'}</span>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        <button onclick="aeSaveAdv()" class="btn btn-primary" style="padding:5px 12px;font-size:.78rem;min-height:32px" title="Salva (Ctrl+S)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg> Salva</button>
+        <button onclick="aeShowExportMenu(S.ae.adv.id)" class="btn btn-secondary" style="padding:5px 10px;font-size:.78rem;min-height:32px" title="Esporta"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2z"/><path d="M14 2v6h6"/><path d="M12 12v6"/><path d="m9 15 3 3 3-3"/></svg> Export</button>
       </div>
     </div>
-    ${adv.desc!==undefined?`<div style="background:rgba(0,0,0,.04);border-bottom:1px solid rgba(115,24,31,.15);padding:6px 14px"><input value="${esc(adv.desc||'')}" oninput="aeSetMeta('desc',this.value)" placeholder="Descrizione breve dell'avventura..." style="width:100%;background:transparent;border:none;font-size:.82rem;font-family:inherit;color:#1a1007;outline:none;opacity:.75"></div>`:''}
-    <div style="display:flex;flex:1">
-      <div style="width:190px;flex-shrink:0;border-right:2px solid rgba(115,24,31,.2);padding:10px 8px;background:rgba(216,199,161,.4);overflow-y:auto;max-height:calc(100svh - 86px)">
-        <div style="font-size:.68rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:8px;padding:0 2px">PARAGRAFI (${adv.paragraphs.length})</div>
-        ${paraList}
-        <button onclick="aeAddPara()" class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:.76rem;padding:7px;border-style:dashed;min-height:34px">+ Aggiungi</button>
-        <div style="margin-top:14px;border-top:1px solid rgba(115,24,31,.2);padding-top:10px">
-          <div style="font-size:.68rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:7px;padding:0 2px">VISUALIZZA</div>
+    <!-- DESCRIZIONE -->
+    ${adv.desc!==undefined?`<div style="background:rgba(0,0,0,.04);border-bottom:1px solid rgba(115,24,31,.15);padding:5px 14px"><input value="${esc(adv.desc||'')}" oninput="aeSetMeta('desc',this.value)" placeholder="Descrizione breve dell'avventura..." style="width:100%;background:transparent;border:none;font-size:.8rem;font-family:inherit;color:#1a1007;outline:none;opacity:.75"></div>`:''}
+    <div style="display:flex;flex:1;overflow:hidden">
+      <!-- SIDEBAR -->
+      <div style="width:200px;flex-shrink:0;border-right:2px solid rgba(115,24,31,.2);display:flex;flex-direction:column;background:rgba(216,199,161,.4);overflow:hidden;max-height:calc(100svh - 86px)">
+        <!-- Ricerca -->
+        <div style="padding:8px 8px 4px">
+          <input value="${esc(searchQuery||'')}" oninput="aeSetSearch(this.value)" placeholder="🔍 Cerca paragrafo..." style="width:100%;background:rgba(255,255,255,.5);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:5px 8px;font-size:.78rem;font-family:inherit;color:#1a1007;outline:none">
+        </div>
+        <!-- Back nav -->
+        ${hasHistory?`<div style="padding:2px 8px 4px"><button onclick="aeNavBack()" style="width:100%;padding:4px 6px;background:rgba(115,24,31,.08);border:1px solid rgba(115,24,31,.2);border-radius:5px;cursor:pointer;font-size:.72rem;font-family:inherit;color:#73181F;text-align:left">← Torna a §${S.ae.paraHistory[S.ae.paraHistory.length-1]}</button></div>`:''}
+        <!-- Lista para -->
+        <div style="flex:1;overflow-y:auto;padding:4px 8px">
+          <div style="font-size:.66rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:6px;padding:0 2px">PARAGRAFI (${filteredParas.length}${sq?'/'+adv.paragraphs.length:''})</div>
+          ${paraList}
+        </div>
+        <!-- Add para -->
+        <div style="padding:8px;border-top:1px solid rgba(115,24,31,.15)">
+          <button onclick="aeAddPara()" class="btn btn-secondary" style="width:100%;font-size:.76rem;padding:7px;border-style:dashed;min-height:34px">+ Paragrafo</button>
+        </div>
+        <!-- Visualizza / Tools -->
+        <div style="padding:8px;border-top:1px solid rgba(115,24,31,.2)">
+          <div style="font-size:.66rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:6px">VISUALIZZA</div>
+          <div style="display:flex;gap:4px;margin-bottom:6px">
+            <button onclick="aeToggleView('edit')" style="flex:1;padding:5px 3px;border-radius:5px;border:1.5px solid #73181F;background:${viewMode==='edit'?'#73181F':'transparent'};color:${viewMode==='edit'?'white':'#1a1007'};cursor:pointer;font-size:.66rem;font-family:inherit"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg> Editor</button>
+            <button onclick="aeToggleView('tree')" style="flex:1;padding:5px 3px;border-radius:5px;border:1.5px solid #73181F;background:${viewMode==='tree'?'#73181F':'transparent'};color:${viewMode==='tree'?'white':'#1a1007'};cursor:pointer;font-size:.66rem;font-family:inherit"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><path d="M18 9a3 3 0 0 0-3-3H6"/><path d="M18 21a3 3 0 0 0-3-3H6"/></svg> Albero</button>
+          </div>
           <div style="display:flex;gap:4px">
-            <button onclick="aeToggleView('edit')" style="flex:1;padding:5px 3px;border-radius:5px;border:1.5px solid #73181F;background:${viewMode==='edit'?'#73181F':'transparent'};color:${viewMode==='edit'?'white':'#1a1007'};cursor:pointer;font-size:.68rem;font-family:inherit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg> Editor</button>
-            <button onclick="aeToggleView('tree')" style="flex:1;padding:5px 3px;border-radius:5px;border:1.5px solid #73181F;background:${viewMode==='tree'?'#73181F':'transparent'};color:${viewMode==='tree'?'white':'#1a1007'};cursor:pointer;font-size:.68rem;font-family:inherit"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><path d="M18 9a3 3 0 0 0-3-3H6"/><path d="M18 21a3 3 0 0 0-3-3H6"/></svg> Albero</button>
+            <button onclick="S.ae.showDiagnostics=!S.ae.showDiagnostics;S.ae.showStats=false;render()" style="flex:1;padding:4px 3px;border-radius:5px;border:1.5px solid ${diagIssues.length?'#c0392b':'rgba(115,24,31,.35)'};background:${S.ae.showDiagnostics?'rgba(192,57,43,.15)':'transparent'};color:${diagIssues.length?'#c0392b':'#73181F'};cursor:pointer;font-size:.64rem;font-family:inherit" title="Controlla errori nell'avventura">${diagIssues.length?`⚠ ${diagIssues.length}`:'✓'} Errori</button>
+            <button onclick="S.ae.showStats=!S.ae.showStats;S.ae.showDiagnostics=false;render()" style="flex:1;padding:4px 3px;border-radius:5px;border:1.5px solid rgba(115,24,31,.35);background:${S.ae.showStats?'rgba(115,24,31,.1)':'transparent'};color:#73181F;cursor:pointer;font-size:.64rem;font-family:inherit" title="Statistiche avventura">📊 Stat</button>
           </div>
         </div>
+        ${diagPanel}
+        ${statsPanel}
       </div>
+      <!-- MAIN CONTENT -->
       <div style="flex:1;padding:18px 20px;overflow-y:auto;max-height:calc(100svh - 86px)">
         ${mainContent}
       </div>
@@ -2590,7 +2679,7 @@ function renderAdvEdit(){
 }
 
 // ─── PARA EDITOR ─────────────────────────────────────────────────────────────
-function renderParaEditor(p,adv){
+function renderParaEditor(p,adv,previewMode){
   const iS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 7px;font-family:'Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;border-radius:3px 3px 0 0`;
   const sS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 6px;font-family:'Times New Roman',serif;font-size:.85rem;color:#1a1007;outline:none;cursor:pointer`;
   const isStart=p.id===adv.startParagraph;
@@ -2605,6 +2694,7 @@ function renderParaEditor(p,adv){
         <input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Testo della scelta..." style="flex:2;min-width:110px;${iS}">
         <span style="color:#73181F;font-weight:bold">→</span>
         <input value="${esc(e.to)}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID" style="width:58px;font-family:monospace;${iS}" maxlength="3">
+        ${e.to?`<button onclick="aeJumpTo('${e.to}')" title="Vai al paragrafo ${e.to}" style="background:rgba(115,24,31,.1);border:none;color:#73181F;cursor:pointer;border-radius:4px;padding:3px 6px;font-size:.75rem">↗</button>`:''}
       </div>`;
     }else if(e.type==='stat_check'){
       flds=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center">
@@ -2702,16 +2792,61 @@ function renderParaEditor(p,adv){
     </div>`;
   }).join('');
 
+  // Preview mode
+  if(previewMode){
+    return`
+    <div style="max-width:560px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+        <div style="font-family:monospace;font-size:1.4rem;font-weight:bold;color:#73181F;background:rgba(115,24,31,.1);padding:5px 12px;border-radius:6px">${p.id}</div>
+        ${p.name?`<div style="font-size:1rem;opacity:.7;font-style:italic">${esc(p.name)}</div>`:''}
+        <button onclick="aeTogglePreview()" style="margin-left:auto;padding:5px 12px;border-radius:6px;border:1.5px solid #73181F;background:transparent;color:#73181F;cursor:pointer;font-size:.76rem;font-family:inherit">✎ Modifica</button>
+      </div>
+      <div style="font-size:1rem;line-height:1.8;color:#1a1007;white-space:pre-wrap;margin-bottom:24px">${esc(p.text)||'<em style="opacity:.4">— Nessun testo —</em>'}</div>
+      ${(p.exits||[]).length?`<div style="border-top:1px solid rgba(115,24,31,.2);padding-top:14px">
+        ${(p.exits||[]).map(e=>{
+          const col=tColors[e.type]||'#555';
+          let lbl='';
+          if(e.type==='choice')lbl=`➜ ${esc(e.label||'Vai a')} <span style="opacity:.5;font-size:.8rem">[§${e.to}]</span>`;
+          else if(e.type==='stat_check')lbl=`Prova ${e.stat}: ✓§${e.successTo} / ✗§${e.failTo}`;
+          else if(e.type==='encounter')lbl=`⚔ Scontro → §${e.to}`;
+          else if(e.type==='end')lbl=`★ Fine avventura${e.label?' — '+esc(e.label):''}`;
+          else if(e.type==='exp_grant')lbl=`⭐ +${e.exp} EXP → §${e.to}`;
+          else if(e.type==='rest')lbl=`Riposo → §${e.to}`;
+          else lbl=`[${tLabels[e.type]||e.type}]`;
+          return`<div style="padding:8px 12px;margin-bottom:6px;border:1.5px solid ${col};border-radius:6px;background:rgba(255,255,255,.3);color:${col};font-size:.88rem">${lbl}</div>`;
+        }).join('')}
+      </div>`:''}
+    </div>`;
+  }
+
+  const wc=p.text&&p.text.trim()?p.text.trim().split(/\s+/).length:0;
+
   return`
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
     <div style="font-family:monospace;font-size:1.5rem;font-weight:bold;color:#73181F;background:rgba(115,24,31,.1);padding:6px 14px;border-radius:6px;cursor:pointer" title="Clicca per cambiare ID" onclick="aeChangeId('${p.id}')">${p.id}</div>
     <input id="para-name-inp" value="${esc(p.name)}" oninput="aePN(this.value)" placeholder="Nome paragrafo (opzionale)..." style="flex:1;min-width:120px;${iS}">
-    <button onclick="aeSetStart('${p.id}')" style="padding:6px 10px;border-radius:6px;border:1.5px solid ${isStart?'#18732D':'#84785E'};background:${isStart?'#18732D':'transparent'};color:${isStart?'white':'#1a1007'};cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px">${isStart?'▶ Inizio':'Imposta inizio'}</button>
-    <button onclick="aeDP('${p.id}')" style="padding:6px 10px;border-radius:6px;border:1.5px solid #d32f2f;background:transparent;color:#d32f2f;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
+    <button onclick="aeSetStart('${p.id}')" title="${isStart?'Paragrafo iniziale':'Imposta come inizio'}" style="padding:6px 10px;border-radius:6px;border:1.5px solid ${isStart?'#18732D':'#84785E'};background:${isStart?'#18732D':'transparent'};color:${isStart?'white':'#1a1007'};cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px">${isStart?'▶ Inizio':'▶'}</button>
+    <button onclick="aeDupPara('${p.id}')" title="Duplica paragrafo" style="padding:6px 10px;border-radius:6px;border:1.5px solid #84785E;background:transparent;color:#1a1007;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
+    <button onclick="aeDP('${p.id}')" title="Elimina paragrafo" style="padding:6px 10px;border-radius:6px;border:1.5px solid #d32f2f;background:transparent;color:#d32f2f;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
   </div>
+  <!-- Tags -->
+  ${(p.tags&&p.tags.length||true)?`<div style="margin-bottom:10px">
+    <input value="${esc((p.tags||[]).join(', '))}" oninput="aeSetTags(this.value)" placeholder="Tag (es: combattimento, dialogo, snodo) separati da virgola..." style="width:100%;background:rgba(0,0,0,.03);border:none;border-bottom:1px dashed rgba(115,24,31,.3);padding:4px 2px;font-size:.76rem;font-family:inherit;color:#1a1007;outline:none;opacity:.7">
+  </div>`:''}
   <div style="margin-bottom:16px">
-    <div class="sec-hdr" style="margin-top:0">TESTO DEL PARAGRAFO</div>
-    <textarea id="para-text-ta" oninput="aePT(this.value)" style="width:100%;min-height:160px;background:rgba(0,0,0,.03);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:12px;font-family:'Times New Roman',serif;font-size:.95rem;color:#1a1007;resize:vertical;outline:none;line-height:1.65" placeholder="Scrivi qui il testo narrativo del paragrafo...">${esc(p.text)}</textarea>
+    <div class="sec-hdr" style="margin-top:0;display:flex;justify-content:space-between;align-items:center">
+      <span>TESTO DEL PARAGRAFO</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span id="ae-wc" style="font-size:.68rem;font-weight:normal;opacity:.5;letter-spacing:0">${wc} parole</span>
+        <button onclick="aeTogglePreview()" style="padding:2px 8px;border-radius:4px;border:1px solid rgba(115,24,31,.35);background:transparent;cursor:pointer;font-size:.68rem;font-family:inherit;color:#73181F">👁 Anteprima</button>
+      </div>
+    </div>
+    <textarea id="para-text-ta" oninput="aePT(this.value)" style="width:100%;min-height:180px;background:rgba(0,0,0,.03);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:12px;font-family:'Times New Roman',serif;font-size:.95rem;color:#1a1007;resize:vertical;outline:none;line-height:1.75" placeholder="Scrivi qui il testo narrativo del paragrafo...">${esc(p.text)}</textarea>
+  </div>
+  <!-- Note interne -->
+  <div style="margin-bottom:16px">
+    <div class="sec-hdr" style="margin-top:0">NOTE INTERNE <span style="font-weight:normal;font-size:.7rem;opacity:.5;letter-spacing:0">(non visibili al giocatore)</span></div>
+    <textarea oninput="aeSetNote(this.value)" style="width:100%;min-height:60px;background:rgba(255,249,200,.4);border:1.5px dashed rgba(180,150,0,.4);border-radius:6px;padding:8px 10px;font-family:'Times New Roman',serif;font-size:.86rem;color:#5a4800;resize:vertical;outline:none;line-height:1.6" placeholder="Appunti per l'autore, promemoria di trama, idee future...">${esc(p.notes||'')}</textarea>
   </div>
   <div>
     <div class="sec-hdr">USCITE (${(p.exits||[]).length})</div>
@@ -2806,18 +2941,58 @@ function renderAdvTree(adv,selPara){
     </g>`;
   }).join('');
 
+  const totalW=maxX+28, totalH=maxY+28;
+
   return`
-  <div style="font-size:.78rem;opacity:.6;margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><path d="M18 9a3 3 0 0 0-3-3H6"/><path d="M18 21a3 3 0 0 0-3-3H6"/></svg> Clicca su un nodo per aprire il paragrafo nell'editor. &nbsp;|&nbsp; Grigio = disconnesso &nbsp;|&nbsp; Verde = inizio</div>
-  <div style="overflow:auto;border:1.5px solid rgba(115,24,31,.2);border-radius:8px;background:#f5f0e4;padding:8px;max-height:calc(100svh - 200px)">
-    <svg width="${maxX+18}" height="${maxY+18}" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <marker id="advA" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-          <path d="M0,0 L0,7 L7,3.5 z" fill="#73181F" opacity=".55"/>
-        </marker>
-      </defs>
-      ${edgeSVG}${nodeSVG}
-    </svg>
-  </div>`;
+  <div style="font-size:.78rem;opacity:.6;margin-bottom:8px">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><path d="M18 9a3 3 0 0 0-3-3H6"/><path d="M18 21a3 3 0 0 0-3-3H6"/></svg>
+    Clicca nodo per aprire &nbsp;|&nbsp; Trascina per spostarti &nbsp;|&nbsp; Scroll per zoom &nbsp;|&nbsp; 🟢 Inizio &nbsp;|&nbsp; ⚫ Disconnesso
+  </div>
+  <div id="ae-tree-wrap" style="overflow:hidden;border:1.5px solid rgba(115,24,31,.2);border-radius:8px;background:#f5f0e4;max-height:calc(100svh - 200px);position:relative;cursor:grab;user-select:none">
+    <div id="ae-tree-inner" style="transform-origin:0 0;transform:scale(1) translate(0px,0px);will-change:transform;display:inline-block">
+      <svg width="${totalW}" height="${totalH}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="advA" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+            <path d="M0,0 L0,7 L7,3.5 z" fill="#73181F" opacity=".55"/>
+          </marker>
+        </defs>
+        ${edgeSVG}${nodeSVG}
+      </svg>
+    </div>
+    <div style="position:absolute;bottom:8px;right:8px;display:flex;gap:4px">
+      <button onclick="_treeZoom(0.2)" style="background:rgba(216,199,161,.9);border:1px solid rgba(115,24,31,.3);border-radius:4px;width:28px;height:28px;cursor:pointer;font-size:1rem;color:#73181F;display:flex;align-items:center;justify-content:center">+</button>
+      <button onclick="_treeZoom(-0.2)" style="background:rgba(216,199,161,.9);border:1px solid rgba(115,24,31,.3);border-radius:4px;width:28px;height:28px;cursor:pointer;font-size:1rem;color:#73181F;display:flex;align-items:center;justify-content:center">−</button>
+      <button onclick="_treeReset()" style="background:rgba(216,199,161,.9);border:1px solid rgba(115,24,31,.3);border-radius:4px;width:28px;height:28px;cursor:pointer;font-size:.65rem;color:#73181F;display:flex;align-items:center;justify-content:center">↺</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    const wrap=document.getElementById('ae-tree-wrap');
+    const inner=document.getElementById('ae-tree-inner');
+    if(!wrap||!inner)return;
+    let scale=1,tx=0,ty=0,dragging=false,lastX=0,lastY=0;
+    function applyTransform(){inner.style.transform='scale('+scale+') translate('+tx+'px,'+ty+'px)';}
+    wrap.addEventListener('wheel',e=>{
+      e.preventDefault();
+      const delta=e.deltaY>0?-0.1:0.1;
+      scale=Math.min(3,Math.max(0.25,scale+delta));
+      applyTransform();
+    },{passive:false});
+    wrap.addEventListener('pointerdown',e=>{
+      if(e.target.closest('g[onclick]'))return;
+      dragging=true;lastX=e.clientX;lastY=e.clientY;
+      wrap.style.cursor='grabbing';wrap.setPointerCapture(e.pointerId);
+    });
+    wrap.addEventListener('pointermove',e=>{
+      if(!dragging)return;
+      tx+=(e.clientX-lastX)/scale;ty+=(e.clientY-lastY)/scale;
+      lastX=e.clientX;lastY=e.clientY;applyTransform();
+    });
+    wrap.addEventListener('pointerup',()=>{dragging=false;wrap.style.cursor='grab';});
+    window._treeZoom=function(d){scale=Math.min(3,Math.max(0.25,scale+d));applyTransform();};
+    window._treeReset=function(){scale=1;tx=0;ty=0;applyTransform();};
+  })();
+  <\/script>`;
 }
 
 // ─── RENDER: SELEZIONE PERSONAGGIO ───────────────────────────────────────────
@@ -3220,11 +3395,16 @@ function aeSaveAdv(){
   if(idx>=0)S.adventures[idx]=copy;
   else S.adventures.push(copy);
   persist();
-  alert('Avventura salvata!');
+  S.ae.autoSaveStatus='saved';
+  const ind=document.getElementById('ae-save-ind');
+  if(ind){ind.textContent='✓ Salvato';ind.style.color='#18732D';}
+  showToast('Avventura salvata!','#18732D');
 }
 function aeSetMeta(field,val){
   if(!S.ae)return;
+  aePushUndo();
   S.ae.adv[field]=val;
+  aeMarkDirty();
 }
 function aeToggleView(mode){
   if(!S.ae)return;
@@ -3232,21 +3412,28 @@ function aeToggleView(mode){
 }
 function aeSelectParaAndEdit(id){
   if(!S.ae)return;
+  if(S.ae.selPara&&S.ae.selPara!==id){
+    if(!S.ae.paraHistory)S.ae.paraHistory=[];
+    S.ae.paraHistory.push(S.ae.selPara);
+    if(S.ae.paraHistory.length>30)S.ae.paraHistory.shift();
+  }
   S.ae.selPara=id;S.ae.viewMode='edit';render();
 }
 function aeAddPara(){
   if(!S.ae)return;
+  aePushUndo();
   const used=S.ae.adv.paragraphs.map(p=>p.id);
   const p=mkPara(used);
   S.ae.adv.paragraphs.push(p);
-  S.ae.selPara=p.id;render();
+  S.ae.selPara=p.id;aeMarkDirty();render();
 }
 function aeDP(id){// delete para
   if(!S.ae)return;
   if(!confirm(`Eliminare il paragrafo ${id}?`))return;
+  aePushUndo();
   S.ae.adv.paragraphs=S.ae.adv.paragraphs.filter(p=>p.id!==id);
   if(S.ae.adv.startParagraph===id)S.ae.adv.startParagraph=null;
-  S.ae.selPara=S.ae.adv.paragraphs[0]?.id||null;render();
+  S.ae.selPara=S.ae.adv.paragraphs[0]?.id||null;aeMarkDirty();render();
 }
 function aeSetStart(id){
   if(!S.ae)return;
@@ -3255,31 +3442,37 @@ function aeSetStart(id){
 function aePN(val){// set para name
   if(!S.ae||!S.ae.selPara)return;
   const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
-  if(p)p.name=val;
+  if(p){p.name=val;aeMarkDirty();}
 }
 function aePT(val){// set para text (no re-render to keep cursor)
   if(!S.ae||!S.ae.selPara)return;
   const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
-  if(p)p.text=val;
+  if(p){p.text=val;aeMarkDirty();}
+  // word count live
+  const wc=document.getElementById('ae-wc');
+  if(wc){const w=val.trim()?val.trim().split(/\s+/).length:0;wc.textContent=w+' parole';}
 }
 function aeAE(type){// add exit
   if(!S.ae||!S.ae.selPara)return;
   const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
   if(!p)return;
   if(!p.exits)p.exits=[];
-  p.exits.push(mkExit(type));render();
+  aePushUndo();
+  p.exits.push(mkExit(type));aeMarkDirty();render();
 }
 function aeDE(idx){// delete exit
   if(!S.ae||!S.ae.selPara)return;
   const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
   if(!p||!p.exits)return;
-  p.exits.splice(idx,1);render();
+  aePushUndo();
+  p.exits.splice(idx,1);aeMarkDirty();render();
 }
 function aeUE(idx,field,val){// update exit (no re-render)
   if(!S.ae||!S.ae.selPara)return;
   const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
   if(!p||!p.exits||!p.exits[idx])return;
   p.exits[idx][field]=val;
+  aeMarkDirty();
 }
 function aeSetEncGrade(idx,grade){
   // Salva il filtro grado sull'exit (non persistito, solo UI) e ri-renderizza
@@ -3292,6 +3485,7 @@ function aeSetEncGrade(idx,grade){
 }
 function aeChangeId(oldId){
   if(!S.ae)return;
+  aePushUndo();
   const raw=prompt(`Nuovo ID per il paragrafo ${oldId} (001–999):`,oldId);
   if(!raw)return;
   const nid=String(parseInt(raw)).padStart(3,'0');
@@ -3311,6 +3505,233 @@ function aeChangeId(oldId){
   if(S.ae.adv.startParagraph===oldId)S.ae.adv.startParagraph=nid;
   S.ae.selPara=nid;render();
 }
+
+
+// ─── AUTOSAVE, UNDO/REDO, NUOVE FEATURE ──────────────────────────────────────
+let _aeAutoSaveTimer=null;
+function aeMarkDirty(){
+  if(!S.ae)return;
+  S.ae.autoSaveStatus='unsaved';
+  const ind=document.getElementById('ae-save-ind');
+  if(ind){ind.textContent='● Non salvato';ind.style.color='#c0392b';}
+  clearTimeout(_aeAutoSaveTimer);
+  _aeAutoSaveTimer=setTimeout(aeAutoSave,2500);
+}
+function aeAutoSave(){
+  if(!S.ae)return;
+  if(!S.adventures)S.adventures=[];
+  const idx=S.adventures.findIndex(a=>a.id===S.ae.adv.id);
+  const copy=JSON.parse(JSON.stringify(S.ae.adv));
+  if(idx>=0)S.adventures[idx]=copy;
+  else S.adventures.push(copy);
+  persist();
+  S.ae.autoSaveStatus='saved';
+  const ind=document.getElementById('ae-save-ind');
+  if(ind){ind.textContent='✓ Salvato';ind.style.color='#18732D';}
+}
+function aePushUndo(){
+  if(!S.ae)return;
+  if(!S.ae.undoStack)S.ae.undoStack=[];
+  if(!S.ae.redoStack)S.ae.redoStack=[];
+  S.ae.undoStack.push(JSON.stringify(S.ae.adv));
+  if(S.ae.undoStack.length>60)S.ae.undoStack.shift();
+  S.ae.redoStack=[];
+}
+function aeUndo(){
+  if(!S.ae||!S.ae.undoStack||!S.ae.undoStack.length){showToast('Niente da annullare','#888');return;}
+  if(!S.ae.redoStack)S.ae.redoStack=[];
+  S.ae.redoStack.push(JSON.stringify(S.ae.adv));
+  S.ae.adv=JSON.parse(S.ae.undoStack.pop());
+  aeMarkDirty();render();
+}
+function aeRedo(){
+  if(!S.ae||!S.ae.redoStack||!S.ae.redoStack.length){showToast('Niente da ripristinare','#888');return;}
+  if(!S.ae.undoStack)S.ae.undoStack=[];
+  S.ae.undoStack.push(JSON.stringify(S.ae.adv));
+  S.ae.adv=JSON.parse(S.ae.redoStack.pop());
+  aeMarkDirty();render();
+}
+function aeNavBack(){
+  if(!S.ae||!S.ae.paraHistory||!S.ae.paraHistory.length)return;
+  S.ae.selPara=S.ae.paraHistory.pop();
+  S.ae.viewMode='edit';render();
+}
+function aeDupPara(id){
+  if(!S.ae)return;
+  const p=S.ae.adv.paragraphs.find(x=>x.id===id);
+  if(!p)return;
+  aePushUndo();
+  const used=S.ae.adv.paragraphs.map(x=>x.id);
+  const newP=JSON.parse(JSON.stringify(p));
+  newP.id=genParaId(used);
+  newP.name=(p.name?p.name+' (copia)':'copia');
+  S.ae.adv.paragraphs.push(newP);
+  S.ae.selPara=newP.id;aeMarkDirty();render();
+}
+function aeSetNote(val){
+  if(!S.ae||!S.ae.selPara)return;
+  const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
+  if(p){p.notes=val;aeMarkDirty();}
+}
+function aeSetTags(val){
+  if(!S.ae||!S.ae.selPara)return;
+  const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
+  if(p){p.tags=val.split(',').map(t=>t.trim()).filter(Boolean);aeMarkDirty();}
+}
+function aeTogglePreview(){
+  if(!S.ae)return;
+  S.ae.previewMode=!S.ae.previewMode;render();
+}
+function aeSetSearch(val){
+  if(!S.ae)return;
+  S.ae.searchQuery=val;render();
+}
+function aeJumpTo(id){
+  if(!S.ae)return;
+  const exists=S.ae.adv.paragraphs.find(p=>p.id===id);
+  if(exists)aeSelectParaAndEdit(id);
+  else showToast(`Paragrafo ${id} non trovato`,'#c0392b');
+}
+function aeGetDiagnostics(adv){
+  const paras=adv.paragraphs;
+  const ids=new Set(paras.map(p=>p.id));
+  const issues=[];
+  paras.forEach(p=>{
+    (p.exits||[]).forEach(e=>{
+      const targets=[e.to,e.successTo,e.failTo,e.elseTo,e.defeatTo].filter(Boolean);
+      targets.forEach(tid=>{
+        if(!ids.has(tid))issues.push({type:'broken',paraId:p.id,msg:`Link rotto: §${p.id} → §${tid}`});
+      });
+    });
+  });
+  if(adv.startParagraph&&ids.has(adv.startParagraph)){
+    const reachable=new Set([adv.startParagraph]);
+    const queue=[adv.startParagraph];
+    while(queue.length){
+      const curr=queue.shift();
+      const p=paras.find(x=>x.id===curr);
+      if(!p)continue;
+      (p.exits||[]).forEach(e=>{
+        [e.to,e.successTo,e.failTo,e.elseTo,e.defeatTo].filter(Boolean).forEach(tid=>{
+          if(ids.has(tid)&&!reachable.has(tid)){reachable.add(tid);queue.push(tid);}
+        });
+      });
+    }
+    paras.forEach(p=>{
+      if(!reachable.has(p.id))issues.push({type:'orphan',paraId:p.id,msg:`Irraggiungibile: §${p.id}${p.name?' ('+p.name+')':''}`});
+    });
+  }else if(!adv.startParagraph){
+    issues.push({type:'nostart',paraId:null,msg:'Nessun paragrafo iniziale impostato'});
+  }
+  paras.forEach(p=>{
+    const hasEndExit=(p.exits||[]).some(e=>e.type==='end');
+    if(!(p.exits||[]).length&&!hasEndExit)
+      issues.push({type:'deadend',paraId:p.id,msg:`Vicolo cieco: §${p.id} non ha uscite`});
+  });
+  return issues;
+}
+function aeGetStats(adv){
+  const paras=adv.paragraphs;
+  const totalExits=paras.reduce((s,p)=>(s+(p.exits||[]).length),0);
+  const typeCounts={};
+  paras.forEach(p=>(p.exits||[]).forEach(e=>{typeCounts[e.type]=(typeCounts[e.type]||0)+1;}));
+  const wordCount=paras.reduce((s,p)=>{
+    const w=p.text&&p.text.trim()?p.text.trim().split(/\s+/).length:0;return s+w;},0);
+  const hasBranchCount=paras.filter(p=>(p.exits||[]).filter(e=>e.type==='choice'||e.type==='stat_check'||e.type==='talent_check').length>1).length;
+  return{paraCount:paras.length,totalExits,typeCounts,wordCount,hasBranchCount};
+}
+function aeExportGamebook(id){
+  const adv=(S.adventures||[]).find(a=>a.id===id)||(S.ae?S.ae.adv:null);
+  if(!adv){alert('Avventura non trovata.');return;}
+  const paras=[...adv.paragraphs].sort((a,b)=>parseInt(a.id)-parseInt(b.id));
+  function exitText(e){
+    if(e.type==='choice')return`➜ ${e.label||'Vai a'} [§${e.to}]`;
+    if(e.type==='stat_check')return`Prova ${e.stat}: Successo→§${e.successTo}, Fallimento→§${e.failTo}`;
+    if(e.type==='talent_check')return`Talento (${e.talent}): Successo→§${e.successTo}, Fallimento→§${e.failTo}`;
+    if(e.type==='code_check')return`Codice ${e.code}: Sì→§${e.to}, No→§${e.elseTo}`;
+    if(e.type==='code_grant')return`[Segna il codice: ${e.code}]${e.label?' — '+e.label:''}`;
+    if(e.type==='end')return`★ Fine avventura${e.label?' — '+e.label:''}`;
+    if(e.type==='encounter')return`⚔ Scontro: Vittoria→§${e.to}, Sconfitta→§${e.defeatTo}`;
+    if(e.type==='exp_grant')return`⭐ +${e.exp} EXP → §${e.to}`;
+    if(e.type==='rest')return`Riposo (${e.restType==='daily'?'Giornaliero':'Prolungato'}) → §${e.to}`;
+    return '';
+  }
+  const htmlOut=`<!DOCTYPE html>\n<html lang="it">\n<head>\n<meta charset="UTF-8">\n<title>${adv.title} — Libro-Gioco SAGA</title>\n<style>\nbody{font-family:Georgia,serif;max-width:700px;margin:0 auto;padding:40px 24px;color:#1a1007;background:#fdf9f0;line-height:1.6;}\nh1{font-size:2.2rem;text-align:center;color:#73181F;border-bottom:3px double #73181F;padding-bottom:16px;margin-bottom:8px;letter-spacing:4px;}\n.meta{text-align:center;font-size:.9rem;color:#666;margin-bottom:48px;}\n.para{margin-bottom:40px;padding:20px 28px;border-left:4px solid #73181F;background:rgba(115,24,31,.025);page-break-inside:avoid;border-radius:0 8px 8px 0;}\n.para-id{font-size:2.2rem;font-weight:bold;color:#73181F;font-family:monospace;margin-bottom:2px;}\n.para-name{font-size:.85rem;color:#888;margin-bottom:14px;font-style:italic;}\n.para-text{line-height:1.8;margin-bottom:16px;white-space:pre-wrap;}\n.exits{font-size:.88rem;border-top:1px solid rgba(115,24,31,.2);padding-top:12px;}\n.exit{margin:6px 0;padding:4px 0;}\n.exit a{color:#73181F;text-decoration:none;font-weight:bold;}\n@media print{.para{page-break-inside:avoid;}}\n</style>\n</head>\n<body>\n<h1>${adv.title}</h1>\n<div class="meta">${adv.author?'<em>di '+adv.author+'</em>&nbsp;&middot;&nbsp;':''} ${paras.length} paragrafi${adv.desc?'<br><br>'+adv.desc:''}</div>\n${paras.map(p=>`<div class="para" id="p${p.id}">\n  <div class="para-id">${p.id}</div>\n  ${p.name?`<div class="para-name">${p.name}</div>`:''}\n  <div class="para-text">${(p.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>\n  ${(p.exits||[]).length?`<div class="exits">${p.exits.map(e=>`<div class="exit">${exitText(e)}</div>`).join('')}</div>`:''}</div>`).join('\n')}\n</body>\n</html>`;
+  const blob=new Blob([htmlOut],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`${adv.title.replace(/\W+/g,'_')}_gamebook.html`;
+  a.click();URL.revokeObjectURL(url);
+  showToast('Libro-gioco esportato!','#18732D');
+}
+function aeExportMarkdown(id){
+  const adv=(S.adventures||[]).find(a=>a.id===id)||(S.ae?S.ae.adv:null);
+  if(!adv){alert('Avventura non trovata.');return;}
+  const paras=[...adv.paragraphs].sort((a,b)=>parseInt(a.id)-parseInt(b.id));
+  let md=`# ${adv.title}\n`;
+  if(adv.author)md+=`*di ${adv.author}*\n`;
+  if(adv.desc)md+=`\n> ${adv.desc}\n`;
+  md+=`\n---\n\n`;
+  paras.forEach(p=>{
+    md+=`## §${p.id}${p.name?' — '+p.name:''}\n\n`;
+    if(p.text)md+=p.text+`\n\n`;
+    (p.exits||[]).forEach(e=>{
+      if(e.type==='choice')md+=`- **${e.label||'Scelta'}** → §\`${e.to}\`\n`;
+      else if(e.type==='stat_check')md+=`- *Prova ${e.stat}:* Successo→§\`${e.successTo}\`, Fallimento→§\`${e.failTo}\`\n`;
+      else if(e.type==='talent_check')md+=`- *Talento (${e.talent}):* Successo→§\`${e.successTo}\`, Fallimento→§\`${e.failTo}\`\n`;
+      else if(e.type==='encounter')md+=`- ⚔ Scontro: Vittoria→§\`${e.to}\`, Sconfitta→§\`${e.defeatTo}\`\n`;
+      else if(e.type==='end')md+=`- ★ Fine${e.label?' — '+e.label:''}\n`;
+      else if(e.type==='exp_grant')md+=`- ⭐ +${e.exp} EXP → §\`${e.to}\`\n`;
+      else if(e.type==='rest')md+=`- Riposo → §\`${e.to}\`\n`;
+      else if(e.type==='code_grant')md+=`- [Codice: \`${e.code}\`]\n`;
+    });
+    if((p.exits||[]).length)md+=`\n`;
+    if(p.notes)md+=`> 📝 *${p.notes}*\n\n`;
+    md+=`---\n\n`;
+  });
+  const blob=new Blob([md],{type:'text/markdown'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`${adv.title.replace(/\W+/g,'_')}.md`;
+  a.click();URL.revokeObjectURL(url);
+  showToast('Markdown esportato!','#18732D');
+}
+function aeShowExportMenu(id){
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999';
+  d.innerHTML=`<div style="background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:24px;width:min(360px,90vw)">
+    <div style="font-weight:bold;font-size:1rem;margin-bottom:16px;color:#73181F;letter-spacing:2px">ESPORTA AVVENTURA</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button onclick="aeExport('${id}');this.closest('[style*=fixed]').remove()" class="btn btn-secondary" style="min-height:44px;text-align:left;gap:12px;padding:10px 16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2z"/><path d="M14 2v6h6"/></svg>
+        <div><div style="font-weight:bold">JSON</div><div style="font-size:.72rem;opacity:.6">Formato nativo SAGA per backup e reimportazione</div></div>
+      </button>
+      <button onclick="aeExportGamebook('${id}');this.closest('[style*=fixed]').remove()" class="btn btn-secondary" style="min-height:44px;text-align:left;gap:12px;padding:10px 16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <div><div style="font-weight:bold">Libro-Gioco HTML</div><div style="font-size:.72rem;opacity:.6">Paragrafi numerati, pronto per stampa o web</div></div>
+      </button>
+      <button onclick="aeExportMarkdown('${id}');this.closest('[style*=fixed]').remove()" class="btn btn-secondary" style="min-height:44px;text-align:left;gap:12px;padding:10px 16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <div><div style="font-weight:bold">Markdown</div><div style="font-size:.72rem;opacity:.6">Testo leggibile, per documentazione o blog</div></div>
+      </button>
+    </div>
+    <button onclick="this.closest('[style*=fixed]').remove()" class="btn btn-secondary" style="margin-top:12px;min-height:38px;font-size:.8rem">Annulla</button>
+  </div>`;
+  d.addEventListener('click',e=>{if(e.target===d)d.remove();});
+  document.body.appendChild(d);
+}
+
+// Keyboard shortcuts per l'editor
+function _aeKeyHandler(e){
+  if(!S.ae||S.page!=='adv-edit')return;
+  const tag=document.activeElement?.tagName;
+  const inText=(tag==='TEXTAREA'||tag==='INPUT');
+  if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();aeUndo();return;}
+  if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();aeRedo();return;}
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();aeSaveAdv();return;}
+  if(e.key==='Escape'&&!inText){aeNavBack();return;}
+}
+if(!window._aeKeyBound){window._aeKeyBound=true;document.addEventListener('keydown',_aeKeyHandler);}
 
 // ─── HANDLER: GIOCO ──────────────────────────────────────────────────────────
 function apStart(advId,charId){
