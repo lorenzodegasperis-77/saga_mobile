@@ -187,23 +187,212 @@ input,select,textarea{font-size:16px !important;}
 'use strict';
 // ─── SVG ICONS ────────────────────────────────────────────────────────────────
 const SVG = {
-  dice:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="10" width="12" height="12" rx="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg>',
-  sword2:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg>',
-  shield:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
-  rest:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 0 4H7"/><path d="M2 12h20"/><path d="M7 16h15"/></svg>',
-  moon:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
-  exp:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-  npc:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 19a6 6 0 0 0-12 0"/><circle cx="8" cy="9" r="4"/><path d="M22 19a6 6 0 0 0-6-6 4 4 0 0 0 0-8"/></svg>',
-  sword:   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg>',
-  plus:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
-  trash:   '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>',
-  edit:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>',
-  copy:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>',
+  dice:      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="10" width="12" height="12" rx="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg>',
+  sword2:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg>',
+  shield:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  rest:      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 0 4H7"/><path d="M2 12h20"/><path d="M7 16h15"/></svg>',
+  moon:      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
+  exp:       '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  npc:       '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 19a6 6 0 0 0-12 0"/><circle cx="8" cy="9" r="4"/><path d="M22 19a6 6 0 0 0-6-6 4 4 0 0 0 0-8"/></svg>',
+  sword:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/></svg>',
+  plus:      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
+  trash:     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>',
+  edit:      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>',
+  copy:      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>',
+  bag:       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
+  goto:      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+  chevL:     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+  flag:      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>',
+  check:     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  x:         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+  bold:      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12a4 4 0 0 0 0-8H6v8"/><path d="M6 12h8a4 4 0 0 1 0 8H6z"/></svg>',
+  italic:    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>',
+  underline: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v6a6 6 0 0 0 12 0V4"/><line x1="4" y1="20" x2="20" y2="20"/></svg>',
+  eye:       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
+  stats:     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  export:    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
 };
 
 // ─── UTILS ────────────────────────────────────────────────────────────────────
 function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function genId(){return 'PG-'+Math.random().toString(36).substr(2,9).toUpperCase();}
+
+// ─── MARKDOWN RENDERER (bold/italic/underline) ────────────────────────────────
+function renderMarkdown(raw){
+  if(!raw)return'';
+  // Escape HTML first, then apply markdown
+  let s=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // __underline__
+  s=s.replace(/__([\s\S]+?)__/g,'<u>$1</u>');
+  // **bold**
+  s=s.replace(/\*\*([\s\S]+?)\*\*/g,'<strong>$1</strong>');
+  // _italic_ (single underscore, not already consumed)
+  s=s.replace(/(?<![_a-zA-Z0-9])_([\s\S]+?)_(?![_a-zA-Z0-9])/g,'<em>$1</em>');
+  return s;
+}
+
+// ─── EDITOR FORMAT WRAP ───────────────────────────────────────────────────────
+function aeFmtWrap(marker){
+  const ta=document.getElementById('para-text-ta');
+  if(!ta)return;
+  const start=ta.selectionStart, end=ta.selectionEnd;
+  const sel=ta.value.substring(start,end);
+  const wrapped=marker+sel+marker;
+  ta.setRangeText(wrapped,start,end,'select');
+  ta.focus();
+  aePT(ta.value);
+}
+
+// ─── NPC DETAIL MODAL ─────────────────────────────────────────────────────────
+function showNpcModal(id){
+  // Find in predefined or user NPCs
+  const pred=NEMICI_PREDEFINITI.find(n=>n.id===id);
+  const user=S.npcs.find(n=>n.id===id);
+  const n=pred||user;
+  if(!n)return;
+  const isPred=!!pred;
+  const GRADE_LABELS=['','Comune','Minaccioso','Pericoloso','Letale','Leggendario'];
+  const GRADE_ROMAN=['','I','II','III','IV','V'];
+  const g=Math.min(5,Math.max(1,n.grado||1));
+  const settingsArr=(n.settings||n.ambientazioni||[]);
+  const settingPills=settingsArr.map(k=>{const s=SETTINGS[k];return s?`<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:12px;border:1px solid ${s.color};font-size:.7rem;color:${s.color}">${s.svg.replace('width="21" height="21"','width="11" height="11"')} ${s.label}</span>`:''}).join('');
+  const abilitaHtml=(n.abilita||[]).map(a=>`
+    <div style="padding:8px 0;border-bottom:1px solid rgba(115,24,31,.1)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+        <strong style="font-size:.88rem">${esc(a.ability_name||'')}</strong>
+        <span style="font-size:.72rem;color:#73181F;font-weight:bold">${esc(a.ability_cost||'')}</span>
+      </div>
+      <div style="font-size:.8rem;opacity:.78;line-height:1.5">${esc(a.ability_description||'')}</div>
+    </div>`).join('');
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Times New Roman,Georgia,serif';
+  d.onclick=e=>{if(e.target===d)d.remove();};
+  d.innerHTML=`
+  <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:22px 20px;width:100%;max-width:460px;max-height:90svh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.5)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #73181F">
+      <div>
+        <div style="font-size:1.2rem;font-weight:bold;color:#73181F">${esc(n.nome)}</div>
+        <div style="font-size:.72rem;margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-weight:bold;color:#73181F;font-size:.7rem">Grado ${GRADE_ROMAN[g]} — ${GRADE_LABELS[g]}</span>
+          ${isPred?'':'<span style="background:#73181F;color:white;padding:1px 7px;border-radius:4px;font-size:.6rem;font-weight:bold">PERSONALE</span>'}
+        </div>
+        ${settingPills?`<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">${settingPills}</div>`:''}
+      </div>
+      <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#73181F;flex-shrink:0;padding:2px 6px;line-height:1">${SVG.x}</button>
+    </div>
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+      ${[['VIG',n.vig],['IST',n.ist||n.men],['MEN',n.men]].map(([l,v])=>`<div style="text-align:center;background:rgba(115,24,31,.07);border:1px solid rgba(115,24,31,.2);border-radius:6px;padding:6px 4px"><div style="font-size:.55rem;letter-spacing:1px;opacity:.55">${l}</div><div style="font-size:1.5rem;font-weight:bold;color:#73181F">${v||0}</div></div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px">
+      <div style="text-align:center;background:rgba(115,24,31,.07);border-radius:6px;padding:5px 4px"><div style="font-size:.55rem;opacity:.55">HP</div><div style="font-size:1.1rem;font-weight:bold;color:#73181F">${n.hpMax||n.hp||0}</div></div>
+      <div style="text-align:center;background:rgba(26,52,115,.07);border-radius:6px;padding:5px 4px"><div style="font-size:.55rem;opacity:.55">EN</div><div style="font-size:1.1rem;font-weight:bold;color:#1a3473">${n.enMax||n.en||0}</div></div>
+      <div style="text-align:center;background:rgba(115,24,31,.07);border-radius:6px;padding:5px 4px"><div style="font-size:.55rem;opacity:.55">DMG</div><div style="font-size:1.1rem;font-weight:bold;color:#73181F">${n.dmg||0}</div></div>
+      <div style="text-align:center;background:rgba(26,52,115,.07);border-radius:6px;padding:5px 4px"><div style="font-size:.55rem;opacity:.55">PROT</div><div style="font-size:1.1rem;font-weight:bold;color:#1a3473">${n.prot||0}</div></div>
+    </div>
+    ${n.note?`<div style="background:rgba(255,249,200,.5);border:1px dashed rgba(180,150,0,.4);border-radius:6px;padding:8px 10px;font-size:.82rem;margin-bottom:10px;color:#5a4800">${esc(n.note)}</div>`:''}
+    ${(n.bersaglio||[]).length?`<div style="margin-bottom:10px"><div style="font-size:.66rem;letter-spacing:1px;color:#73181F;font-weight:bold;margin-bottom:5px">COMPORTAMENTO</div>${(n.bersaglio||[]).map(b=>`<div style="font-size:.82rem;padding:3px 0;opacity:.8">${SVG.goto} ${esc(b)}</div>`).join('')}</div>`:''}
+    ${abilitaHtml?`<div><div style="font-size:.66rem;letter-spacing:1px;color:#73181F;font-weight:bold;margin-bottom:4px">ABILITÀ</div>${abilitaHtml}</div>`:''}
+    ${!isPred?`<div style="display:flex;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(115,24,31,.2)">
+      <button onclick="this.closest('[style*=fixed]').remove();npcOpenEdit('${n.id}')" style="flex:1;padding:8px;background:#73181F;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:5px">${SVG.edit} Modifica</button>
+      <button onclick="this.closest('[style*=fixed]').remove();npcDelete('${n.id}')" style="flex:1;padding:8px;background:transparent;color:#d32f2f;border:1px solid #d32f2f;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:5px">${SVG.trash} Elimina</button>
+    </div>`:''}
+  </div>`;
+  document.body.appendChild(d);
+}
+
+// ─── ADVENTURE PLAY: VAI A ────────────────────────────────────────────────────
+function apGoToPrompt(){
+  const raw=prompt('Vai al paragrafo (inserisci il numero):');
+  if(!raw)return;
+  const id=String(parseInt(raw)).padStart(3,'0');
+  if(!S.ap)return;
+  const exists=(S.ap.adv.paragraphs||[]).find(p=>p.id===id);
+  if(!exists){showToast('Paragrafo '+id+' non trovato','#c0392b');return;}
+  apGoTo(id);
+}
+
+// ─── ITEM GRANT HANDLER ───────────────────────────────────────────────────────
+function apApplyItemGrant(exitIdx){
+  if(!S.ap||!S.ap.char)return;
+  const para=(S.ap.adv.paragraphs||[]).find(p=>p.id===S.ap.currPara);
+  if(!para)return;
+  const e=(para.exits||[])[exitIdx];
+  if(!e||e.type!=='item_grant')return;
+  const ch=S.ap.char;
+  if(!ch.inventory)ch.inventory=[];
+  if(e.action==='remove'){
+    const idx=ch.inventory.findIndex(it=>it.item===e.itemName);
+    if(idx>=0){
+      const qty=parseInt(e.qty)||1;
+      ch.inventory[idx].quantity=(ch.inventory[idx].quantity||1)-qty;
+      if(ch.inventory[idx].quantity<=0)ch.inventory.splice(idx,1);
+      showToast('Rimosso: '+e.itemName,'#73181F');
+    } else {
+      showToast('Oggetto non in inventario: '+e.itemName,'#888');
+    }
+  } else {
+    // add
+    const existing=ch.inventory.find(it=>it.item===e.itemName);
+    const qty=parseInt(e.qty)||1;
+    if(existing){
+      existing.quantity=(existing.quantity||1)+qty;
+    } else {
+      ch.inventory.push({
+        item:e.itemName||'Oggetto',
+        description:e.itemDesc||'',
+        quantity:qty,
+        slot:e.itemSlot||'0',
+      });
+    }
+    showToast('Aggiunto all\'inventario: '+e.itemName,'#18732D');
+  }
+  // Mark exit as applied so button changes state
+  if(!S.ap._appliedItems)S.ap._appliedItems={};
+  S.ap._appliedItems[S.ap.currPara+'_'+exitIdx]=true;
+  apSaveSession();
+  render();
+}
+
+// ─── TREE INIT (called after render for adv-edit/tree) ───────────────────────
+function _initAdvTree(){
+  const wrap=document.getElementById('ae-tree-wrap');
+  const inner=document.getElementById('ae-tree-inner');
+  if(!wrap||!inner)return;
+  let scale=1,tx=0,ty=0,dragging=false,lastX=0,lastY=0;
+  function applyTransform(){
+    inner.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')';
+  }
+  // Remove old listeners if any
+  if(wrap._treeInit)return; // already initialised for this DOM instance
+  wrap._treeInit=true;
+  wrap.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const rect=wrap.getBoundingClientRect();
+    const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+    const delta=e.deltaY>0?-0.1:0.1;
+    const newScale=Math.min(3,Math.max(0.2,scale+delta));
+    // Zoom toward cursor
+    tx=mx-(mx-tx)*(newScale/scale);
+    ty=my-(my-ty)*(newScale/scale);
+    scale=newScale;
+    applyTransform();
+  },{passive:false});
+  wrap.addEventListener('pointerdown',e=>{
+    if(e.target.closest('g[onclick]'))return;
+    dragging=true;lastX=e.clientX;lastY=e.clientY;
+    wrap.style.cursor='grabbing';wrap.setPointerCapture(e.pointerId);
+  });
+  wrap.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    tx+=e.clientX-lastX; ty+=e.clientY-lastY;
+    lastX=e.clientX; lastY=e.clientY;
+    applyTransform();
+  });
+  wrap.addEventListener('pointerup',()=>{dragging=false;wrap.style.cursor='grab';});
+  window._treeZoom=function(d){scale=Math.min(3,Math.max(0.2,scale+d));applyTransform();};
+  window._treeReset=function(){scale=1;tx=0;ty=0;applyTransform();};
+}
 
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const DB={
@@ -607,7 +796,7 @@ function getAvailableForSlot(L,currentSlot){
 let S={
   page:'home',params:{},
   chars:[],sessions:[],
-  settings:{music:true,diceAnim:true,sfxEnabled:false,sfxStyle:'fantasy',language:'it'},
+  settings:{music:true,diceAnim:true,language:'it'},
   loaded:false,
   // create character
   cc:null,
@@ -739,7 +928,7 @@ function homeManual(){
   window.open('https://www.example.com/manuale-saga','_blank','noopener,noreferrer');
 }
 function homeFeedback(){
-  const mail='mailto:feedback@saga-gioco.it?subject='+encodeURIComponent('Feedback su SAGA — Avventure Interattive')+'&body='+encodeURIComponent('Ciao,\n\nVorrei condividere la mia opinione su SAGA:\n\n');
+  const mail='mailto:zuneprogetto@gmail.com?subject='+encodeURIComponent('Feedback su SAGA — Avventure Interattive')+'&body='+encodeURIComponent('Ciao,\n\nVorrei condividere la mia opinione su SAGA:\n\n');
   window.location.href=mail;
 }
 function homeShare(){
@@ -800,6 +989,11 @@ function render(){
 
   app.innerHTML=html;
 
+  // Initialise adventure tree pan/zoom (scripts in innerHTML don't execute)
+  if(S.page==='adv-edit' && S.ae && S.ae.viewMode==='tree'){
+    requestAnimationFrame(_initAdvTree);
+  }
+
   // restore focus
   if(focusId){const el=document.getElementById(focusId);if(el){el.focus();if(el.setSelectionRange&&el.value)try{el.setSelectionRange(el.value.length,el.value.length);}catch(e){}}}
   else if(focusSel){const el=document.querySelector(`[data-focus-key="${focusSel}"]`);if(el)el.focus();}
@@ -818,7 +1012,7 @@ function renderHome(){
       <div onclick="apResumeSession('${s.sessId}')" style="padding:10px 12px;border-bottom:1px solid rgba(115,24,31,.12);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .15s;border-radius:6px" onmouseover="this.style.background='rgba(115,24,31,.07)'" onmouseout="this.style.background=''">
         <div style="min-width:0;flex:1;overflow:hidden">
           <div style="font-weight:bold;color:#73181F;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s.advTitle||'—')}</div>
-          <div style="font-size:.76rem;opacity:.65;margin-top:1px">${esc(s.charName)} · §${esc(s.currPara||'—')}${s.hpMax?` · ❤ ${s.hpCurr}/${s.hpMax}`:''}</div>
+          <div style="font-size:.76rem;opacity:.65;margin-top:1px">${esc(s.charName)} · §${esc(s.currPara||'—')}${s.hpMax?` · <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;vertical-align:middle"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> ${s.hpCurr}/${s.hpMax}`:''}</div>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
           <span class="badge" style="font-size:.65rem">Lv.${esc(s.charLevel)}</span>
@@ -953,7 +1147,7 @@ function renderAdventures(){
         <div style="margin-top:10px;font-size:.78rem;opacity:.5">${customAdvs.length} ${customAdvs.length===1?'avventura':'avventure'} salvate</div>
       </div>
     </div>
-    <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:16px">❮ TORNA AL MENU</button>
+    <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:16px">‹ TORNA AL MENU</button>
   </div>`;
 }
 
@@ -978,7 +1172,7 @@ function renderAdvSagaOfficial(){
         <p style="font-size:.84rem;margin:0 0 10px;opacity:.8;line-height:1.4">${esc(a.desc)}</p>
         <button class="btn btn-primary" style="padding:7px 14px;font-size:.8rem" onclick="alert('${esc(a.title).replace(/'/g,'&#39;')} — in arrivo nelle prossime versioni!')">INIZIA</button>
       </div>`).join('')}
-      <button class="btn btn-secondary" onclick="nav('adventures')">❮ INDIETRO</button>
+      <button class="btn btn-secondary" onclick="nav('adventures')">‹ INDIETRO</button>
     </div>
   </div>`;
 }
@@ -1052,7 +1246,7 @@ function renderCharacters(){
     <div style="display:flex;flex-direction:column;gap:0;margin-bottom:16px">${charCards}</div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <button class="btn btn-secondary" style="border:2px dashed #73181F;opacity:.85" onclick="nav('create')">+ Nuovo personaggio</button>
-      <button class="btn btn-secondary" onclick="nav('home')">❮ TORNA AL MENU</button>
+      <button class="btn btn-secondary" onclick="nav('home')">‹ TORNA AL MENU</button>
     </div>
   </div>`;
 }
@@ -1128,7 +1322,7 @@ function renderCCStep(cc,cs,stats,remaining){
   if(s===1)return renderCCStep1(cs);
   if(s===2)return renderCCOrigins('Origini (1/3). Lignaggio','Le tue origini plasmano il tuo corpo e la tua mente.',DB.heritage,'lineage',cs.origins.lineage);
   if(s===3)return renderCCOrigins('Origini (2/3). Infanzia','Come sei cresciuto prima di prendere in mano il tuo destino?',DB.childhood,'childhood',cs.origins.childhood);
-  if(s===4)return renderCCOrigins('Origini (3/3). Professione','Cosa facevi prima di diventare un avventuriero?',DB.profession,'profession',cs.origins.profession,'TALENTI ❯');
+  if(s===4)return renderCCOrigins('Origini (3/3). Professione','Cosa facevi prima di diventare un avventuriero?',DB.profession,'profession',cs.origins.profession,'TALENTI ›');
   if(s===5)return renderCCTalents(cc,cs,stats);
   if(s===6)return renderCCAbilities(cc,cs);
   if(s===7)return renderCCCredits(cs);
@@ -1160,7 +1354,7 @@ function renderCCSetting(cs){
     ${cs.setting
       ? `<button class="btn btn-secondary" style="flex:1;max-width:220px;border:2px dashed #73181F" onclick="generateRandomChar(S.cc.cs.setting)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>Casuale</button>`
       : `<div></div>`}
-    <button class="btn btn-primary" style="flex:1;max-width:220px" onclick="if(!S.cc.cs.setting){ccAlertSetting();return;}ccGoStep(1)">IL TUO EROE ❯</button>
+    <button class="btn btn-primary" style="flex:1;max-width:220px" onclick="if(!S.cc.cs.setting){ccAlertSetting();return;}ccGoStep(1)">IL TUO EROE ›</button>
   </div>`;
 }
 
@@ -1175,12 +1369,12 @@ function renderCCStep1(cs){
     <option value="Altro" ${cs.sex==='Altro'?'selected':''}>Altro / Non specificato</option>
   </select>
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(0)">❮ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.name.trim()){alert('Inserisci il nome del personaggio!');return;}if(!S.cc.cs.sex){alert('Scegli il sesso!');return;}ccGoStep(2)">ORIGINI ❯</button>
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(0)">‹ INDIETRO</button>
+    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.name.trim()){alert('Inserisci il nome del personaggio!');return;}if(!S.cc.cs.sex){alert('Scegli il sesso!');return;}ccGoStep(2)">ORIGINI ›</button>
   </div>`;
 }
 
-function renderCCOrigins(title,subtitle,items,type,selected,nextLabel='AVANTI ❯'){
+function renderCCOrigins(title,subtitle,items,type,selected,nextLabel='AVANTI ›'){
   const prev=({lineage:1,childhood:2,profession:3}[type]);
   const next=({lineage:3,childhood:4,profession:5}[type]);
   const validation=({lineage:"Scegli un Lignaggio!",childhood:"Scegli un'Infanzia!",profession:"Scegli una Professione!"}[type]);
@@ -1196,7 +1390,7 @@ function renderCCOrigins(title,subtitle,items,type,selected,nextLabel='AVANTI �
     </div>
   </div>`).join('')}
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(${prev})">❮ INDIETRO</button>
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(${prev})">‹ INDIETRO</button>
     <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.origins.${type}){alert('${validation.replace(/'/g,"\\'")}');return;}ccGoStep(${next})">${esc(nextLabel)}</button>
   </div>`;
 }
@@ -1214,8 +1408,8 @@ function renderCCCredits(cs){
         <p>Hai ottenuto <strong>${cs.credits}</strong> Crediti.</p>`}
   </div>
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(6)">❮ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.hasRolled){alert('Tira i dadi prima!');return;}ccGoStep(8)">EQUIPAGGIAMENTO ❯</button>
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(6)">‹ INDIETRO</button>
+    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.hasRolled){alert('Tira i dadi prima!');return;}ccGoStep(8)">EQUIPAGGIAMENTO ›</button>
   </div>`;
 }
 
@@ -1361,8 +1555,8 @@ function renderCCTalents(cc,cs,stats){
         </div>`}).join(''):''}
     </div>`}).join('')}
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(4)">❮ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:230px" onclick="ccGoStep(6)">ABILITÀ ISTANTANEE ❯</button>
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(4)">‹ INDIETRO</button>
+    <button class="btn btn-primary" style="max-width:230px" onclick="ccGoStep(6)">ABILITÀ ISTANTANEE ›</button>
   </div>`;
 }
 
@@ -1413,14 +1607,14 @@ function renderCCAbilities(cc,cs){
   <div style="display:flex;align-items:center;margin-bottom:6px"><h3 style="color:#73181F;margin:0">Abilità Istantanee</h3><button onclick="showAbilityInfoModal()" style="background:rgba(115,24,31,.12);border:1.5px solid #73181F;border-radius:50%;width:22px;height:22px;cursor:pointer;font-weight:bold;font-size:.82rem;color:#73181F;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;margin-left:8px">i</button></div>
   ${abContent}
   <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(5)">❮ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:220px" onclick="ccGoStep(7)">CREDITI ❯</button>
+    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(5)">‹ INDIETRO</button>
+    <button class="btn btn-primary" style="max-width:220px" onclick="ccGoStep(7)">CREDITI ›</button>
   </div>`;
 }
 
-function navBtns(onBack,onNext,nextLabel='AVANTI ❯'){
+function navBtns(onBack,onNext,nextLabel='AVANTI ›'){
   return`<div style="display:flex;justify-content:${onBack?'space-between':'flex-end'};margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    ${onBack?`<button class="btn btn-secondary" style="max-width:160px" onclick="${onBack}()">❮ INDIETRO</button>`:''}
+    ${onBack?`<button class="btn btn-secondary" style="max-width:160px" onclick="${onBack}()">‹ INDIETRO</button>`:''}
     <button class="btn btn-primary" style="max-width:220px" onclick="${onNext}()">${esc(nextLabel)}</button>
   </div>`;}
 
@@ -1593,7 +1787,7 @@ function renderSheet(){
     </div>
     ${tabContent}
     <div class="btn-group-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px">
-      <button class="btn btn-secondary" onclick="nav('characters')">❮ INDIETRO</button>
+      <button class="btn btn-secondary" onclick="nav('characters')">‹ INDIETRO</button>
       <button class="btn btn-primary" onclick="shSave()">SALVA SCHEDA</button>
     </div>
   </div>`;
@@ -1847,7 +2041,7 @@ function renderLevelUp(){
     </div>`:''}
     <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
       <button class="btn btn-secondary" style="max-width:160px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
-      <button class="btn btn-primary" style="max-width:220px" onclick="${needsAttr&&!lu.attrBoost?`alert('Scegli una Caratteristica!')`:(needsExtra?`luGoStep(2)`:`luFinish()`)}">${needsExtra?'AVANTI ❯':'CONFERMA LIVELLO ✓'}</button>
+      <button class="btn btn-primary" style="max-width:220px" onclick="${needsAttr&&!lu.attrBoost?`alert('Scegli una Caratteristica!')`:(needsExtra?`luGoStep(2)`:`luFinish()`)}">${needsExtra?'AVANTI ›':'CONFERMA LIVELLO ✓'}</button>
     </div>`;
   } else if(lu.step===2){
     stepContent=`
@@ -1899,9 +2093,9 @@ function renderLevelUp(){
           </div>`}).join(''):''}
       </div>`;}).join('')}
     <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-      <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(1)">❮ INDIETRO</button>
+      <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(1)">‹ INDIETRO</button>
       <button class="btn btn-secondary" style="max-width:120px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
-      <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newTalent){alert('Scegli un talento!');return;}luGoStep(3)">AVANTI ❯</button>
+      <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newTalent){alert('Scegli un talento!');return;}luGoStep(3)">AVANTI ›</button>
     </div>`;
   } else if(lu.step===3){
     const availAb=DB.abilities.filter(a=>!(char.abilities||[]).some(x=>x.ability_name===a.ability_name));
@@ -1932,7 +2126,7 @@ function renderLevelUp(){
         <div style="font-size:.81rem;margin-top:3px;opacity:.8">${esc(a.ability_description)}</div>
       </div>`}).join('')}
     <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-      <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(2)">❮ INDIETRO</button>
+      <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(2)">‹ INDIETRO</button>
       <button class="btn btn-secondary" style="max-width:120px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
       <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newAbility){alert('Seleziona almeno una abilita prima di procedere!');return;}luFinish()">CONFERMA LIVELLO ✓</button>
     </div>`;
@@ -2048,7 +2242,8 @@ function openDiceOv(numDice,title,subtitle,mode,statValue,onClose){
   document.getElementById('dice-ov-sub').textContent=subtitle;
   document.getElementById('dice-ov-result').innerHTML='<p style="opacity:.5;font-style:italic;font-size:.88rem">Premi il pulsante per lanciare.</p>';
   const btn=document.getElementById('dice-ov-btn');
-  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Lancia '+numDice+'d6';btn.disabled=false;
+  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Lancia '+numDice+'d6';
+  btn.disabled=false;btn.style.opacity='';btn.style.cursor='';
   requestAnimationFrame(()=>_initDice3D(numDice));
 }
 
@@ -2215,7 +2410,7 @@ function _draw2DPlaceholder(ctx,W,H,numDice,vals){
 }
 
 function startDiceRoll(){
-  if(!_diceThree||_diceThree.rolling)return;
+  if(_diceThree&&_diceThree.rolling)return; // prevent double-click during animation
   const diceOv=S.diceOv;if(!diceOv)return;
   // Respect diceAnim setting: if off, show result immediately
   if(!S.settings.diceAnim){
@@ -2344,12 +2539,13 @@ function _showDiceOvResult(diceOv){
     html=`<div style="font-size:2rem;font-weight:bold;color:#73181F">${values.join(' + ')} = ${total}</div>`;
   }
   rd.innerHTML=html;
-  btn.textContent='✓ Lanciato';btn.disabled=true;btn.style.opacity='0.5';btn.style.cursor='not-allowed';
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg> Rilancia';
+  btn.disabled=false;btn.style.opacity='0.7';btn.style.cursor='pointer';
 }
 
 // ─── RENDER: SETTINGS ─────────────────────────────────────────────────────────
 function renderSettings(){
-  const{music,diceAnim,sfxEnabled,sfxStyle,language}=S.settings;
+  const{music,diceAnim,language}=S.settings;
   const tog=(checked,fn)=>`
     <label class="toggle-wrap">
     <input type="checkbox" ${checked?'checked':''} onchange="${fn}">
@@ -2381,10 +2577,6 @@ function renderSettings(){
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music" style="width:18px;height:18px"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> AUDIO</h3>
         ${row('Musica di sottofondo',tog(music,"settingsToggle('music')"))}
-        ${row('Effetti sonori',tog(sfxEnabled,"settingsToggle('sfxEnabled')"))}
-        ${row('Stile effetti sonori',sel(sfxStyle,[
-          ['fantasy','Fantasy'],['scifi','Sci-Fi'],['modern','Moderno'],['neutral','Neutro']
-        ],"settingsSfxStyle(this.value)"))}
       </div>
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gamepad2-icon lucide-gamepad-2" style="width:18px;height:18px"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg> GAMEPLAY</h3>
@@ -2401,7 +2593,6 @@ function renderSettings(){
 
     </div>
     <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:6px">TORNA AL MENU</button>
-    <div style="font-size:.75rem;opacity:.5;color:#73181F;margin-top:10px">Le impostazioni vengono salvate automaticamente</div>
   </div>`;
 
 }
@@ -2414,7 +2605,6 @@ function settingsToggle(key){
   if(key==='diceAnim'){/* animation flag handled at roll time */}
   render();
 }
-function settingsSfxStyle(v){S.settings.sfxStyle=v;persist();render();}
 function settingsLanguage(v){S.settings.language=v;persist();render();}
 
 
@@ -2466,6 +2656,7 @@ function mkExit(type){
   if(type==='encounter')return{...b,npcId:NEMICI_PREDEFINITI[0]?.id||'',label:'',to:'',defeatTo:'',victoryMsg:''};
   if(type==='exp_grant')return{...b,exp:10,label:'',to:''};
   if(type==='rest')return{...b,restType:'daily',to:''};
+  if(type==='item_grant')return{...b,action:'add',itemName:'',itemDesc:'',qty:1,itemSlot:'0',useEquipList:false,equipRef:''};
   return b;
 }
 function initAE(adv){
@@ -2485,7 +2676,7 @@ function initAP(adv,charId){
   const sessId='SESS-'+Math.random().toString(36).substr(2,9).toUpperCase();
   return{adv,charId,char:ch?JSON.parse(JSON.stringify(ch)):null,
     currPara:adv.startParagraph||adv.paragraphs[0]?.id,codes:[],history:[],
-    sessId,showBreadcrumb:false,showCharSheet:false,sheetTab:'generale'};
+    sessId,showBreadcrumb:false,showCharSheet:false,sheetTab:'generale',_appliedItems:{}};
 }
 
 // ─── RENDER: LISTA AVVENTURE ──────────────────────────────────────────────────
@@ -2535,7 +2726,7 @@ function renderAdvList(){
     </div>
     ${cards}
 	    <input id="adv-import-inp" type="file" accept=".json" style="display:none" onchange="aeImportFile(event)">
-    <button class="btn btn-secondary" onclick="nav('adventures')" style="margin-top:6px">❮ INDIETRO</button>
+    <button class="btn btn-secondary" onclick="nav('adventures')" style="margin-top:6px">‹ INDIETRO</button>
 
     </div>
   </div>`;
@@ -2577,7 +2768,7 @@ function renderAdvEdit(){
         ${p.id===adv.startParagraph?`<span style="font-size:.55rem;background:#18732D;color:white;border-radius:3px;padding:1px 4px;flex-shrink:0">▶</span>`:`<span style="font-size:.55rem;opacity:0;flex-shrink:0">▶</span>`}
         <span style="font-family:monospace;font-weight:bold;color:${p.id===adv.startParagraph?'#18732D':isSel?'#73181F':'#73181F'};flex-shrink:0">${p.id}</span>
         <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;opacity:.75">${esc(p.name||'—')}</span>
-        <span style="font-size:.6rem;flex-shrink:0">${hasErr?'🔴':isOrphan?'⚫':''}</span>
+        <span style="font-size:.6rem;flex-shrink:0">${hasErr?'!':isOrphan?'◌':''}</span>
         <span style="font-size:.62rem;opacity:.4;flex-shrink:0">${(p.exits||[]).length}↗</span>
       </div>`;
     }).join('');
@@ -2594,7 +2785,7 @@ function renderAdvEdit(){
     ${diagIssues.length===0
       ?`<div style="font-size:.76rem;color:#18732D;opacity:.8">✓ Nessun problema trovato</div>`
       :diagIssues.map(i=>`
-        <div onclick="${i.paraId?`aeSelectParaAndEdit('${i.paraId}')`:''}" style="font-size:.72rem;color:${i.type==='broken'?'#c0392b':i.type==='orphan'?'#555':'#8a6000'};margin-bottom:4px;cursor:${i.paraId?'pointer':'default'};padding:2px 4px;border-radius:3px" onmouseover="${i.paraId?"this.style.background='rgba(0,0,0,.06)'":''}" onmouseout="${i.paraId?"this.style.background=''":''}">${i.type==='broken'?'🔴':i.type==='orphan'?'⚫':i.type==='deadend'?'🟡':'⚠'} ${i.msg}</div>`).join('')}
+        <div onclick="${i.paraId?`aeSelectParaAndEdit('${i.paraId}')`:''}" style="font-size:.72rem;color:${i.type==='broken'?'#c0392b':i.type==='orphan'?'#555':'#8a6000'};margin-bottom:4px;cursor:${i.paraId?'pointer':'default'};padding:2px 4px;border-radius:3px" onmouseover="${i.paraId?"this.style.background='rgba(0,0,0,.06)'":''}" onmouseout="${i.paraId?"this.style.background=''":''}">${i.type==='broken'?'!':i.type==='orphan'?'◌':i.type==='deadend'?'△':'▲'} ${i.msg}</div>`).join('')}
     <button onclick="S.ae.showDiagnostics=false;render()" style="margin-top:6px;font-size:.68rem;background:transparent;border:none;color:#888;cursor:pointer;padding:0">Chiudi</button>
   </div>`:''
 
@@ -2603,10 +2794,10 @@ function renderAdvEdit(){
   <div style="border-top:1px solid rgba(115,24,31,.2);padding:10px 8px;background:rgba(216,199,161,.3)">
     <div style="font-size:.68rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:6px">STATISTICHE</div>
     <div style="font-size:.75rem;display:flex;flex-direction:column;gap:3px;opacity:.85">
-      <div>📄 <strong>${stats.paraCount}</strong> paragrafi</div>
+      <div><strong>${stats.paraCount}</strong> paragrafi</div>
       <div>↗ <strong>${stats.totalExits}</strong> uscite totali</div>
-      <div>📝 <strong>${stats.wordCount}</strong> parole</div>
-      <div>🔀 <strong>${stats.hasBranchCount}</strong> bivi</div>
+      <div><strong>${stats.wordCount}</strong> parole</div>
+      <div><strong>${stats.hasBranchCount}</strong> bivi</div>
     </div>
     <button onclick="S.ae.showStats=false;render()" style="margin-top:6px;font-size:.68rem;background:transparent;border:none;color:#888;cursor:pointer;padding:0">Chiudi</button>
   </div>`:''
@@ -2617,7 +2808,7 @@ function renderAdvEdit(){
   <div style="width:100vw;max-width:1100px;display:flex;flex-direction:column;z-index:1;font-family:'Times New Roman',Georgia,serif;color:#1a1007;min-height:100svh;background:#D8C7A1">
     <!-- HEADER -->
     <div style="background:#D8C7A1;border-bottom:2px solid #73181F;padding:8px 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.12)">
-      <button onclick="nav('adv-list')" title="Torna alla lista" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:1.2rem;padding:4px 6px;line-height:1;flex-shrink:0">❮</button>
+      <button onclick="nav('adv-list')" title="Torna alla lista" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:1.2rem;padding:4px 6px;line-height:1;flex-shrink:0">‹</button>
       <input id="ae-title" value="${esc(adv.title)}" oninput="aeSetMeta('title',this.value)" style="flex:1;min-width:80px;background:transparent;border:none;border-bottom:2px solid #73181F;padding:5px 6px;font-size:1rem;font-family:inherit;font-weight:bold;color:#1a1007;outline:none">
       <input value="${esc(adv.author||'')}" oninput="aeSetMeta('author',this.value)" placeholder="Autore..." style="width:100px;background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.78rem;font-family:inherit;color:#1a1007;outline:none">
       <select onchange="aeSetMeta('setting',this.value||null)" style="background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.76rem;font-family:inherit;color:#1a1007;outline:none;cursor:pointer">
@@ -2644,7 +2835,7 @@ function renderAdvEdit(){
       <div style="width:200px;flex-shrink:0;border-right:2px solid rgba(115,24,31,.2);display:flex;flex-direction:column;background:rgba(216,199,161,.4);overflow:hidden;max-height:calc(100svh - 86px)">
         <!-- Ricerca -->
         <div style="padding:8px 8px 4px">
-          <input value="${esc(searchQuery||'')}" oninput="aeSetSearch(this.value)" placeholder="🔍 Cerca paragrafo..." style="width:100%;background:rgba(255,255,255,.5);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:5px 8px;font-size:.78rem;font-family:inherit;color:#1a1007;outline:none">
+          <input value="${esc(searchQuery||'')}" oninput="aeSetSearch(this.value)" placeholder="Cerca paragrafo..." style="width:100%;background:rgba(255,255,255,.5);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:5px 8px;font-size:.78rem;font-family:inherit;color:#1a1007;outline:none">
         </div>
         <!-- Back nav -->
         ${hasHistory?`<div style="padding:2px 8px 4px"><button onclick="aeNavBack()" style="width:100%;padding:4px 6px;background:rgba(115,24,31,.08);border:1px solid rgba(115,24,31,.2);border-radius:5px;cursor:pointer;font-size:.72rem;font-family:inherit;color:#73181F;text-align:left">← Torna a §${S.ae.paraHistory[S.ae.paraHistory.length-1]}</button></div>`:''}
@@ -2666,7 +2857,7 @@ function renderAdvEdit(){
           </div>
           <div style="display:flex;gap:4px">
             <button onclick="S.ae.showDiagnostics=!S.ae.showDiagnostics;S.ae.showStats=false;render()" style="flex:1;padding:4px 3px;border-radius:5px;border:1.5px solid ${diagIssues.length?'#c0392b':'rgba(115,24,31,.35)'};background:${S.ae.showDiagnostics?'rgba(192,57,43,.15)':'transparent'};color:${diagIssues.length?'#c0392b':'#73181F'};cursor:pointer;font-size:.64rem;font-family:inherit" title="Controlla errori nell'avventura">${diagIssues.length?`⚠ ${diagIssues.length}`:'✓'} Errori</button>
-            <button onclick="S.ae.showStats=!S.ae.showStats;S.ae.showDiagnostics=false;render()" style="flex:1;padding:4px 3px;border-radius:5px;border:1.5px solid rgba(115,24,31,.35);background:${S.ae.showStats?'rgba(115,24,31,.1)':'transparent'};color:#73181F;cursor:pointer;font-size:.64rem;font-family:inherit" title="Statistiche avventura">📊 Stat</button>
+            <button onclick="S.ae.showStats=!S.ae.showStats;S.ae.showDiagnostics=false;render()" style="flex:1;padding:4px 3px;border-radius:5px;border:1.5px solid rgba(115,24,31,.35);background:${S.ae.showStats?'rgba(115,24,31,.1)':'transparent'};color:#73181F;cursor:pointer;font-size:.64rem;font-family:inherit" title="Statistiche avventura">${SVG.stats} Stat</button>
           </div>
         </div>
         ${diagPanel}
@@ -2685,8 +2876,8 @@ function renderParaEditor(p,adv,previewMode){
   const iS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 7px;font-family:'Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;border-radius:3px 3px 0 0`;
   const sS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 6px;font-family:'Times New Roman',serif;font-size:.85rem;color:#1a1007;outline:none;cursor:pointer`;
   const isStart=p.id===adv.startParagraph;
-  const tLabels={choice:'Scelta',stat_check:'Prova stat',talent_check:'Prova talento',code_check:'Verifica codice',code_grant:'Dona codice',end:'Fine',encounter:'Scontro',exp_grant:'Esperienza',rest:'Riposo'};
-  const tColors={choice:'#73181F',stat_check:'#8a6000',talent_check:'#1a4a1a',code_check:'#555',code_grant:'#18732D',end:'#333',encounter:'#8a1f1f',exp_grant:'#1a4a7a',rest:'#4a7a1a'};
+  const tLabels={choice:'Scelta',stat_check:'Prova stat',talent_check:'Prova talento',code_check:'Verifica codice',code_grant:'Dona codice',end:'Fine',encounter:'Scontro',exp_grant:'Esperienza',rest:'Riposo',item_grant:'Oggetto inv.'};
+  const tColors={choice:'#73181F',stat_check:'#8a6000',talent_check:'#1a4a1a',code_check:'#555',code_grant:'#18732D',end:'#333',encounter:'#8a1f1f',exp_grant:'#1a4a7a',rest:'#4a7a1a',item_grant:'#5a2e7a'};
 
   const exitsHtml=(p.exits||[]).map((e,idx)=>{
     const col=tColors[e.type]||'#555';
@@ -2756,7 +2947,7 @@ function renderParaEditor(p,adv,previewMode){
           </select>
           <input value="${esc(e.label)}" oninput="aeUE(${idx},'label',this.value)" placeholder="Testo bottone" style="flex:3;min-width:100px;${iS}">
         </div>
-        ${advSetting?`<div style="font-size:.64rem;color:#73181F;opacity:.65">⚔ Filtro ambientazione: <strong>${SETTINGS[advSetting]?.label||advSetting}</strong>${gradeFilter>0?' · Grado '+grRoman[gradeFilter]:''}</div>`:''}
+        ${advSetting?`<div style="font-size:.64rem;color:#73181F;opacity:.65">[⚔] Filtro ambientazione: <strong>${SETTINGS[advSetting]?.label||advSetting}</strong>${gradeFilter>0?' · Grado '+grRoman[gradeFilter]:''}</div>`:''}
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <span style="font-size:.72rem;color:#18732D;font-weight:bold;min-width:64px">✓ Vittoria→</span>
           <input value="${esc(e.to||'')}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID paragrafo" style="width:60px;font-family:monospace;${iS}" maxlength="3">
@@ -2785,6 +2976,32 @@ function renderParaEditor(p,adv,previewMode){
         <span style="color:#4a7a1a;font-weight:bold">→</span>
         <input value="${esc(e.to)}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID dopo" style="width:52px;font-family:monospace;${iS}" maxlength="3">
       </div>`;
+    }else if(e.type==='item_grant'){
+      // All equip items for quick pick
+      const allItems=[...DB.equip_weapons,...DB.equip_protection,...DB.equip_slots];
+      const itemOpts=allItems.map(it=>`<option value="${esc(it.equip_name)}" ${e.itemName===it.equip_name?'selected':''}>${esc(it.equip_name)}</option>`).join('');
+      flds=`<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <select onchange="aeUE(${idx},'action',this.value)" style="width:120px;${sS}">
+            <option value="add" ${e.action==='add'||!e.action?'selected':''}>Aggiungi oggetto</option>
+            <option value="remove" ${e.action==='remove'?'selected':''}>Rimuovi oggetto</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:4px;font-size:.76rem;cursor:pointer">
+            <input type="checkbox" ${e.useEquipList?'checked':''} onchange="aeUE(${idx},'useEquipList',this.checked);render()"> Da lista equip
+          </label>
+        </div>
+        ${e.useEquipList?`
+        <select onchange="(function(v){const it=([...DB.equip_weapons,...DB.equip_protection,...DB.equip_slots].find(x=>x.equip_name===v)||{});aeUE(${idx},'itemName',it.equip_name||'');aeUE(${idx},'itemDesc',it.equip_bonus||'');aeUE(${idx},'itemSlot',String(it.equip_inventory||'0'))})(this.value)" style="width:100%;${sS}">
+          <option value="">— Scegli oggetto —</option>${itemOpts}
+        </select>`:`
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <input value="${esc(e.itemName)}" oninput="aeUE(${idx},'itemName',this.value)" placeholder="Nome oggetto..." style="flex:2;min-width:110px;${iS}">
+          <input type="number" value="${e.qty||1}" min="1" oninput="aeUE(${idx},'qty',parseInt(this.value)||1)" placeholder="Qtà" style="width:52px;${iS}" title="Quantità">
+        </div>
+        <input value="${esc(e.itemDesc||'')}" oninput="aeUE(${idx},'itemDesc',this.value)" placeholder="Descrizione (opzionale)..." style="width:100%;${iS}">
+        <input value="${esc(e.itemSlot||'0')}" oninput="aeUE(${idx},'itemSlot',this.value)" placeholder="Slot inventario (es: 1 slot, 2 = 1 slot...)" style="width:100%;${iS}">`}
+        ${e.useEquipList&&e.itemName?`<div style="font-size:.73rem;color:#5a2e7a;opacity:.8;padding:4px 0">Selezionato: <strong>${esc(e.itemName)}</strong> — ${esc(e.itemDesc||'')} (Slot: ${esc(e.itemSlot||'0')})</div>`:''}
+      </div>`;
     }
     return`<div style="background:rgba(255,255,255,.4);border:1.5px solid ${col};border-radius:7px;padding:10px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -2803,16 +3020,16 @@ function renderParaEditor(p,adv,previewMode){
         ${p.name?`<div style="font-size:1rem;opacity:.7;font-style:italic">${esc(p.name)}</div>`:''}
         <button onclick="aeTogglePreview()" style="margin-left:auto;padding:5px 12px;border-radius:6px;border:1.5px solid #73181F;background:transparent;color:#73181F;cursor:pointer;font-size:.76rem;font-family:inherit">✎ Modifica</button>
       </div>
-      <div style="font-size:1rem;line-height:1.8;color:#1a1007;white-space:pre-wrap;margin-bottom:24px">${esc(p.text)||'<em style="opacity:.4">— Nessun testo —</em>'}</div>
+      <div style="font-size:1rem;line-height:1.8;color:#1a1007;margin-bottom:24px">${para.text?para.text.split('\n').map(l=>`<p style="margin:0 0 10px">${renderMarkdown(l)||'&nbsp;'}</p>`).join(''):'<em style="opacity:.4">— Nessun testo —</em>'}</div>
       ${(p.exits||[]).length?`<div style="border-top:1px solid rgba(115,24,31,.2);padding-top:14px">
         ${(p.exits||[]).map(e=>{
           const col=tColors[e.type]||'#555';
           let lbl='';
-          if(e.type==='choice')lbl=`➜ ${esc(e.label||'Vai a')} <span style="opacity:.5;font-size:.8rem">[§${e.to}]</span>`;
+          if(e.type==='choice')lbl=`▶ ${esc(e.label||'Vai a')} <span style="opacity:.5;font-size:.8rem">[§${e.to}]</span>`;
           else if(e.type==='stat_check')lbl=`Prova ${e.stat}: ✓§${e.successTo} / ✗§${e.failTo}`;
-          else if(e.type==='encounter')lbl=`⚔ Scontro → §${e.to}`;
-          else if(e.type==='end')lbl=`★ Fine avventura${e.label?' — '+esc(e.label):''}`;
-          else if(e.type==='exp_grant')lbl=`⭐ +${e.exp} EXP → §${e.to}`;
+          else if(e.type==='encounter')lbl=`Scontro → §${e.to}`;
+          else if(e.type==='end')lbl=`Fine avventura${e.label?' — '+esc(e.label):''}`;
+          else if(e.type==='exp_grant')lbl=`+${e.exp} EXP → §${e.to}`;
           else if(e.type==='rest')lbl=`Riposo → §${e.to}`;
           else lbl=`[${tLabels[e.type]||e.type}]`;
           return`<div style="padding:8px 12px;margin-bottom:6px;border:1.5px solid ${col};border-radius:6px;background:rgba(255,255,255,.3);color:${col};font-size:.88rem">${lbl}</div>`;
@@ -2840,22 +3057,27 @@ function renderParaEditor(p,adv,previewMode){
       <span>TESTO DEL PARAGRAFO</span>
       <div style="display:flex;gap:6px;align-items:center">
         <span id="ae-wc" style="font-size:.68rem;font-weight:normal;opacity:.5;letter-spacing:0">${wc} parole</span>
-        <button onclick="aeTogglePreview()" style="padding:2px 8px;border-radius:4px;border:1px solid rgba(115,24,31,.35);background:transparent;cursor:pointer;font-size:.68rem;font-family:inherit;color:#73181F">👁 Anteprima</button>
+        <button onclick="aeTogglePreview()" style="padding:2px 8px;border-radius:4px;border:1px solid rgba(115,24,31,.35);background:transparent;cursor:pointer;font-size:.68rem;font-family:inherit;color:#73181F;display:flex;align-items:center;gap:4px">${SVG.eye} Anteprima</button>
       </div>
+    </div>
+    <!-- Formatting toolbar -->
+    <div style="display:flex;gap:3px;margin-bottom:4px;flex-wrap:wrap">
+      ${[['**','bold',SVG.bold,'Grassetto (Ctrl+B)'],['_','italic',SVG.italic,'Corsivo'],['__','underline',SVG.underline,'Sottolineato']].map(([m,_n,icon,title])=>`
+      <button onclick="aeFmtWrap('${m}')" title="${title}" style="padding:4px 8px;border-radius:4px;border:1px solid rgba(115,24,31,.3);background:rgba(255,255,255,.4);cursor:pointer;color:#73181F;display:flex;align-items:center;gap:3px;font-size:.72rem;font-family:inherit">${icon}</button>`).join('')}
     </div>
     <textarea id="para-text-ta" oninput="aePT(this.value)" style="width:100%;min-height:180px;background:rgba(0,0,0,.03);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:12px;font-family:'Times New Roman',serif;font-size:.95rem;color:#1a1007;resize:vertical;outline:none;line-height:1.75" placeholder="Scrivi qui il testo narrativo del paragrafo...">${esc(p.text)}</textarea>
   </div>
   <!-- Note interne -->
   <div style="margin-bottom:16px">
-    <div class="sec-hdr" style="margin-top:0">NOTE INTERNE <span style="font-weight:normal;font-size:.7rem;opacity:.5;letter-spacing:0">(non visibili al giocatore)</span></div>
+    <div class="sec-hdr" style="margin-top:0">NOTE <span style="font-weight:normal;font-size:.7rem;opacity:.5;letter-spacing:0">(non visibili al giocatore)</span></div>
     <textarea oninput="aeSetNote(this.value)" style="width:100%;min-height:60px;background:rgba(255,249,200,.4);border:1.5px dashed rgba(180,150,0,.4);border-radius:6px;padding:8px 10px;font-family:'Times New Roman',serif;font-size:.86rem;color:#5a4800;resize:vertical;outline:none;line-height:1.6" placeholder="Appunti per l'autore, promemoria di trama, idee future...">${esc(p.notes||'')}</textarea>
   </div>
   <div>
     <div class="sec-hdr">USCITE (${(p.exits||[]).length})</div>
     ${exitsHtml}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
-      ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['talent_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Talento'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg> Fine'],['encounter','⚔ Scontro'],['exp_grant',`${SVG.exp} Esperienza`],['rest',`${SVG.rest} Riposo`]].map(([t,l])=>`
-      <button onclick="aeAE('${t}')" style="padding:7px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
+      ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end',`${SVG.flag} Fine`],['encounter',`${SVG.sword} Scontro`],['exp_grant',`${SVG.exp} Esperienza`],['rest',`${SVG.rest} Riposo`],['item_grant',`${SVG.bag} Inventario`]].map(([t,l])=>`
+      <button onclick="aeAE('${t}')" style="padding:7px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007;display:flex;align-items:center;justify-content:center;gap:3px" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
     </div>
   </div>`;
 }
@@ -2933,7 +3155,7 @@ function renderAdvTree(adv,selPara){
     const fill=isSel?'#73181F':isStart?'#18732D':isEncounter?'#8a1f1f':pos.disc?'#bbb':'#D8C7A1';
     const stk=isSel||isStart?fill:'#84785E';
     const tc=isSel||isStart?'white':'#1a1007';
-    const encNpc=isEncounter?(NEMICI_PREDEFINITI.find(n=>n.id===(p.exits||[]).find(e=>e.type==='encounter')?.npcId)?.nome||'⚔'):'';
+    const encNpc=isEncounter?(NEMICI_PREDEFINITI.find(n=>n.id===(p.exits||[]).find(e=>e.type==='encounter')?.npcId)?.nome||'?'):'';
     const lbl=p.name?`${p.id}·${p.name.substring(0,9)}${p.name.length>9?'…':''}`:encNpc?`${p.id}·${encNpc.substring(0,7)}`:p.id;
     return`<g onclick="aeSelectParaAndEdit('${p.id}')" style="cursor:pointer">
       <rect x="${pos.x}" y="${pos.y}" width="${NW}" height="${NH}" rx="7" fill="${fill}" stroke="${stk}" stroke-width="${isSel?2.5:1.5}" opacity="${pos.disc?.5:1}"/>
@@ -2948,10 +3170,10 @@ function renderAdvTree(adv,selPara){
   return`
   <div style="font-size:.78rem;opacity:.6;margin-bottom:8px">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><path d="M18 9a3 3 0 0 0-3-3H6"/><path d="M18 21a3 3 0 0 0-3-3H6"/></svg>
-    Clicca nodo per aprire &nbsp;|&nbsp; Trascina per spostarti &nbsp;|&nbsp; Scroll per zoom &nbsp;|&nbsp; 🟢 Inizio &nbsp;|&nbsp; ⚫ Disconnesso
+    Clicca nodo per aprire &nbsp;|&nbsp; Trascina per spostarti &nbsp;|&nbsp; Scroll per zoom &nbsp;|&nbsp; Verde = Inizio &nbsp;|&nbsp; Grigio = Disconnesso
   </div>
   <div id="ae-tree-wrap" style="overflow:hidden;border:1.5px solid rgba(115,24,31,.2);border-radius:8px;background:#f5f0e4;max-height:calc(100svh - 200px);position:relative;cursor:grab;user-select:none">
-    <div id="ae-tree-inner" style="transform-origin:0 0;transform:scale(1) translate(0px,0px);will-change:transform;display:inline-block">
+    <div id="ae-tree-inner" style="transform-origin:0 0;transform:translate(0px,0px) scale(1);will-change:transform;display:inline-block;padding:14px">
       <svg width="${totalW}" height="${totalH}" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="advA" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
@@ -2962,39 +3184,11 @@ function renderAdvTree(adv,selPara){
       </svg>
     </div>
     <div style="position:absolute;bottom:8px;right:8px;display:flex;gap:4px">
-      <button onclick="_treeZoom(0.2)" style="background:rgba(216,199,161,.9);border:1px solid rgba(115,24,31,.3);border-radius:4px;width:28px;height:28px;cursor:pointer;font-size:1rem;color:#73181F;display:flex;align-items:center;justify-content:center">+</button>
-      <button onclick="_treeZoom(-0.2)" style="background:rgba(216,199,161,.9);border:1px solid rgba(115,24,31,.3);border-radius:4px;width:28px;height:28px;cursor:pointer;font-size:1rem;color:#73181F;display:flex;align-items:center;justify-content:center">−</button>
-      <button onclick="_treeReset()" style="background:rgba(216,199,161,.9);border:1px solid rgba(115,24,31,.3);border-radius:4px;width:28px;height:28px;cursor:pointer;font-size:.65rem;color:#73181F;display:flex;align-items:center;justify-content:center">↺</button>
+      <button onclick="_treeZoom(0.15)" style="background:rgba(216,199,161,.9);border:1px solid rgba(115,24,31,.3);border-radius:4px;width:30px;height:30px;cursor:pointer;font-size:1.1rem;color:#73181F;display:flex;align-items:center;justify-content:center">+</button>
+      <button onclick="_treeZoom(-0.15)" style="background:rgba(216,199,161,.9);border:1px solid rgba(115,24,31,.3);border-radius:4px;width:30px;height:30px;cursor:pointer;font-size:1.1rem;color:#73181F;display:flex;align-items:center;justify-content:center">&#8722;</button>
+      <button onclick="_treeReset()" title="Reimposta vista" style="background:rgba(216,199,161,.9);border:1px solid rgba(115,24,31,.3);border-radius:4px;width:30px;height:30px;cursor:pointer;font-size:.75rem;color:#73181F;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
     </div>
-  </div>
-  <script>
-  (function(){
-    const wrap=document.getElementById('ae-tree-wrap');
-    const inner=document.getElementById('ae-tree-inner');
-    if(!wrap||!inner)return;
-    let scale=1,tx=0,ty=0,dragging=false,lastX=0,lastY=0;
-    function applyTransform(){inner.style.transform='scale('+scale+') translate('+tx+'px,'+ty+'px)';}
-    wrap.addEventListener('wheel',e=>{
-      e.preventDefault();
-      const delta=e.deltaY>0?-0.1:0.1;
-      scale=Math.min(3,Math.max(0.25,scale+delta));
-      applyTransform();
-    },{passive:false});
-    wrap.addEventListener('pointerdown',e=>{
-      if(e.target.closest('g[onclick]'))return;
-      dragging=true;lastX=e.clientX;lastY=e.clientY;
-      wrap.style.cursor='grabbing';wrap.setPointerCapture(e.pointerId);
-    });
-    wrap.addEventListener('pointermove',e=>{
-      if(!dragging)return;
-      tx+=(e.clientX-lastX)/scale;ty+=(e.clientY-lastY)/scale;
-      lastX=e.clientX;lastY=e.clientY;applyTransform();
-    });
-    wrap.addEventListener('pointerup',()=>{dragging=false;wrap.style.cursor='grab';});
-    window._treeZoom=function(d){scale=Math.min(3,Math.max(0.25,scale+d));applyTransform();};
-    window._treeReset=function(){scale=1;tx=0;ty=0;applyTransform();};
-  })();
-  <\/script>`;
+  </div>`;
 }
 
 // ─── RENDER: SELEZIONE PERSONAGGIO ───────────────────────────────────────────
@@ -3008,19 +3202,22 @@ function renderAdvCharSelect(){
   const compatible=S.chars.filter(c=>!advSetting||!c.setting||c.setting===advSetting);
   const incompatible=S.chars.filter(c=>advSetting&&c.setting&&c.setting!==advSetting);
 
-  const charCard=(c,dimmed=false)=>`
-    <div class="char-card" onclick="${dimmed?'void(0)':`apStart('${advId}','${c.id}')`}" style="${dimmed?'opacity:.4;cursor:not-allowed;':''}">
+  const charCard=(c,dimmed=false)=>{
+    const onclickAttr=dimmed?'void(0)':'apStart(\''+advId+'\',\''+c.id+'\')';
+    const styleAttr=dimmed?'opacity:.4;cursor:not-allowed;':'';
+    return`<div class="char-card" onclick="${onclickAttr}" style="${styleAttr}">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
           <div style="font-weight:bold;color:#73181F;display:flex;align-items:center;gap:6px">${esc(c.name)}${settingBadge(c.setting)}</div>
           <div style="font-size:.76rem;opacity:.6;margin-top:2px">${[c.heritage,c.childhood,c.profession].filter(Boolean).map(esc).join(' · ')}</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
-          ${[['VIG',c.vig],['IST',c.ins],['MEN',c.min]].map(([lb,v])=>`<div style="background:rgba(115,24,31,.08);border-radius:5px;padding:2px 6px;font-size:.78rem"><strong>${v}</strong> <span style="opacity:.6;font-size:.65rem">${lb}</span></div>`).join('')}
+          ${[['VIG',c.vig],['IST',c.ins],['MEN',c.min]].map(([lb,v])=>'<div style="background:rgba(115,24,31,.08);border-radius:5px;padding:2px 6px;font-size:.78rem"><strong>'+v+'</strong> <span style="opacity:.6;font-size:.65rem">'+lb+'</span></div>').join('')}
           <span class="badge">Lv.${c.level}</span>
         </div>
       </div>
     </div>`;
+  };
 
   const compatibleHtml = compatible.length
     ? compatible.map(c=>charCard(c,false)).join('')
@@ -3036,7 +3233,7 @@ function renderAdvCharSelect(){
   const settingNote = advSetting ? `
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;padding:8px 12px;background:rgba(115,24,31,.06);border-radius:8px;border-left:3px solid #73181F">
       ${settingBadge(advSetting)}
-      <span style="font-size:.78rem;opacity:.75">Avventura in <strong>${SETTINGS[advSetting]?.label||advSetting}</strong></span>
+      <span style="font-size:.78rem;opacity:.75">Ambientazione <strong>${SETTINGS[advSetting]?.label||advSetting}</strong></span>
     </div>` : '';
 
   return`
@@ -3050,7 +3247,7 @@ function renderAdvCharSelect(){
     ${incompatibleHtml}
     ${S.chars.length===0?`<p style="font-size:.84rem;opacity:.5;font-style:italic;text-align:center;padding:14px 0">Nessun personaggio. <button onclick="nav('create')" style="background:none;border:none;color:#73181F;cursor:pointer;font-family:inherit;font-size:.84rem;text-decoration:underline">Crea il tuo primo eroe</button>.</p>`:''}
     <p style="font-size:.7rem;opacity:.45;font-style:italic;margin-top:10px;line-height:1.5">I personaggi senza ambientazione assegnata sono sempre compatibili.</p>
-    <button class="btn btn-secondary" onclick="nav('adv-list')" style="margin-top:10px">❮ INDIETRO</button>
+    <button class="btn btn-secondary" onclick="nav('adv-list')" style="margin-top:10px">‹ INDIETRO</button>
   </div>`;
 }
 
@@ -3065,7 +3262,7 @@ function renderAdvPlay(){
     <div style="font-size:3rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
     <h3 style="color:#73181F">Paragrafo "${currPara}" non trovato!</h3>
     <p style="opacity:.7;margin:10px 0 18px">Il collegamento porta a un paragrafo inesistente nell'avventura.</p>
-    ${history.length?`<button class="btn btn-secondary" style="max-width:200px;margin:0 auto 8px" onclick="apBack()">❮ Torna indietro</button><br>`:''}
+    ${history.length?`<button class="btn btn-secondary" style="max-width:200px;margin:0 auto 8px" onclick="apBack()">‹ Torna indietro</button><br>`:''}
     <button class="btn btn-secondary" style="max-width:200px;margin:0 auto" onclick="nav('adv-list')">Abbandona</button>
   </div>`;
 
@@ -3079,9 +3276,10 @@ function renderAdvPlay(){
   const encounters=exits.filter(e=>e.type==='encounter');
   const expGrants=exits.filter(e=>e.type==='exp_grant');
   const restExits=exits.filter(e=>e.type==='rest');
+  const itemGrants=exits.filter(e=>e.type==='item_grant');
 
   const paraText=para.text
-    ?para.text.split('\n').map(l=>`<p style="margin:0 0 10px;line-height:1.75">${esc(l)||'&nbsp;'}</p>`).join('')
+    ?para.text.split('\n').map(l=>`<p style="margin:0 0 10px;line-height:1.75">${renderMarkdown(l)||'&nbsp;'}</p>`).join('')
     :`<p style="opacity:.45;font-style:italic">— Questo paragrafo non ha testo. —</p>`;
 
   const codeGrantsHtml=codeGrants.length?`
@@ -3174,7 +3372,25 @@ function renderAdvPlay(){
     </div>`;
   }).join('');
 
-  const hasExits=choicesHtml||statChecksHtml||talentChecksHtml||codeChecksHtml||endsHtml||encountersHtml||expGrantsHtml;
+  const itemGrantsHtml=itemGrants.map((e,_iIdx)=>{
+    const globalIdx=exits.indexOf(e);
+    const applied=S.ap._appliedItems&&S.ap._appliedItems[S.ap.currPara+'_'+globalIdx];
+    const isAdd=e.action!=='remove';
+    const color=isAdd?'#5a2e7a':'#8a3000';
+    const label=e.itemName?`${isAdd?'Acquisisci':'Perdi'}: ${esc(e.itemName)}${e.qty&&e.qty>1?` ×${e.qty}`:''}`:isAdd?'Aggiungi oggetto':'Rimuovi oggetto';
+    return`
+    <div style="background:rgba(90,46,122,.07);border:1.5px solid ${color};border-radius:8px;padding:12px;margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <span style="font-weight:bold;color:${color};font-size:.9rem;display:flex;align-items:center;gap:5px">${SVG.bag.replace('currentColor',color)} ${label}</span>
+        ${applied?`<span style="font-size:.7rem;background:${isAdd?'#18732D':'#8a3000'};color:white;padding:2px 8px;border-radius:10px;font-weight:bold">${isAdd?SVG.check+' Aggiunto':SVG.x+' Rimosso'}</span>`:''}
+      </div>
+      ${e.itemDesc?`<div style="font-size:.78rem;opacity:.7;margin-bottom:8px;line-height:1.5">${esc(e.itemDesc)}</div>`:''}
+      ${!applied?`<button onclick="apApplyItemGrant(${globalIdx})" class="btn btn-primary" style="background:${color};border-color:${color};width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.bag.replace('currentColor','white')} ${isAdd?'Aggiungi all\'inventario':'Rimuovi dall\'inventario'}</button>`
+        :`<div style="font-size:.76rem;opacity:.6;text-align:center;font-style:italic">Inventario aggiornato. Usa il tasto indietro per continuare.</div>`}
+    </div>`;
+  }).join('');
+
+  const hasExits=choicesHtml||statChecksHtml||talentChecksHtml||codeChecksHtml||endsHtml||encountersHtml||expGrantsHtml||itemGrantsHtml;
 
   return`
   <div style="min-height:100svh;display:flex;flex-direction:column;font-family:'Times New Roman',Georgia,serif;color:#1a1007;background:#D8C7A1">
@@ -3185,13 +3401,14 @@ function renderAdvPlay(){
           ${char?[['VIG',char.vig],['IST',char.ins],['MEN',char.min]].map(([l,v])=>`<span style="color:#D8C7A1;font-size:.74rem;opacity:.85"><strong>${l}</strong> ${v}</span>`).join(''):''}
         </div>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
-        ${codes.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;max-width:220px;justify-content:flex-end">${codes.map(co=>`<span style="background:#18732D;color:white;font-size:.64rem;padding:2px 8px;border-radius:12px;font-family:monospace;font-weight:bold;cursor:pointer" onclick="apRemoveCode('${co}')" title="Clicca per rimuovere">${esc(co)} ×</span>`).join('')}</div>`:''}
-        <button onclick="S.ap.showCharSheet=!S.ap.showCharSheet;render()" title="Scheda personaggio" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
-        ${history.length?`<button onclick="apBack()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">&#10094;</button>`:''}
-        <button onclick="openCombat()" style="background:rgba(115,24,31,.25);border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit" title="Avvia combattimento" style="display:flex;align-items:center;justify-content:center">${SVG.sword}</button>
-        ${restExits.length?`<button onclick="openRestModal()" style="background:rgba(74,122,26,.25);border:1px solid #4a7a1a;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit" title="Riposo" style="display:flex;align-items:center;justify-content:center">${SVG.rest}</button>`:''}
-        <button onclick="if(confirm('Abbandonare la partita?'))nav('adv-list')" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">Abbandona</button>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        ${codes.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;max-width:180px;justify-content:flex-end">${codes.map(co=>`<span style="background:#18732D;color:white;font-size:.64rem;padding:2px 8px;border-radius:12px;font-family:monospace;font-weight:bold;cursor:pointer" onclick="apRemoveCode('${co}')" title="Clicca per rimuovere">${esc(co)} ×</span>`).join('')}</div>`:''}
+        <button onclick="S.ap.showCharSheet=!S.ap.showCharSheet;render()" title="Scheda personaggio" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+        <button onclick="openCombat()" style="background:rgba(115,24,31,.25);border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:4px" title="Avvia combattimento">${SVG.sword}</button>
+        <button onclick="apGoToPrompt()" title="Vai a paragrafo specifico" style="background:rgba(26,52,115,.25);border:1px solid #4a6cba;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:4px">${SVG.goto}Vai a </button>
+        ${history.length?`<button onclick="apBack()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:3px">${SVG.chevL}</button>`:''}
+        ${restExits.length?`<button onclick="openRestModal()" style="background:rgba(74,122,26,.25);border:1px solid #4a7a1a;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:4px" title="Riposo">${SVG.rest}</button>`:''}
+        <button onclick="if(confirm('Abbandonare la partita?'))nav('adv-list')" style="background:transparent;border:1px solid rgba(115,24,31,.5);color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">Abbandona</button>
       </div>
     </div>
     ${S.ap.showCharSheet&&char?`
@@ -3245,18 +3462,18 @@ function renderAdvPlay(){
             // Salute + Energia + DMG/PROT
             out += '<div>';
             // HP
-            out += '<div style="font-size:.72rem;color:#18732D;font-weight:bold;margin-bottom:3px">SALUTE</div>';
+            out += '<div style="font-size:.72rem;color:#73181F;font-weight:bold;margin-bottom:3px">SALUTE</div>';
             out += '<div class="bar-outer" style="margin-bottom:5px"><div class="bar-inner" style="width:'+((L.hpMax>0?Math.min(100,L.hpCurr/L.hpMax*100):0))+'%;background:#18732D"></div><div class="bar-label">'+L.hpCurr+' / '+L.hpMax+'</div></div>';
             out += '<div style="display:flex;gap:5px;margin-bottom:10px">'
-              +'<button onclick="apAdjChar(\'hpCurr\',-1)" style="flex:1;background:#18732D;color:white;border:none;border-radius:6px;padding:6px;cursor:pointer;font-weight:bold;font-size:1.1rem;min-height:40px">−</button>'
-              +'<button onclick="apAdjChar(\'hpCurr\',1)" style="flex:1;background:#18732D;color:white;border:none;border-radius:6px;padding:6px;cursor:pointer;font-weight:bold;font-size:1.1rem;min-height:40px">+</button>'
+              +'<button onclick="apAdjChar(\'hpCurr\',-1)" style="width:25px;height:25px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">−</button>'
+              +'<button onclick="apAdjChar(\'hpCurr\',1)" style="width:25px;height:25px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>'
               +'</div>';
             // EN
-            out += '<div style="font-size:.72rem;color:#182473;font-weight:bold;margin-bottom:3px">ENERGIA</div>';
+            out += '<div style="font-size:.72rem;color:#73181F;font-weight:bold;margin-bottom:3px">ENERGIA</div>';
             out += '<div class="bar-outer" style="margin-bottom:5px"><div class="bar-inner" style="width:'+((L.enMax>0?Math.min(100,L.enCurr/L.enMax*100):0))+'%;background:#182473"></div><div class="bar-label">'+L.enCurr+' / '+L.enMax+'</div></div>';
             out += '<div style="display:flex;gap:5px;margin-bottom:10px">'
-              +'<button onclick="apAdjChar(\'enCurr\',-1)" style="flex:1;background:#182473;color:white;border:none;border-radius:6px;padding:6px;cursor:pointer;font-weight:bold;font-size:1.1rem;min-height:40px">−</button>'
-              +'<button onclick="apAdjChar(\'enCurr\',1)" style="flex:1;background:#182473;color:white;border:none;border-radius:6px;padding:6px;cursor:pointer;font-weight:bold;font-size:1.1rem;min-height:40px">+</button>'
+              +'<button onclick="apAdjChar(\'enCurr\',-1)" style="width:25px;height:25px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">−</button>'
+              +'<button onclick="apAdjChar(\'enCurr\',1)" style="width:25px;height:25px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>'
               +'</div>';
             // DMG / PROT
             out += '<div style="display:flex;gap:6px">'
@@ -3332,7 +3549,7 @@ function renderAdvPlay(){
       ${hasExits?`
       <div style="margin-top:18px;border-top:1px solid rgba(115,24,31,.2);padding-top:16px">
         <div style="font-size:.7rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:12px">COSA FAI?</div>
-        <div style="display:flex;flex-direction:column">${expGrantsHtml}${encountersHtml}${choicesHtml}${statChecksHtml}${talentChecksHtml}${codeChecksHtml}${endsHtml}</div>
+        <div style="display:flex;flex-direction:column">${itemGrantsHtml}${expGrantsHtml}${encountersHtml}${choicesHtml}${statChecksHtml}${talentChecksHtml}${codeChecksHtml}${endsHtml}</div>
       </div>`:`<div style="text-align:center;opacity:.5;font-style:italic;padding:20px 0;font-size:.9rem">Nessuna uscita definita per questo paragrafo.</div>`}
     </div>
   </div>`;
@@ -3647,14 +3864,14 @@ function aeExportGamebook(id){
   if(!adv){alert('Avventura non trovata.');return;}
   const paras=[...adv.paragraphs].sort((a,b)=>parseInt(a.id)-parseInt(b.id));
   function exitText(e){
-    if(e.type==='choice')return`➜ ${e.label||'Vai a'} [§${e.to}]`;
+    if(e.type==='choice')return`▶ ${e.label||'Vai a'} [§${e.to}]`;
     if(e.type==='stat_check')return`Prova ${e.stat}: Successo→§${e.successTo}, Fallimento→§${e.failTo}`;
     if(e.type==='talent_check')return`Talento (${e.talent}): Successo→§${e.successTo}, Fallimento→§${e.failTo}`;
     if(e.type==='code_check')return`Codice ${e.code}: Sì→§${e.to}, No→§${e.elseTo}`;
     if(e.type==='code_grant')return`[Segna il codice: ${e.code}]${e.label?' — '+e.label:''}`;
-    if(e.type==='end')return`★ Fine avventura${e.label?' — '+e.label:''}`;
-    if(e.type==='encounter')return`⚔ Scontro: Vittoria→§${e.to}, Sconfitta→§${e.defeatTo}`;
-    if(e.type==='exp_grant')return`⭐ +${e.exp} EXP → §${e.to}`;
+    if(e.type==='end')return`Fine avventura${e.label?' — '+e.label:''}`;
+    if(e.type==='encounter')return`Scontro: Vittoria→§${e.to}, Sconfitta→§${e.defeatTo}`;
+    if(e.type==='exp_grant')return`+${e.exp} EXP → §${e.to}`;
     if(e.type==='rest')return`Riposo (${e.restType==='daily'?'Giornaliero':'Prolungato'}) → §${e.to}`;
     return '';
   }
@@ -3681,14 +3898,14 @@ function aeExportMarkdown(id){
       if(e.type==='choice')md+=`- **${e.label||'Scelta'}** → §\`${e.to}\`\n`;
       else if(e.type==='stat_check')md+=`- *Prova ${e.stat}:* Successo→§\`${e.successTo}\`, Fallimento→§\`${e.failTo}\`\n`;
       else if(e.type==='talent_check')md+=`- *Talento (${e.talent}):* Successo→§\`${e.successTo}\`, Fallimento→§\`${e.failTo}\`\n`;
-      else if(e.type==='encounter')md+=`- ⚔ Scontro: Vittoria→§\`${e.to}\`, Sconfitta→§\`${e.defeatTo}\`\n`;
-      else if(e.type==='end')md+=`- ★ Fine${e.label?' — '+e.label:''}\n`;
-      else if(e.type==='exp_grant')md+=`- ⭐ +${e.exp} EXP → §\`${e.to}\`\n`;
+      else if(e.type==='encounter')md+=`- Scontro: Vittoria→§\`${e.to}\`, Sconfitta→§\`${e.defeatTo}\`\n`;
+      else if(e.type==='end')md+=`- Fine${e.label?' — '+e.label:''}\n`;
+      else if(e.type==='exp_grant')md+=`- +${e.exp} EXP → §\`${e.to}\`\n`;
       else if(e.type==='rest')md+=`- Riposo → §\`${e.to}\`\n`;
       else if(e.type==='code_grant')md+=`- [Codice: \`${e.code}\`]\n`;
     });
     if((p.exits||[]).length)md+=`\n`;
-    if(p.notes)md+=`> 📝 *${p.notes}*\n\n`;
+    if(p.notes)md+=`> *${p.notes}*\n\n`;
     md+=`---\n\n`;
   });
   const blob=new Blob([md],{type:'text/markdown'});
@@ -3755,14 +3972,14 @@ function apGrantExp(amount, toPara){
   const expNeeded = (ch.level||1) * 10;
   if(ch.exp >= expNeeded){
     // Show level-up banner then navigate
-    const msg = `⭐ +${amount} EXP! Totale: ${ch.exp}/${expNeeded}\n\nHai raggiunto i punti necessari per salire di livello!`;
+    const msg = `+${amount} EXP! Totale: ${ch.exp}/${expNeeded}\n\nHai raggiunto i punti necessari per salire di livello!`;
     if(confirm(msg + '\n\nVuoi fare Level Up ora?')){
       if(toPara){ S.ap.history.push(S.ap.currPara); S.ap.currPara=toPara; }
       nav('levelup', {charId: S.ap.charId});
       return;
     }
   } else {
-    alert(`⭐ +${amount} EXP! Totale: ${ch.exp}/${expNeeded}`);
+    alert(`+${amount} EXP! Totale: ${ch.exp}/${expNeeded}`);
   }
   if(toPara) apGoTo(toPara);
   else render();
@@ -3774,6 +3991,7 @@ function apGoTo(paraId){
   S.ap.currPara=paraId;
   const _p=(S.ap.adv.paragraphs||[]).find(p=>p.id===paraId);
   S.ap.currentRestExits=(_p?.exits||[]).filter(e=>e.type==='rest');
+  if(!S.ap._appliedItems)S.ap._appliedItems={};
   apSaveSession();
   window.scrollTo(0,0);render();
 }
@@ -3818,7 +4036,8 @@ function apResumeSession(sessId){
     codes:[...(sess.codes||[])],
     history:[...(sess.history||[])],
     sessId:sess.sessId,
-    showBreadcrumb:false,showCharSheet:false,sheetTab:'generale'
+    showBreadcrumb:false,showCharSheet:false,sheetTab:'generale',
+    _appliedItems:{}
   };
   const _startP=(adv.paragraphs||[]).find(p=>p.id===S.ap.currPara);
   S.ap.currentRestExits=(_startP?.exits||[]).filter(e=>e.type==='rest');
@@ -4112,7 +4331,7 @@ const NEMICI_PREDEFINITI = [
     ]
   },
   {
-    id: 'lupo-minion',
+    id: 'lupo',
     nome: 'Lupo',
     grado: 2,
     vig: 8, ist: 7, men: 3,
@@ -4237,7 +4456,7 @@ const NEMICI_PREDEFINITI = [
     hp: 10, hpMax: 10,
     en: 14, enMax: 14,
     dmg: 3, prot: 1,
-    settings: ['fantasy','medievale','moderno'],
+    settings: ['fantasy','medievale','moderno','postapoc'],
     bersaglio: ['PG con più MEN'],
     abilita: [
       {
@@ -4445,7 +4664,7 @@ const NEMICI_PREDEFINITI = [
     hp: 4, hpMax: 4,
     en: 8, enMax: 8,
     dmg: 3, prot: 1,
-    settings: ['scifi','postapoc'],
+    settings: ['scifi','postapoc','fantasy'],
     bersaglio: ['Attacco Standard'],
     abilita: [
       {
@@ -4474,8 +4693,8 @@ const NEMICI_PREDEFINITI = [
     ]
   },
   {
-    id: 'virus-di-titano',
-    nome: 'Virus di Titano',
+    id: 'virus',
+    nome: 'Virus',
     grado: 2,
     vig: 6, ist: 7, men: 5,
     hp: 18, hpMax: 18,
@@ -4516,7 +4735,7 @@ const NEMICI_PREDEFINITI = [
   },
   {
     id: 'demone-oscuro',
-    nome: 'Demone Oscuro (Boss)',
+    nome: 'Demone Oscuro',
     grado: 5,
     vig: 10, ist: 8, men: 9,
     hp: 20, hpMax: 20,
@@ -4534,13 +4753,13 @@ const NEMICI_PREDEFINITI = [
   },
   {
     id: 'cultista-capo',
-    nome: 'Cultista Capo (Boss)',
+    nome: 'Cultista Capo',
     grado: 3,
     vig: 6, ist: 6, men: 9,
     hp: 14, hpMax: 14,
     en: 18, enMax: 18,
     dmg: 4, prot: 2,
-    settings: ['fantasy','medievale','moderno'],
+    settings: ['fantasy','medievale','moderno','postapoc'],
     bersaglio: ['Attacco Standard'],
     abilita: [
       {
@@ -4599,7 +4818,7 @@ const NEMICI_PREDEFINITI = [
     hp: 5, hpMax: 5,
     en: 6, enMax: 6,
     dmg: 3, prot: 0,
-    settings: ['scifi','postapoc'],
+    settings: ['scifi','postapoc','fantasy'],
     bersaglio: ['Attacco Standard'],
     abilita: [
       {
@@ -4630,7 +4849,7 @@ const COMBAT_TUTORIAL_STEPS = [
   },
   {
     title:'Svenimento e morte (5/5)',
-    text:'Quando la Salute scende a <strong>0</strong> il personaggio sviene ed è morente. Solitamente in questo caso l\'avventura termina a meno che essa non preveda un qualche scenario particolare se ciò devesse accadere.<br><br>Ora tutto è pronto per cimentarti nel tuo primo combattimento.<br><br>Buona fortuna!'
+    text:'Quando la Salute scende a <strong>0</strong> il personaggio sviene ed è morente. Solitamente in questo caso l\'avventura termina a meno che essa non preveda un qualche scenario particolare se ciò devesse accadere.<br><br>Ora tutto è pronto per cimentarti nel tuo primo combattimento.<br><br>Buona fortuna!<br><br>Puoi riaprire questa guida in qualunque momento cliccando sul pulsante \"i\" in alto'
   }
 ];
 
@@ -5016,7 +5235,7 @@ function renderCombat(){
         <p style="font-size:.88rem;line-height:1.65;margin:0 0 18px">${step.text}</p>
         <div style="display:flex;gap:10px">
           <button onclick="S.combat.tutorialStep=-1;render()" class="btn btn-secondary" style="flex:1;min-height:40px;font-size:.82rem">Salta guida</button>
-          <button onclick="combatNextTutorial()" class="btn btn-primary" style="flex:2;min-height:40px;font-size:.88rem">${tutorialStep < total-1 ? 'Avanti ▶' : 'Inizia ⚔'}</button>
+          <button onclick="combatNextTutorial()" class="btn btn-primary" style="flex:2;min-height:40px;font-size:.88rem">${tutorialStep < total-1 ? 'Avanti ▶' : 'Inizia'}</button>
         </div>
       </div>
     </div>`;
@@ -5125,9 +5344,9 @@ function renderCombat(){
 
     function makeHpBar(adjFn){
       return '<div style="display:flex;gap:6px;align-items:center;margin-top:6px">'
-        + '<button onclick="'+adjFn+'(\'hp\',-1)" style="width:40px;height:40px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
+        + '<button onclick="'+adjFn+'(\'hp\',-1)" style="width:25px;height:25px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
         + '<span style="font-size:.82rem;flex:1;text-align:center;font-weight:bold"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:middle"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> '+data.hp+'/'+data.hpMax+'</span>'
-        + '<button onclick="'+adjFn+'(\'hp\',1)" style="width:40px;height:40px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>'
+        + '<button onclick="'+adjFn+'(\'hp\',1)" style="width:25px;height:25px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>'
         + '</div>'
         + '<div style="height:8px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15);margin-top:4px"><div style="height:100%;background:#18732D;width:'+hpPct+'%;transition:width .25s"></div></div>';
     }
@@ -5135,9 +5354,9 @@ function renderCombat(){
     function makeEnBar(adjFn){
       if(!data.enMax) return '';
       return '<div style="display:flex;gap:6px;align-items:center;margin-top:6px">'
-        + '<button onclick="'+adjFn+'(\'en\',-1)" style="width:28px;height:28px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
+        + '<button onclick="'+adjFn+'(\'en\',-1)" style="width:25px;height:25px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
         + '<span style="font-size:.82rem;flex:1;text-align:center;font-weight:bold"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> '+(data.en||0)+'/'+data.enMax+'</span>'
-        + '<button onclick="'+adjFn+'(\'en\',1)" style="width:28px;height:28px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">+</button>'
+        + '<button onclick="'+adjFn+'(\'en\',1)" style="width:25px;height:25px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">+</button>'
         + '</div>'
         + '<div style="height:8px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15);margin-top:4px"><div style="height:100%;background:#182473;width:'+enPct+'%;transition:width .25s"></div></div>';
     }
@@ -5169,10 +5388,12 @@ function renderCombat(){
     } else {
       return '<div style="flex:1;min-width:0;background:rgba(196,176,138,.2);border:2px solid #8a3000;border-radius:10px;padding:12px">'
         + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
-        +   '<div>'
-        +     '<div style="font-weight:bold;color:#8a3000;font-size:.72rem;letter-spacing:2px">'+esc(data.nome||data.name||'PNG')+'</div>'
-        +     (data.grado ? '<div style="font-size:.62rem;opacity:.5;margin-top:1px">Grado '+data.grado+'</div>' : '')
-        +   '</div>'
+		+ '<div>'
+		+   '<div style="display:flex; align-items:center; gap:8px;">'
+		+     '<div style="font-weight:bold; color:#8a3000; font-size:.72rem; letter-spacing:2px; text-transform:uppercase;">' + esc(data.nome || data.name || 'PNG') + '</div>'
+		+     (data.grado ? '<span style="font-size:.62rem; opacity:.5; margin-top:2px;">Grado ' + data.grado + '</span>' : '')
+		+   '</div>'
+		+ '</div>'
         + '</div>'
         + statRow1
         + statRow2
@@ -5188,7 +5409,7 @@ function renderCombat(){
   <div style="min-height:100svh;display:flex;flex-direction:column;font-family:'Times New Roman',Georgia,serif;color:#1a1007;background:#D8C7A1">
     ${tutHtml}
     <div style="background:#120801;border-bottom:2px solid #73181F;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:50">
-      <div style="color:#D8C7A1;font-weight:bold;font-size:.95rem;letter-spacing:2px">⚔ COMBATTIMENTO</div>
+      <div style="color:#D8C7A1;font-weight:bold;font-size:.95rem;letter-spacing:2px">COMBATTIMENTO</div>
       <div style="display:flex;gap:8px">
         <button onclick="combatShowTutorial()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.85rem;font-weight:bold;display:flex;align-items:center;justify-content:center" title="Regole combattimento">i</button>
         <div style="display:flex;gap:6px">
@@ -5476,38 +5697,30 @@ function renderNpcDb(){
     return`<span class="${cls}"><span>${GRADE_ROMAN[level]}</span><span style="display:inline-flex;gap:2px;align-items:center;margin:0 4px">${segs}</span><span style="font-size:.58rem;opacity:.75">${GRADE_LABELS[level]}</span></span>`;
   };
 
-  // Riga singola PNG
+  // Riga singola PNG — solo nome e ambientazione, click → modale
   const npcRow=n=>{
     const isPred=n._tipo==='predefinito';
     const settingIcons=(n.settings||[]).map(k=>{
       const s=SETTINGS[k];if(!s)return'';
       return`<span class="set-tag" style="color:${s.color};width:17px;height:17px" onclick="event.stopPropagation();this.classList.toggle('tip-show')" ontouchstart="event.stopPropagation();this.classList.toggle('tip-show')">${s.svg.replace('width="21" height="21"','width="15" height="15"')}<span class="set-tip">${s.label}</span></span>`;
     }).join('');
-    const stats=`<span style="font-size:.7rem;opacity:.65;white-space:nowrap">VIG ${n.vig} IST ${n.ist} MEN ${n.men}</span>`
-      +`<span style="font-size:.7rem;opacity:.65;white-space:nowrap"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>${n.hpMax}</span>`
-      +`<span style="font-size:.7rem;opacity:.65;white-space:nowrap"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>${n.enMax}</span>`
-      +`<span style="font-size:.7rem;font-weight:bold;color:#73181F;white-space:nowrap">DMG ${n.dmg}</span>`
-      +`<span style="font-size:.7rem;font-weight:bold;color:#1a3473;white-space:nowrap">PROT ${n.prot}</span>`;
+    const GRADE_ROMAN2=['','I','II','III','IV','V'];
+    const g=Math.min(5,Math.max(1,n.grado||1));
     const actionBtns=isPred?'':`
-      <button onclick="npcDuplicate('${n.id}')" title="Duplica" style="background:transparent;border:1px solid #73181F;border-radius:5px;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#73181F;flex-shrink:0">${SVG.copy}</button>
-      <button onclick="npcExport('${n.id}')" title="Esporta" style="background:transparent;border:1px solid #73181F;border-radius:5px;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#73181F;font-size:.7rem;flex-shrink:0">↓</button>
-      <button onclick="npcOpenEdit('${n.id}')" title="Modifica" style="background:#73181F;border:none;border-radius:5px;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0">${SVG.edit}</button>
-      <button onclick="npcDelete('${n.id}')" title="Elimina" style="background:transparent;border:1px solid #d32f2f;border-radius:5px;width:26px;height:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#d32f2f;flex-shrink:0">${SVG.trash}</button>`;
-    return`<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;border:1.5px solid ${isPred?'rgba(115,24,31,.3)':'#73181F'};background:${isPred?'rgba(196,176,138,.18)':'rgba(196,176,138,.28)'};margin-bottom:5px;flex-wrap:nowrap">
-      <!-- Nome + grado -->
+      <button onclick="event.stopPropagation();npcDuplicate('${n.id}')" title="Duplica" style="background:transparent;border:1px solid #73181F;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#73181F;flex-shrink:0">${SVG.copy}</button>
+      <button onclick="event.stopPropagation();npcOpenEdit('${n.id}')" title="Modifica" style="background:#73181F;border:none;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0">${SVG.edit}</button>
+      <button onclick="event.stopPropagation();npcDelete('${n.id}')" title="Elimina" style="background:transparent;border:1px solid #d32f2f;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#d32f2f;flex-shrink:0">${SVG.trash}</button>`;
+    return`<div onclick="showNpcModal('${n.id}')" style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:7px;border:1.5px solid ${isPred?'rgba(115,24,31,.3)':'#73181F'};background:${isPred?'rgba(196,176,138,.18)':'rgba(196,176,138,.28)'};margin-bottom:5px;cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='${isPred?'rgba(196,176,138,.18)':'rgba(196,176,138,.28)'}'">
       <div style="min-width:0;flex:1;overflow:hidden">
-        <div style="display:flex;align-items:center;gap:5px;flex-wrap:nowrap;overflow:hidden">
-          <span style="font-weight:bold;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.nome)}</span>
-          ${isPred?'':'<span class="badge" style="font-size:.58rem;flex-shrink:0">PER</span>'}
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow:hidden">
+          <span style="font-weight:bold;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.nome)}</span>
+          ${isPred?'':`<span class="badge" style="font-size:.58rem;flex-shrink:0">PER</span>`}
+          <span style="font-size:.68rem;color:#73181F;font-weight:bold;flex-shrink:0">Gr. ${GRADE_ROMAN2[g]}</span>
+		          ${settingIcons?`<div style="margin-top:3px"><span class="set-tags-row">${settingIcons}</span></div>`:'<div style="margin-top:2px;font-size:.7rem;opacity:.45;font-style:italic">Tutte le ambientazioni</div>'}
         </div>
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px">
-          <span style="font-size:.65rem;color:#73181F;font-weight:bold">${gradeBadge(n.grado||1)}</span>
-          ${stats}
-          <span class="set-tags-row">${settingIcons}</span>
-        </div>
+
       </div>
-      <!-- Azioni -->
-      <div style="display:flex;gap:4px;flex-shrink:0;align-items:center">${actionBtns}</div>
+      <div style="display:flex;gap:4px;flex-shrink:0;align-items:center">${actionBtns}<span style="opacity:.3;font-size:.8rem;margin-left:2px">${SVG.goto}</span></div>
     </div>`;
   };
 
@@ -5536,7 +5749,7 @@ function renderNpcDb(){
 
     <div style="margin-top:4px">${rows}</div>
 
-    <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:14px">❮ TORNA AL MENU</button>
+    <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:14px">‹ TORNA AL MENU</button>
   </div>`;
 }
 
@@ -5773,7 +5986,7 @@ function renderStories(){
         </div>
       </div>
     </div>
-    <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:16px">❮ TORNA AL MENU</button>
+    <button class="btn btn-secondary" onclick="nav('home')" style="margin-top:16px">‹ TORNA AL MENU</button>
   </div>`;
 }
 
@@ -5816,7 +6029,7 @@ function renderCommunity(){
       <div style="font-size:.92rem;font-weight:bold;color:#73181F;margin-bottom:6px">Prossimamente</div>
       <div style="font-size:.82rem;opacity:.6;line-height:1.55">Il server community è in fase di sviluppo.<br>Presto potrai sfogliare, filtrare e scaricare<br>avventure create da altri giocatori SAGA.</div>
     </div>
-    <button class="btn btn-secondary" onclick="nav('stories')" style="margin-top:16px">❮ INDIETRO</button>
+    <button class="btn btn-secondary" onclick="nav('stories')" style="margin-top:16px">‹ INDIETRO</button>
   </div>`;
 }
 
@@ -5857,13 +6070,13 @@ function setCommunityFilter(key, val){
           <div style="color:#73181F;font-size:.72rem;letter-spacing:3px;font-weight:bold;margin-bottom:14px;border-bottom:1px solid rgba(115,24,31,.3);padding-bottom:6px">COMPARTO VISIVO E UI</div>
           <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Direzione artistica e generazione immagini</span><br><span style="font-size:.88rem">Generato tramite AI <span style="opacity:.55">(Gemini, Microsoft Copilot)</span><br>con la supervisione di <strong>Lorenzo De Gasperis</strong></span></div>
           <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">UI/UX Design</span><br><span style="opacity:.45;font-style:italic">— —</span></div>
-          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Consulenza Grafica Addizionale</span><br><span style="opacity:.45;font-style:italic">— —</span></div>
+          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Consulenza Grafica Addizionale</span><br><span style="font-size:.88rem"> Amici </span></div>
         </div>
 
         <div style="margin-bottom:32px">
           <div style="color:#73181F;font-size:.72rem;letter-spacing:3px;font-weight:bold;margin-bottom:14px;border-bottom:1px solid rgba(115,24,31,.3);padding-bottom:6px">LOCALIZZAZIONE E SUONO</div>
           <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Traduzioni</span><br><strong>Lorenzo De Gasperis</strong></div>
-          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Musica e Sound Effects</span><br><span style="opacity:.45;font-style:italic">— —</span></div>
+          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Musica e Sound Effects</span><br><span style="font-size:.88rem"> Suno AI </span></div>
         </div>
 
         <div style="margin-top:40px;opacity:.35;font-size:.75rem;letter-spacing:2px">© SAGA — Tutti i diritti riservati</div>
