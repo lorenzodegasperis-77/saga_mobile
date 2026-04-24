@@ -3368,7 +3368,7 @@ function renderAdvPlay(){
         <span style="font-weight:bold;color:#1a4a7a;font-size:.9rem;display:flex;align-items:center;gap:6px">${SVG.exp} ${esc(e.label||'Esperienza guadagnata')}</span>
         <span class="badge" style="background:#1a4a7a">+${expVal} EXP</span>
       </div>
-      <button onclick="apGrantExp(${expVal},'${e.to||''}')" class="btn btn-primary" style="background:#1a4a7a;border-color:#1a4a7a;width:100%;font-size:.88rem;min-height:40px"style="display:flex;align-items:center;justify-content:center;gap:6px">${SVG.exp} Raccogli ${expVal} EXP</button>
+      <button onclick="apGrantExp(${expVal},'${e.to||''}')" class="btn btn-primary" style="width:100%;font-size:.88rem;min-height:40px; display:flex;align-items:center;justify-content:center;gap:6px">${SVG.exp} Raccogli ${expVal} EXP</button>
     </div>`;
   }).join('');
 
