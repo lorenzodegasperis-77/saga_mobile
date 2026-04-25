@@ -2169,25 +2169,6 @@ function luFinish(){
   const idx=S.chars.findIndex(c=>c.id===char.id);
   if(idx>=0)S.chars[idx]=s;
   persist();
-  // If level-up was triggered from inside an adventure, sync and return there
-  if(S.ap && S.ap.char){
-    S.ap.char.level=newLvl;
-    S.ap.char.exp=0;
-    S.ap.char.hpMax=s.hpMax;
-    S.ap.char.hpCurr=s.hpCurr;
-    S.ap.char.enMax=s.enMax;
-    S.ap.char.enCurr=s.enCurr;
-    if(lu.attrBoost) S.ap.char[lu.attrBoost]=s[lu.attrBoost];
-    if(lu.newTalent) S.ap.char.talents=[...(S.ap.char.talents||[]),lu.newTalent];
-    if(allNewAb.length) S.ap.char.abilities=[...(S.ap.char.abilities||[]),...allNewAb];
-    const retPara = S.ap._pendingLevelUpReturnPara;
-    S.ap._pendingLevelUpReturnPara = null;
-    apSaveSession();
-    showToast(`${char.name} — Livello ${newLvl}!`, '#1a4a7a');
-    S.lu=null;
-    nav('adv-play');
-    return;
-  }
   alert(`${char.name} è avanzato al Livello ${newLvl}!`);
   nav('sheet',{charId:char.id});
 }
@@ -2666,15 +2647,15 @@ function mkAdv(){
 function mkPara(used){return{id:genParaId(used),name:'',text:'',exits:[],notes:'',tags:[]};}
 function mkExit(type){
   const b={id:genId(),type};
-  if(type==='choice')return{...b,label:'',to:'',exp:0};
-  if(type==='stat_check')return{...b,stat:'VIG',label:'',successTo:'',failTo:'',exp:0};
+  if(type==='choice')return{...b,label:'',to:''};
+  if(type==='stat_check')return{...b,stat:'VIG',label:'',successTo:'',failTo:''};
   if(type==='talent_check')return{...b,talent:'',successTo:'',failTo:''};
   if(type==='code_check')return{...b,code:'',label:'',to:'',elseTo:''};
   if(type==='code_grant')return{...b,code:'',label:''};
   if(type==='end')return{...b,label:"Fine dell'avventura"};
-  if(type==='encounter')return{...b,npcId:NEMICI_PREDEFINITI[0]?.id||'',label:'',to:'',defeatTo:'',victoryMsg:'',exp:0};
+  if(type==='encounter')return{...b,npcId:NEMICI_PREDEFINITI[0]?.id||'',label:'',to:'',defeatTo:'',victoryMsg:''};
   if(type==='exp_grant')return{...b,exp:10,label:'',to:''};
-  if(type==='rest')return{...b,restType:'daily',to:'',exp:0};
+  if(type==='rest')return{...b,restType:'daily',to:''};
   if(type==='item_grant')return{...b,action:'add',itemName:'',itemDesc:'',qty:1,itemSlot:'0',useEquipList:false,equipRef:''};
   return b;
 }
@@ -2907,8 +2888,6 @@ function renderParaEditor(p,adv,previewMode){
         <span style="color:#73181F;font-weight:bold">→</span>
         <input value="${esc(e.to)}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID" style="width:58px;font-family:monospace;${iS}" maxlength="3">
         ${e.to?`<button onclick="aeJumpTo('${e.to}')" title="Vai al paragrafo ${e.to}" style="background:rgba(115,24,31,.1);border:none;color:#73181F;cursor:pointer;border-radius:4px;padding:3px 6px;font-size:.75rem">↗</button>`:''}
-        <span style="font-size:.7rem;opacity:.55;margin-left:4px">EXP:</span>
-        <input type="number" value="${e.exp||0}" min="0" max="999" oninput="aeUE(${idx},'exp',parseInt(this.value)||0)" placeholder="0" style="width:54px;${iS}" title="EXP concessa alla scelta (0 = nessuna)">
       </div>`;
     }else if(e.type==='stat_check'){
       flds=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center">
@@ -2920,8 +2899,6 @@ function renderParaEditor(p,adv,previewMode){
         <input value="${esc(e.successTo)}" oninput="aeUE(${idx},'successTo',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
         <span style="color:#d32f2f;font-size:.8rem;font-weight:bold">✗→</span>
         <input value="${esc(e.failTo)}" oninput="aeUE(${idx},'failTo',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
-        <span style="font-size:.7rem;opacity:.55;white-space:nowrap">EXP succ.:</span>
-        <input type="number" value="${e.exp||0}" min="0" max="999" oninput="aeUE(${idx},'exp',parseInt(this.value)||0)" placeholder="0" style="width:52px;${iS}" title="EXP concessa al successo">
       </div>`;
     }else if(e.type==='talent_check'){
       flds=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center">
@@ -2981,10 +2958,6 @@ function renderParaEditor(p,adv,previewMode){
           <div style="font-size:.66rem;opacity:.55;margin-bottom:3px">Messaggio di vittoria (opzionale)</div>
           <textarea oninput="aeUE(${idx},'victoryMsg',this.value)" placeholder="Es: Hai sconfitto il Coboldo. Tra le sue spoglie trovi una moneta d'argento..." style="width:100%;min-height:48px;background:rgba(0,0,0,.03);border:1px solid rgba(24,115,45,.4);border-radius:4px;padding:7px;font-family:'Times New Roman',serif;font-size:.82rem;color:#1a1007;resize:vertical;outline:none">${esc(e.victoryMsg||'')}</textarea>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
-          <span style="font-size:.72rem;opacity:.65;white-space:nowrap">EXP per vittoria:</span>
-          <input type="number" value="${e.exp||0}" min="0" max="999" oninput="aeUE(${idx},'exp',parseInt(this.value)||0)" placeholder="0" style="width:64px;${iS}" title="EXP concessa in caso di vittoria">
-        </div>
       </div>`;
     }else if(e.type==='exp_grant'){
       flds=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center">
@@ -3002,13 +2975,10 @@ function renderParaEditor(p,adv,previewMode){
         </select>
         <span style="color:#4a7a1a;font-weight:bold">→</span>
         <input value="${esc(e.to)}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID dopo" style="width:52px;font-family:monospace;${iS}" maxlength="3">
-        <span style="font-size:.7rem;opacity:.55;white-space:nowrap">EXP:</span>
-        <input type="number" value="${e.exp||0}" min="0" max="999" oninput="aeUE(${idx},'exp',parseInt(this.value)||0)" placeholder="0" style="width:52px;${iS}" title="EXP concessa dopo il riposo">
       </div>`;
     }else if(e.type==='item_grant'){
       // All equip items for quick pick
-      const _advSetting = S.ae?.adv?.setting || null;
-      const allItems=[...DB.equip_weapons,...DB.equip_protection,...DB.equip_slots].filter(it=>itemMatchesSetting(it.equip_name,_advSetting));
+      const allItems=[...DB.equip_weapons,...DB.equip_protection,...DB.equip_slots];
       const itemOpts=allItems.map(it=>`<option value="${esc(it.equip_name)}" ${e.itemName===it.equip_name?'selected':''}>${esc(it.equip_name)}</option>`).join('');
       flds=`<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
@@ -3106,7 +3076,7 @@ function renderParaEditor(p,adv,previewMode){
     <div class="sec-hdr">USCITE (${(p.exits||[]).length})</div>
     ${exitsHtml}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
-      ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end',`${SVG.flag} Fine`],['encounter',`${SVG.sword} Scontro`],['rest',`${SVG.rest} Riposo`],['item_grant',`${SVG.bag} Inventario`]].map(([t,l])=>`
+      ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end',`${SVG.flag} Fine`],['encounter',`${SVG.sword} Scontro`],['exp_grant',`${SVG.exp} Esperienza`],['rest',`${SVG.rest} Riposo`],['item_grant',`${SVG.bag} Inventario`]].map(([t,l])=>`
       <button onclick="aeAE('${t}')" style="padding:7px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007;display:flex;align-items:center;justify-content:center;gap:3px" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
     </div>
   </div>`;
@@ -3304,6 +3274,7 @@ function renderAdvPlay(){
   const codeChecks=exits.filter(e=>e.type==='code_check');
   const ends=exits.filter(e=>e.type==='end');
   const encounters=exits.filter(e=>e.type==='encounter');
+  const expGrants=exits.filter(e=>e.type==='exp_grant');
   const restExits=exits.filter(e=>e.type==='rest');
   const itemGrants=exits.filter(e=>e.type==='item_grant');
 
@@ -3323,8 +3294,8 @@ function renderAdvPlay(){
   </div>`:'';
 
   const choicesHtml=choices.map(e=>`
-  <button onclick="${parseInt(e.exp)>0?`apGrantExp(${parseInt(e.exp)||0},'${e.to}')`:`apGoTo('${e.to}')`}" class="btn btn-secondary" style="text-align:left;padding:13px 16px;margin-bottom:7px;border-color:rgba(115,24,31,.4)">
-    <span style="color:#73181F;font-weight:bold;margin-right:8px">▶</span>${esc(e.label)||`Vai al paragrafo ${e.to}`}${parseInt(e.exp)>0?` <span style="font-size:.7rem;color:#1a4a7a;font-weight:bold;margin-left:6px">+${e.exp} EXP</span>`:''}
+  <button onclick="apGoTo('${e.to}')" class="btn btn-secondary" style="text-align:left;padding:13px 16px;margin-bottom:7px;border-color:rgba(115,24,31,.4)">
+    <span style="color:#73181F;font-weight:bold;margin-right:8px">▶</span>${esc(e.label)||`Vai al paragrafo ${e.to}`}
     <span style="float:right;font-family:monospace;opacity:.4;font-size:.78rem">${e.to}</span>
   </button>`).join('');
 
@@ -3334,9 +3305,9 @@ function renderAdvPlay(){
     <div style="background:rgba(138,96,0,.07);border:1.5px solid #8a6000;border-radius:8px;padding:12px;margin-bottom:7px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;flex-wrap:wrap;gap:6px">
         <span style="font-weight:bold;color:#8a6000;font-size:.9rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> ${e.label||`Prova di ${e.stat}`}</span>
-        <span class="badge" style="background:#8a6000">${e.stat} ${sv} — 2d6 ≤ ${sv}</span>${parseInt(e.exp)>0?`<span class="badge" style="background:#1a4a7a">+${e.exp} EXP</span>`:''}
+        <span class="badge" style="background:#8a6000">${e.stat} ${sv} — 2d6 ≤ ${sv}</span>
       </div>
-      <button onclick="apRollStat('${e.stat}',${sv},'${e.successTo}','${e.failTo}',${parseInt(e.exp)||0})" class="btn btn-primary" style="background:#8a6000;border-color:#8a6000;width:100%;font-size:.88rem;min-height:40px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Tira i dadi</button>
+      <button onclick="apRollStat('${e.stat}',${sv},'${e.successTo}','${e.failTo}')" class="btn btn-primary" style="background:#8a6000;border-color:#8a6000;width:100%;font-size:.88rem;min-height:40px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Tira i dadi</button>
     </div>`;
   }).join('');
 
@@ -3385,11 +3356,21 @@ function renderAdvPlay(){
         ${e.to?`<span style="color:#18732D;font-weight:bold">✓ Vittoria → §${esc(e.to)}</span>`:''}
         ${e.defeatTo?`<span style="color:#d32f2f;font-weight:bold">✗ Sconfitta → §${esc(e.defeatTo)}</span>`:''}
       </div>`:''}
-      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${_eIdx},${parseInt(e.exp)||0})" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
+      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${_eIdx})" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
     </div>`;
   }).join('');
 
-  const expGrantsHtml=''; // exp_grant removed
+  const expGrantsHtml=expGrants.map(e=>{
+    const expVal=parseInt(e.exp)||0;
+    return`
+    <div style="background:rgba(26,74,122,.07);border:1.5px solid #1a4a7a;border-radius:8px;padding:12px;margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <span style="font-weight:bold;color:#1a4a7a;font-size:.9rem;display:flex;align-items:center;gap:6px">${SVG.exp} ${esc(e.label||'Esperienza guadagnata')}</span>
+        <span class="badge" style="background:#1a4a7a">+${expVal} EXP</span>
+      </div>
+      <button onclick="apGrantExp(${expVal},'${e.to||''}')" class="btn btn-primary" style="width:100%;font-size:.88rem;min-height:40px; display:flex;align-items:center;justify-content:center;gap:6px">${SVG.exp} Raccogli ${expVal} EXP</button>
+    </div>`;
+  }).join('');
 
   const itemGrantsHtml=itemGrants.map((e,_iIdx)=>{
     const globalIdx=exits.indexOf(e);
@@ -3438,7 +3419,6 @@ function renderAdvPlay(){
           <div>
             <div style="font-size:1.15rem;font-weight:bold;color:#73181F">${esc(char.name)}</div>
             <div style="font-size:.75rem;opacity:.6">${[char.heritage,char.childhood,char.profession].filter(Boolean).map(v=>esc(v)).join(' · ')} · Lv.${char.level}</div>
-            <div style="font-size:.72rem;color:#1a4a7a;margin-top:2px">EXP questa avventura: <strong>${char.exp||0}</strong> / ${(char.level||1)*10}</div>
             <div style="font-size:.68rem;color:#73181F;margin-top:2px;font-style:italic">Le modifiche valgono solo per questa avventura</div>
           </div>
           <button onclick="S.ap.showCharSheet=false;render()" style="background:transparent;border:none;font-size:1.4rem;cursor:pointer;color:#73181F;padding:4px 8px;flex-shrink:0;min-width:40px;min-height:40px;display:flex;align-items:center;justify-content:center">✕</button>
@@ -3980,36 +3960,29 @@ function apStart(advId,charId){
   apSaveSession();
   nav('adv-play');
 }
-function apGrantExp(amount, toPara, callback){
-  // EXP is adventure-only — only touches S.ap.char, never the canonical S.chars entry
-  if(!S.ap || !S.ap.char || !amount) { if(toPara) apGoTo(toPara); else if(callback) callback(); return; }
+function apGrantExp(amount, toPara){
+  if(!S.ap || !S.ap.char) return;
   const ch = S.ap.char;
   ch.exp = (ch.exp||0) + (amount||0);
-  apSaveSession(); // persist adventure snapshot only
-
+  // Sync to canonical character too
+  const canon = S.chars.find(c=>c.id===S.ap.charId);
+  if(canon) canon.exp = ch.exp;
+  persist();
+  // Check level up threshold: level * 10 EXP to next level (simple formula)
   const expNeeded = (ch.level||1) * 10;
-  const canLevelUp = ch.exp >= expNeeded;
-
-  if(canLevelUp){
-    // Show a toast first, then prompt for level up
-    showToast(`+${amount} EXP — Livello superiore disponibile!`, '#1a4a7a');
-    setTimeout(()=>{
-      if(confirm(`Hai guadagnato ${amount} EXP (totale: ${ch.exp}/${expNeeded})!\n\nVuoi salire di livello ora?`)){
-        // Store where to return after level up
-        S.ap._pendingLevelUpReturnPara = toPara || null;
-        if(toPara){ S.ap.history.push(S.ap.currPara); S.ap.currPara=toPara; }
-        nav('levelup', {charId: S.ap.charId});
-        return;
-      }
-      if(toPara) apGoTo(toPara);
-      else render();
-    }, 300);
+  if(ch.exp >= expNeeded){
+    // Show level-up banner then navigate
+    const msg = `+${amount} EXP! Totale: ${ch.exp}/${expNeeded}\n\nHai raggiunto i punti necessari per salire di livello!`;
+    if(confirm(msg + '\n\nVuoi fare Level Up ora?')){
+      if(toPara){ S.ap.history.push(S.ap.currPara); S.ap.currPara=toPara; }
+      nav('levelup', {charId: S.ap.charId});
+      return;
+    }
   } else {
-    showToast(`+${amount} EXP  ·  ${ch.exp}/${expNeeded}`, '#1a4a7a');
-    if(toPara) apGoTo(toPara);
-    else if(callback) callback();
-    else render();
+    alert(`+${amount} EXP! Totale: ${ch.exp}/${expNeeded}`);
   }
+  if(toPara) apGoTo(toPara);
+  else render();
 }
 
 function apGoTo(paraId){
@@ -4085,15 +4058,13 @@ function apRemoveCode(code){
   if(!S.ap)return;
   S.ap.codes=S.ap.codes.filter(c=>c!==code);render();
 }
-function apRollStat(stat,statVal,successTo,failTo,expOnSuccess){
+function apRollStat(stat,statVal,successTo,failTo){
   if(!S.ap)return;
   openDiceOv(2,`Prova di ${stat}`,`Successo con 2d6 ≤ ${statVal} (tuo ${stat}: ${statVal})`,'stat',statVal,(vals,total)=>{
     const ok=total<=statVal;
     const dest=ok?successTo:failTo;
-    const exp=ok?(parseInt(expOnSuccess)||0):0;
-    const proceed=()=>{ if(dest) setTimeout(()=>apGoTo(dest),200); else render(); };
-    if(exp>0) apGrantExp(exp, dest||null, dest?null:proceed);
-    else proceed();
+    if(dest){setTimeout(()=>apGoTo(dest),200);}
+    else render();
   });
 }
 
@@ -4882,7 +4853,7 @@ const COMBAT_TUTORIAL_STEPS = [
   }
 ];
 
-function apStartCombat(npcId, toPara, defeatTo, msgIdx, expOnVictory){
+function apStartCombat(npcId, toPara, defeatTo, msgIdx){
   if(S.ap){
     S.ap.pendingNpcId = npcId || (NEMICI_PREDEFINITI[0]?.id||'');
     S.ap.pendingCombatReturnPara = toPara || null;
@@ -4890,7 +4861,6 @@ function apStartCombat(npcId, toPara, defeatTo, msgIdx, expOnVictory){
     S.ap.pendingVictoryMsg = (S.ap._encounterVictoryMsgs && msgIdx >= 0)
       ? (S.ap._encounterVictoryMsgs[msgIdx] || '')
       : '';
-    S.ap.pendingCombatExp = parseInt(expOnVictory)||0;
   }
   openCombat();
 }
@@ -5005,7 +4975,7 @@ function openRestModal(){
       ${statRow('Energia', ch.enCurr, ch.enMax, canDaily?dailyENGain:0)}
       <div style="font-size:.75rem;margin-top:6px;opacity:.65">Razioni disponibili: <strong>${rations}</strong></div>
       ${canDaily
-        ? `<button onclick="apDoRest('daily','${dailyExit?.to||''}',${parseInt(dailyExit?.exp)||0})" style="margin-top:10px;width:100%;padding:10px;background:#4a7a1a;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.88rem;min-height:40px">Riposati</button>`
+        ? `<button onclick="apDoRest('daily','${dailyExit?.to||''}')" style="margin-top:10px;width:100%;padding:10px;background:#4a7a1a;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.88rem;min-height:40px">Riposati</button>`
         : `<div style="margin-top:8px;font-size:.78rem;color:#c0392b;font-weight:bold">✗ Razioni insufficienti</div>`}
     </div>`;
   }
@@ -5022,7 +4992,7 @@ function openRestModal(){
       ${statRow('Energia', ch.enCurr, ch.enMax, canProl?prolENGain:0)}
       <div style="font-size:.75rem;margin-top:6px;opacity:.65">Razioni disponibili: <strong>${rations}</strong></div>
       ${canProl
-        ? `<button onclick="apDoRest('prolonged','${prolExit?.to||''}',${parseInt(prolExit?.exp)||0})" style="margin-top:10px;width:100%;padding:10px;background:#18732D;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.88rem;min-height:40px">Riposati</button>`
+        ? `<button onclick="apDoRest('prolonged','${prolExit?.to||''}')" style="margin-top:10px;width:100%;padding:10px;background:#18732D;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.88rem;min-height:40px">Riposati</button>`
         : `<div style="margin-top:8px;font-size:.78rem;color:#c0392b;font-weight:bold">✗ Razioni insufficienti (ne servono 2)</div>`}
     </div>`;
   }
@@ -5044,7 +5014,7 @@ function closeRestModal(){
   if(d) d.remove();
 }
 
-function apDoRest(type, toPara, expAmount){
+function apDoRest(type, toPara){
   if(!S.ap || !S.ap.char) return;
   const ch = S.ap.char;
   const inv = ch.inventory || [];
@@ -5069,9 +5039,7 @@ function apDoRest(type, toPara, expAmount){
   closeRestModal();
   showToast(type==='prolonged' ? '✓ Riposo completo — salute ed energia ripristinate' : '✓ Riposo giornaliero — recupero parziale', '#4a7a1a');
   apSaveSession();
-  if(expAmount>0){
-    setTimeout(()=>apGrantExp(expAmount, toPara||null), 300);
-  } else if(toPara){
+  if(toPara){
     apGoTo(toPara);
   } else {
     render();
@@ -5127,8 +5095,6 @@ function closeCombat(){
     const destPara = isVictory ? victoryPara : defeatPara;
     S.ap.lastVictoryMsg = (isVictory && victoryMsg) ? victoryMsg : '';
     S.ap._victoryMsgShown = false; // reset flag
-    const pendingExp = isVictory ? (S.ap.pendingCombatExp||0) : 0;
-    S.ap.pendingCombatExp = 0;
     if(destPara){
       S.ap.history.push(S.ap.currPara);
       S.ap.currPara = destPara;
@@ -5136,7 +5102,6 @@ function closeCombat(){
       S.ap.currentRestExits=(_p?.exits||[]).filter(e=>e.type==='rest');
     }
     S.page='adv-play';
-    if(pendingExp>0){ render(); setTimeout(()=>apGrantExp(pendingExp, null), 400); return; }
   } else {
     S.page='home';
   }
