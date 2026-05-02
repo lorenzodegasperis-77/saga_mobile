@@ -3111,7 +3111,7 @@ function renderParaEditor(p,adv,previewMode){
       ${[['**','bold',SVG.bold,'Grassetto'],['_','italic',SVG.italic,'Corsivo'],['__','underline',SVG.underline,'Sottolineato']].map(([m,_n,icon,title])=>`
       <button onclick="aeFmtWrap('${m}')" title="${title}" class="ae-fmt-btn" style="padding:7px 10px;border-radius:6px;border:1px solid rgba(115,24,31,.3);background:rgba(255,255,255,.4);cursor:pointer;color:#73181F;display:flex;align-items:center;gap:3px;font-size:.76rem;font-family:inherit;min-height:38px">${icon}</button>`).join('')}
       <div style="flex:1;min-width:8px"></div>
-      <button onclick="showAIWritingModal()" title="Assistente AI — suggerisce o migliora il testo" style="padding:7px 12px;border-radius:6px;border:1.5px solid #5a2d91;background:linear-gradient(135deg,rgba(90,45,145,.12),rgba(115,24,31,.08));cursor:pointer;color:#5a2d91;display:flex;align-items:center;gap:5px;font-size:.78rem;font-family:inherit;min-height:38px;font-weight:bold;white-space:nowrap;flex-shrink:0">
+      <button onclick="showAIWritingModal()" title="Assistente AI — suggerisce o migliora il testo" style="padding:7px 12px;border-radius:6px;border:1.5px solid #73181F;background:linear-gradient(135deg,rgba(90,45,145,.12),rgba(115,24,31,.08));cursor:pointer;color:#73181F;display:flex;align-items:center;gap:5px;font-size:.78rem;font-family:inherit;min-height:38px;font-weight:bold;white-space:nowrap;flex-shrink:0">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
         Assistente AI
       </button>
@@ -3803,7 +3803,7 @@ function showAIWritingModal(){
     <div style="padding:14px 18px 10px;border-bottom:1.5px solid rgba(90,45,145,.25);display:flex;align-items:center;gap:10px;flex-shrink:0">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a2d91" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
       <div style="flex:1">
-        <div style="font-weight:bold;color:#5a2d91;font-size:.92rem;letter-spacing:1px">Assistente AI</div>
+        <div style="font-weight:bold;color:#73181F;font-size:.92rem;letter-spacing:1px">Assistente AI</div>
         <div style="font-size:.7rem;opacity:.6;margin-top:1px">§${paraId} · ${advTitle}${setting?' · '+settingLabel:''}</div>
       </div>
       <button onclick="document.getElementById('ai-writing-modal').remove()" style="background:transparent;border:none;font-size:1.3rem;cursor:pointer;color:#5a2d91;line-height:1;padding:4px 8px;min-width:36px;min-height:36px">✕</button>
