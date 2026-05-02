@@ -9,10 +9,15 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#D8C7A1">
 <title>SAGA — Avventure Interattive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{min-height:100vh;min-height:100svh;background:#D8C7A1;font-family:'Times New Roman',Georgia,serif;color:#1a1007;}body{padding-bottom:env(safe-area-inset-bottom);}
+html,body{min-height:100vh;min-height:100svh;background:#D8C7A1;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007;font-size:16px;}body{padding-bottom:env(safe-area-inset-bottom);}
+h1,h2,h3,h4,.frame>h2,.home-title,.sec-hdr,.tab-btn,.btn,.badge,.grade-badge{font-family:'Cinzel','Times New Roman',serif;}
+.input-line,input,select,textarea{font-family:'EB Garamond','Times New Roman',Georgia,serif;}
 .grade-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-family:'Cinzel',serif;font-size:.65rem;font-weight:700;letter-spacing:.5px;flex-shrink:0;}
 .grade-1{background:rgba(74,122,26,.15);color:#3a6e10;border:1px solid rgba(74,122,26,.4);}
 .grade-2{background:rgba(74,122,26,.12);color:#2d5a0d;border:1px solid rgba(74,122,26,.35);}
@@ -21,7 +26,9 @@ html,body{min-height:100vh;min-height:100svh;background:#D8C7A1;font-family:'Tim
 .grade-5{background:rgba(115,18,31,.18);color:#73181F;border:1px solid rgba(115,18,31,.5);}
 ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:rgba(115,24,31,.08)}::-webkit-scrollbar-thumb{background:#73181F;border-radius:3px}
 #app{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 0;position:relative;}
-.bg-overlay{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(115,24,31,.07) 0%,transparent 65%),repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(0,0,0,.012) 40px,rgba(0,0,0,.012) 80px);pointer-events:none;z-index:0;}
+.bg-overlay{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.bg-overlay::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(115,24,31,.07) 0%,transparent 65%);}
+.bg-overlay::after{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(120,80,30,.045) 3px,rgba(120,80,30,.045) 4px),repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(100,60,20,.03) 3px,rgba(100,60,20,.03) 4px),repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,.022) 10px,rgba(0,0,0,.022) 11px),repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(0,0,0,.018) 10px,rgba(0,0,0,.018) 11px);}
 @keyframes creditsScroll {
   0% { transform: translateY(52%); } /* Parte già visibile */
   100% { transform: translateY(-100%); } /* Scorre fino alla fine */
