@@ -4240,6 +4240,7 @@ function apGrantExp(amount, toPara){
 
 function apGoTo(paraId){
   if(!S.ap||!paraId)return;
+  S.ap.lastVictoryMsg='';
   S.ap.history.push(S.ap.currPara);
   S.ap.currPara=paraId;
   const _p=(S.ap.adv.paragraphs||[]).find(p=>p.id===paraId);
@@ -4299,6 +4300,7 @@ function apResumeSession(sessId){
 
 function apBack(){
   if(!S.ap||!S.ap.history.length)return;
+  S.ap.lastVictoryMsg='';
   S.ap.currPara=S.ap.history.pop();
   window.scrollTo(0,0);render();
 }
@@ -4316,7 +4318,7 @@ function apRollStat(stat,statVal,successTo,failTo){
   openDiceOv(2,`Prova di ${stat}`,`Successo con 2d6 ≤ ${statVal} (tuo ${stat}: ${statVal})`,'stat',statVal,(vals,total)=>{
     const ok=total<=statVal;
     const dest=ok?successTo:failTo;
-    if(dest){setTimeout(()=>apGoTo(dest),200);}
+    if(dest){S.ap.lastVictoryMsg='';setTimeout(()=>apGoTo(dest),200);}
     else render();
   });
 }
