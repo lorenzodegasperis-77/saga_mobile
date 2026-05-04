@@ -11,11 +11,11 @@
 <title>SAGA — Avventure Interattive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{min-height:100vh;min-height:100svh;background:#D8C7A1;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007;font-size:16px;}body{padding-bottom:env(safe-area-inset-bottom);}
+html,body{min-height:100vh;min-height:100svh;background:#D8C7A1;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007;font-size:17px;line-height:1.6;}body{padding-bottom:env(safe-area-inset-bottom);}
 h1,h2,h3,h4,.frame>h2,.home-title,.sec-hdr,.tab-btn,.btn,.badge,.grade-badge{font-family:'Cinzel','Times New Roman',serif;}
 .input-line,input,select,textarea{font-family:'EB Garamond','Times New Roman',Georgia,serif;}
 .grade-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-family:'Cinzel',serif;font-size:.65rem;font-weight:700;letter-spacing:.5px;flex-shrink:0;}
@@ -37,22 +37,25 @@ h1,h2,h3,h4,.frame>h2,.home-title,.sec-hdr,.tab-btn,.btn,.badge,.grade-badge{fon
 #splash{position:fixed;inset:0;z-index:9999;background:#0c0805;display:flex;align-items:center;justify-content:center;transition:opacity 1.2s ease;}
 #splash.fade{opacity:0;pointer-events:none;}
 /* FRAME */
-.frame{background:#D8C7A1;border:3px solid #73181F;border-radius:12px;padding:28px 46px;width:min(620px,95vw);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18),inset 0 0 50px rgba(115,24,31,.03);position:relative;z-index:1;}
+.frame{background:#D8C7A1;border:3px solid #73181F;border-radius:12px;padding:28px 46px;width:min(620px,95vw);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18),inset 0 0 50px rgba(115,24,31,.05),inset 0 0 0 6px rgba(115,24,31,.04);position:relative;z-index:1;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23f)' opacity='0.06'/%3E%3C/svg%3E");}
+/* HEADINGS */
+h1,h2{font-family:'Cinzel',serif;}
+h3{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:2px;}
 /* BTN */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 18px;border-radius:8px;font-weight:bold;font-size:.9rem;cursor:pointer;font-family:inherit;letter-spacing:1px;transition:all .2s;border:2px solid #73181F;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 18px;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:1.5px;transition:all .2s;border:2px solid #73181F;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;}
 .btn:hover:not(:disabled){filter:brightness(1.15);transform:scale(1.02);}
 .btn:disabled{opacity:.5;cursor:not-allowed;}
 .btn-primary{background:#73181F;color:white;}
 .btn-secondary{background:transparent;color:#1a1007;}
 /* BADGE */
-.badge{background:#73181F;color:white;padding:2px 8px;border-radius:5px;font-size:.7rem;font-weight:bold;}
+.badge{background:#73181F;color:white;padding:2px 8px;border-radius:5px;font-size:.62rem;font-weight:700;font-family:'Cinzel',serif;letter-spacing:.5px;}
 /* CHOICE CARD */
 .cc-card{border:1.5px solid #84785E;background:rgba(255,255,255,.3);padding:13px;margin-bottom:8px;border-radius:6px;cursor:pointer;transition:all .2s;}
 .cc-card:hover{background:rgba(115,24,31,.06);}
 .cc-card.sel{border:2px solid #73181F;background:rgba(115,24,31,.1);}
 .cc-card.dis{opacity:.4;cursor:not-allowed;}
 /* INPUT */
-.input-line{width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:11px 10px;font-family:'Times New Roman',serif;font-size:16px;color:#1a1007;outline:none;margin-bottom:8px;}
+.input-line{width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:11px 10px;font-family:'EB Garamond','Times New Roman',serif;font-size:16px;color:#1a1007;outline:none;margin-bottom:8px;}
 /* MENU CONTAINER */
 .menu-c{display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;margin:0 auto;}
 /* MODAL */
@@ -82,9 +85,9 @@ h1,h2,h3,h4,.frame>h2,.home-title,.sec-hdr,.tab-btn,.btn,.badge,.grade-badge{fon
 .sm-btn{border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-weight:bold;font-size:1.1rem;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:#73181F;color:white;}
 .sm-btn:disabled{background:#ccc;cursor:not-allowed;}
 /* SECTION HDR */
-.sec-hdr{font-weight:bold;color:#73181F;letter-spacing:2px;font-size:.8rem;margin:14px 0 5px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
+.sec-hdr{font-weight:700;color:#73181F;letter-spacing:2px;font-size:.72rem;font-family:'Cinzel',serif;margin:14px 0 5px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
 /* SHEET tab btn */
-.tab-btn{padding:7px 15px;border:2px solid #73181F;border-radius:6px;background:transparent;color:#1a1007;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.82rem;letter-spacing:1px;transition:all .2s;}
+.tab-btn{padding:7px 15px;border:2px solid #73181F;border-radius:6px;background:transparent;color:#1a1007;cursor:pointer;font-family:'Cinzel',serif;font-weight:600;font-size:.75rem;letter-spacing:1.5px;transition:all .2s;}
 .tab-btn.active{background:#73181F;color:white;}
 
 /* ── MOBILE RESPONSIVE ──────────────────────────────────── */
@@ -93,7 +96,7 @@ h1,h2,h3,h4,.frame>h2,.home-title,.sec-hdr,.tab-btn,.btn,.badge,.grade-badge{fon
 .tab-btn{min-height:44px;}
 .sm-btn{width:36px;height:36px;font-size:1.2rem;}
 /* iOS input zoom prevention */
-input,select,textarea{font-size:16px !important;}
+input,select,textarea{font-size:16px !important;font-family:'EB Garamond','Times New Roman',serif !important;}
 /* Remove hover transform on touch devices */
 @media(hover:none){
   .btn:hover:not(:disabled){filter:none;transform:none;}
@@ -199,7 +202,7 @@ input,select,textarea{font-size:16px !important;}
 /* SETTING TAGS */
 .set-tag{position:relative;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;cursor:pointer;flex-shrink:0;transition:transform .15s;}
 .set-tag:hover{transform:scale(1.25);}
-.set-tip{position:absolute;bottom:calc(100%+5px);left:50%;transform:translateX(-50%);background:#1a1007;color:#D8C7A1;padding:3px 9px;border-radius:4px;font-size:.62rem;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;font-family:'Times New Roman',Georgia,serif;letter-spacing:.5px;}
+.set-tip{position:absolute;bottom:calc(100%+5px);left:50%;transform:translateX(-50%);background:#1a1007;color:#D8C7A1;padding:3px 9px;border-radius:4px;font-size:.62rem;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;font-family:'EB Garamond','Times New Roman',Georgia,serif;letter-spacing:.5px;}
 .set-tag:hover .set-tip{opacity:1;}
 .set-tag.tip-show .set-tip{opacity:1;}
 .set-tags-row{display:inline-flex;gap:2px;align-items:center;flex-wrap:wrap;}
@@ -297,7 +300,7 @@ function showNpcModal(id){
       <div style="font-size:.8rem;opacity:.78;line-height:1.5">${esc(a.ability_description||'')}</div>
     </div>`).join('');
   const d=document.createElement('div');
-  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Times New Roman,Georgia,serif';
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Georgia,serif';
   d.onclick=e=>{if(e.target===d)d.remove();};
   d.innerHTML=`
   <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:22px 20px;width:100%;max-width:460px;max-height:90svh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.5)">
@@ -828,7 +831,7 @@ function getAvailableForSlot(L,currentSlot){
 let S={
   page:'home',params:{},
   chars:[],sessions:[],
-  settings:{music:true,diceAnim:true,sfxEnabled:false,sfxStyle:'fantasy',language:'it'},
+  settings:{music:true,diceAnim:true,language:'it'},
   loaded:false,
   // create character
   cc:null,
@@ -945,7 +948,7 @@ function showToast(msg, color='#18732D'){
   const t=document.createElement('div');
   t.id='saga-toast';
   t.textContent=msg;
-  t.style.cssText='position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:'+color+';color:white;padding:10px 22px;border-radius:24px;font-family:Times New Roman,Georgia,serif;font-size:.88rem;font-weight:bold;letter-spacing:.5px;z-index:99999;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.35);opacity:0;transition:opacity .2s,transform .2s;white-space:nowrap;max-width:90vw;text-align:center';
+  t.style.cssText='position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:'+color+';color:white;padding:10px 22px;border-radius:24px;font-family:Georgia,serif;font-size:.92rem;font-weight:600;letter-spacing:.5px;z-index:99999;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.35);opacity:0;transition:opacity .2s,transform .2s;white-space:nowrap;max-width:90vw;text-align:center';
   document.body.appendChild(t);
   requestAnimationFrame(()=>{t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});
   setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(10px)';setTimeout(()=>t.remove(),220);},2200);
@@ -960,7 +963,7 @@ function homeManual(){
   window.open('https://www.example.com/manuale-saga','_blank','noopener,noreferrer');
 }
 function homeFeedback(){
-  const mail='mailto:feedback@saga-gioco.it?subject='+encodeURIComponent('Feedback su SAGA — Avventure Interattive')+'&body='+encodeURIComponent('Ciao,\n\nVorrei condividere la mia opinione su SAGA:\n\n');
+  const mail='mailto:zuneprogetto@gmail.com?subject='+encodeURIComponent('Feedback su SAGA — Avventure Interattive')+'&body='+encodeURIComponent('Ciao,\n\nVorrei condividere la mia opinione su SAGA:\n\n');
   window.location.href=mail;
 }
 function homeShare(){
@@ -1137,7 +1140,7 @@ function renderHome(){
         </button>
       </div>
       <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px">
-        <span style="font-size:.72rem;opacity:.45;color:#73181F">v1.2</span>
+        <span style="font-size:.72rem;opacity:.45;color:#73181F">v1.3</span>
         <button onclick="showOnboardingManual()" style="background:transparent;border:1.5px solid rgba(115,24,31,.5);color:#73181F;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:.78rem;font-weight:bold;font-family:inherit;display:flex;align-items:center;justify-content:center" title="Tutorial">?</button>
       </div>
     </div>
@@ -1333,7 +1336,7 @@ function renderCreate(){
 
   return`
   ${guideModal}
-  <div class="cc-layout" style="width:min(1060px,97vw);z-index:1;display:flex;gap:18px;align-items:flex-start;padding:16px 8px;font-family:'Times New Roman',Georgia,serif;color:#1a1007">
+  <div class="cc-layout" style="width:min(1060px,97vw);z-index:1;display:flex;gap:18px;align-items:flex-start;padding:16px 8px;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007">
     ${sidebar}
     <div class="cc-main" style="flex:1;background:#D8C7A1;border:2px solid #73181F;border-radius:8px;padding:20px 24px;box-shadow:0 6px 20px rgba(0,0,0,.1)">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -1888,7 +1891,7 @@ function renderSheetGenerale(L,eff,cKey,dmg,prot,twpEff){
         return`
       <div style="margin-bottom:8px">
         <div style="font-size:.76rem;color:#73181F;font-weight:bold;margin-bottom:3px">${lbl}:</div>
-        <select style="width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid ${curVal&&!curInUsable?'#d32f2f':'#73181F'};padding:9px 10px;font-family:'Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;cursor:pointer" onchange="shSetEquip('${k}',this.value)">
+        <select style="width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid ${curVal&&!curInUsable?'#d32f2f':'#73181F'};padding:9px 10px;font-family:'EB Garamond','Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;cursor:pointer" onchange="shSetEquip('${k}',this.value)">
           <option value="">— nessuno —</option>
           ${curVal&&!curInUsable?`<option value="${esc(curVal)}" selected><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> ${esc(curVal)} (talento mancante)</option>`:''}
           ${opts}
@@ -2165,7 +2168,7 @@ function renderLevelUp(){
   }
 
   return`
-  <div class="lu-layout" style="width:min(860px,97vw);z-index:1;display:flex;gap:18px;align-items:flex-start;padding:16px 8px;font-family:'Times New Roman',Georgia,serif;color:#1a1007">
+  <div class="lu-layout" style="width:min(860px,97vw);z-index:1;display:flex;gap:18px;align-items:flex-start;padding:16px 8px;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007">
     ${sidebar}
     <div class="lu-main" style="flex:1;background:#D8C7A1;border:2px solid #73181F;border-radius:8px;padding:22px">${stepContent}</div>
   </div>`;
@@ -2201,6 +2204,25 @@ function luFinish(){
   const idx=S.chars.findIndex(c=>c.id===char.id);
   if(idx>=0)S.chars[idx]=s;
   persist();
+  // If level-up was triggered from inside an adventure, sync and return there
+  if(S.ap && S.ap.char){
+    S.ap.char.level=newLvl;
+    S.ap.char.exp=0;
+    S.ap.char.hpMax=s.hpMax;
+    S.ap.char.hpCurr=s.hpCurr;
+    S.ap.char.enMax=s.enMax;
+    S.ap.char.enCurr=s.enCurr;
+    if(lu.attrBoost) S.ap.char[lu.attrBoost]=s[lu.attrBoost];
+    if(lu.newTalent) S.ap.char.talents=[...(S.ap.char.talents||[]),lu.newTalent];
+    if(allNewAb.length) S.ap.char.abilities=[...(S.ap.char.abilities||[]),...allNewAb];
+    const retPara = S.ap._pendingLevelUpReturnPara;
+    S.ap._pendingLevelUpReturnPara = null;
+    apSaveSession();
+    showToast(`${char.name} — Livello ${newLvl}!`, '#1a4a7a');
+    S.lu=null;
+    nav('adv-play');
+    return;
+  }
   alert(`${char.name} è avanzato al Livello ${newLvl}!`);
   nav('sheet',{charId:char.id});
 }
@@ -2322,7 +2344,7 @@ function _showSimpleDiceModal(numDice,title,subtitle,mode,statValue,values,total
   // build modal in app
   const modalDiv=document.createElement('div');
   modalDiv.id='simple-dice-modal';
-  modalDiv.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:19999;font-family:Times New Roman,Georgia,serif';
+  modalDiv.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:19999;font-family:Georgia,serif';
   modalDiv.innerHTML=`
   <div style="background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:26px 28px;max-width:400px;width:90%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5)">
     <h3 style="color:#73181F;letter-spacing:3px;font-size:1rem;margin:0 0 4px">${title}</h3>
@@ -2577,7 +2599,7 @@ function _showDiceOvResult(diceOv){
 
 // ─── RENDER: SETTINGS ─────────────────────────────────────────────────────────
 function renderSettings(){
-  const{music,diceAnim,sfxEnabled,sfxStyle,language}=S.settings;
+  const{music,diceAnim,language}=S.settings;
   const tog=(checked,fn)=>`
     <label class="toggle-wrap">
     <input type="checkbox" ${checked?'checked':''} onchange="${fn}">
@@ -2609,10 +2631,6 @@ function renderSettings(){
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music-icon lucide-music" style="width:18px;height:18px"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> AUDIO</h3>
         ${row('Musica di sottofondo',tog(music,"settingsToggle('music')"))}
-        ${row('Effetti sonori',tog(sfxEnabled,"settingsToggle('sfxEnabled')"))}
-        ${row('Stile effetti sonori',sel(sfxStyle,[
-          ['fantasy','Fantasy'],['scifi','Sci-Fi'],['modern','Moderno'],['neutral','Neutro']
-        ],"settingsSfxStyle(this.value)"))}
       </div>
       <div style="margin-bottom:16px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
         <h3 style="color:#73181F;letter-spacing:2px;font-size:.82rem;margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gamepad2-icon lucide-gamepad-2" style="width:18px;height:18px"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg> GAMEPLAY</h3>
@@ -2685,15 +2703,15 @@ function mkAdv(){
 function mkPara(used){return{id:genParaId(used),name:'',text:'',exits:[],notes:'',tags:[]};}
 function mkExit(type){
   const b={id:genId(),type};
-  if(type==='choice')return{...b,label:'',to:''};
-  if(type==='stat_check')return{...b,stat:'VIG',label:'',successTo:'',failTo:''};
+  if(type==='choice')return{...b,label:'',to:'',exp:0};
+  if(type==='stat_check')return{...b,stat:'VIG',label:'',successTo:'',failTo:'',exp:0};
   if(type==='talent_check')return{...b,talent:'',successTo:'',failTo:''};
   if(type==='code_check')return{...b,code:'',label:'',to:'',elseTo:''};
   if(type==='code_grant')return{...b,code:'',label:''};
   if(type==='end')return{...b,label:"Fine dell'avventura"};
-  if(type==='encounter')return{...b,npcId:NEMICI_PREDEFINITI[0]?.id||'',label:'',to:'',defeatTo:'',victoryMsg:''};
+  if(type==='encounter')return{...b,npcId:NEMICI_PREDEFINITI[0]?.id||'',label:'',to:'',defeatTo:'',victoryMsg:'',exp:0};
   if(type==='exp_grant')return{...b,exp:10,label:'',to:''};
-  if(type==='rest')return{...b,restType:'daily',to:''};
+  if(type==='rest')return{...b,restType:'daily',to:'',exp:0};
   if(type==='item_grant')return{...b,action:'add',itemName:'',itemDesc:'',qty:1,itemSlot:'0',useEquipList:false,equipRef:''};
   return b;
 }
@@ -2870,7 +2888,7 @@ function renderAdvEdit(){
     ${diagPanel}${statsPanel}`;
 
   return`
-  <div style="width:100vw;max-width:1100px;display:flex;flex-direction:column;z-index:1;font-family:'Times New Roman',Georgia,serif;color:#1a1007;min-height:100svh;background:#D8C7A1">
+  <div style="width:100vw;max-width:1100px;display:flex;flex-direction:column;z-index:1;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007;min-height:100svh;background:#D8C7A1">
     <!-- MOBILE SIDEBAR OVERLAY -->
     <div class="ae-sidebar-overlay ${S.ae.mobileShowSidebar?'open':''}" onclick="S.ae.mobileShowSidebar=false;render()">
       <div class="ae-sidebar-panel" onclick="event.stopPropagation()" style="display:flex;flex-direction:column">
@@ -2882,42 +2900,43 @@ function renderAdvEdit(){
       </div>
     </div>
     <!-- HEADER -->
-    <div style="background:#D8C7A1;border-bottom:2px solid #73181F;padding:8px 10px;display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.12)">
-      <button onclick="nav('adv-list')" title="Torna alla lista" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:1.2rem;padding:4px 6px;line-height:1;flex-shrink:0;min-width:36px;min-height:36px">‹</button>
+    <div style="background:#D8C7A1;border-bottom:2px solid #73181F;padding:8px 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.12)">
+      <button onclick="nav('adv-list')" title="Torna alla lista" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:1.2rem;padding:4px 6px;line-height:1;flex-shrink:0">‹</button>
       <!-- Mobile: sidebar toggle -->
       <button class="ae-mobile-toggle" onclick="S.ae.mobileShowSidebar=!S.ae.mobileShowSidebar;render()" style="background:rgba(115,24,31,.1);border:1.5px solid #73181F;color:#73181F;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:36px;display:flex;align-items:center;gap:4px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         §${selPara||'—'}
       </button>
-      <input id="ae-title" value="${esc(adv.title)}" oninput="aeSetMeta('title',this.value)" style="flex:1;min-width:60px;background:transparent;border:none;border-bottom:2px solid #73181F;padding:5px 4px;font-size:.95rem;font-family:inherit;font-weight:bold;color:#1a1007;outline:none">
+      <input id="ae-title" value="${esc(adv.title)}" oninput="aeSetMeta('title',this.value)" style="flex:1;min-width:80px;background:transparent;border:none;border-bottom:2px solid #73181F;padding:5px 6px;font-size:1rem;font-family:inherit;font-weight:bold;color:#1a1007;outline:none">
       <!-- Desktop-only meta fields -->
       <span class="ae-header-meta">
-        <input value="${esc(adv.author||'')} " oninput="aeSetMeta('author',this.value)" placeholder="Autore..." style="width:90px;background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.76rem;font-family:inherit;color:#1a1007;outline:none">
-        <select onchange="aeSetMeta('setting',this.value||null)" style="background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 4px;font-size:.73rem;font-family:inherit;color:#1a1007;outline:none;cursor:pointer">
-          <option value="" ${!adv.setting?'selected':''}>— Amb. —</option>
-          ${Object.keys(SETTINGS).map(k=>`<option value="${k}" ${adv.setting===k?'selected':''} >${SETTINGS[k].label}</option>`).join('')}
+      <input value="${esc(adv.author||'')}" oninput="aeSetMeta('author',this.value)" placeholder="Autore..." style="width:100px;background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.78rem;font-family:inherit;color:#1a1007;outline:none">
+      <select onchange="aeSetMeta('setting',this.value||null)" style="background:transparent;border:none;border-bottom:1px solid #84785E;padding:4px 5px;font-size:.76rem;font-family:inherit;color:#1a1007;outline:none;cursor:pointer">
+        <option value="" ${!adv.setting?'selected':''}>— Ambientazione —</option>
+        ${Object.keys(SETTINGS).map(k=>`<option value="${k}" ${adv.setting===k?'selected':''}>${SETTINGS[k].label}</option>`).join('')}
         </select>
         ${adv.setting?settingBadge(adv.setting):''}
       </span>
       <div style="display:flex;gap:2px;flex-shrink:0">
-        <button onclick="aeUndo()" title="Annulla" style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.9rem;line-height:1;min-height:32px;min-width:32px" ${(!S.ae.undoStack||!S.ae.undoStack.length)?'disabled':''}  >↩</button>
-        <button onclick="aeRedo()" title="Ripristina" style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.9rem;line-height:1;min-height:32px;min-width:32px" ${(!S.ae.redoStack||!S.ae.redoStack.length)?'disabled':''}  >↪</button>
+        <button onclick="aeUndo()" title="Annulla (Ctrl+Z)" style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.85rem;line-height:1;min-height:30px" ${(!S.ae.undoStack||!S.ae.undoStack.length)?'disabled style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.85rem;line-height:1;min-height:30px;opacity:.35"':''}>↩</button>
+        <button onclick="aeRedo()" title="Ripristina (Ctrl+Y)" style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.85rem;line-height:1;min-height:30px" ${(!S.ae.redoStack||!S.ae.redoStack.length)?'disabled style="background:transparent;border:1px solid rgba(115,24,31,.3);color:#73181F;cursor:pointer;border-radius:5px;padding:4px 8px;font-size:.85rem;line-height:1;min-height:30px;opacity:.35"':''}>↪</button>
       </div>
-      <span id="ae-save-ind" style="font-size:.68rem;color:${S.ae.autoSaveStatus==='saved'?'#18732D':'#c0392b'};flex-shrink:0;white-space:nowrap">${S.ae.autoSaveStatus==='saved'?'✓':'●'}</span>
-      <div style="display:flex;gap:4px;flex-shrink:0">
-        <button onclick="aeSaveAdv()" class="btn btn-primary" style="padding:5px 10px;font-size:.78rem;min-height:32px" title="Salva (Ctrl+S)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg></button>
-        <button onclick="aeShowExportMenu(S.ae.adv.id)" class="btn btn-secondary" style="padding:5px 8px;font-size:.78rem;min-height:32px" title="Esporta"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2z"/><path d="M14 2v6h6"/><path d="M12 12v6"/><path d="m9 15 3 3 3-3"/></svg></button>
+      <!-- Autosave indicator -->
+      <span id="ae-save-ind" style="font-size:.72rem;color:${S.ae.autoSaveStatus==='saved'?'#18732D':'#c0392b'};flex-shrink:0;white-space:nowrap">${S.ae.autoSaveStatus==='saved'?'✓':'●'}</span>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        <button onclick="aeSaveAdv()" class="btn btn-primary" style="padding:5px 12px;font-size:.78rem;min-height:32px" title="Salva (Ctrl+S)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg> </button>
+        <button onclick="aeShowExportMenu(S.ae.adv.id)" class="btn btn-secondary" style="padding:5px 10px;font-size:.78rem;min-height:32px" title="Esporta"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8l6 6v12a2 2 0 0 1-2 2z"/><path d="M14 2v6h6"/><path d="M12 12v6"/><path d="m9 15 3 3 3-3"/></svg> </button>
       </div>
     </div>
     <!-- DESCRIZIONE -->
-    ${adv.desc!==undefined?`<div style="background:rgba(0,0,0,.04);border-bottom:1px solid rgba(115,24,31,.15);padding:4px 12px"><input value="${esc(adv.desc||'')} " oninput="aeSetMeta('desc',this.value)" placeholder="Descrizione breve..." style="width:100%;background:transparent;border:none;font-size:.78rem;font-family:inherit;color:#1a1007;outline:none;opacity:.75"></div>`:''}
+    ${adv.desc!==undefined?`<div style="background:rgba(0,0,0,.04);border-bottom:1px solid rgba(115,24,31,.15);padding:5px 14px"><input value="${esc(adv.desc||'')}" oninput="aeSetMeta('desc',this.value)" placeholder="Descrizione breve dell'avventura..." style="width:100%;background:transparent;border:none;font-size:.8rem;font-family:inherit;color:#1a1007;outline:none;opacity:.75"></div>`:''}
     <div style="display:flex;flex:1;overflow:hidden">
-      <!-- SIDEBAR DESKTOP -->
-      <div class="ae-sidebar-desktop" style="width:200px;flex-shrink:0;border-right:2px solid rgba(115,24,31,.2);flex-direction:column;background:rgba(216,199,161,.4);overflow:hidden;max-height:calc(100svh - 86px)">
+      <!-- SIDEBAR -->
+      <div style="width:200px;flex-shrink:0;border-right:2px solid rgba(115,24,31,.2);display:flex;flex-direction:column;background:rgba(216,199,161,.4);overflow:hidden;max-height:calc(100svh - 86px)">
         ${sidebarContent}
       </div>
       <!-- MAIN CONTENT -->
-      <div class="ae-main-area" style="flex:1;padding:16px 18px;overflow-y:auto;max-height:calc(100svh - 86px)">
+      <div style="flex:1;padding:18px 20px;overflow-y:auto;max-height:calc(100svh - 86px)">
         ${mainContent}
       </div>
     </div>
@@ -2926,8 +2945,8 @@ function renderAdvEdit(){
 
 // ─── PARA EDITOR ─────────────────────────────────────────────────────────────
 function renderParaEditor(p,adv,previewMode){
-  const iS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 7px;font-family:'Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;border-radius:3px 3px 0 0`;
-  const sS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 6px;font-family:'Times New Roman',serif;font-size:.85rem;color:#1a1007;outline:none;cursor:pointer`;
+  const iS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 7px;font-family:'EB Garamond','Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;border-radius:3px 3px 0 0`;
+  const sS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 6px;font-family:'EB Garamond','Times New Roman',serif;font-size:.85rem;color:#1a1007;outline:none;cursor:pointer`;
   const isStart=p.id===adv.startParagraph;
   const tLabels={choice:'Scelta',stat_check:'Prova stat',talent_check:'Prova talento',code_check:'Verifica codice',code_grant:'Dona codice',end:'Fine',encounter:'Scontro',exp_grant:'Esperienza',rest:'Riposo',item_grant:'Oggetto inv.'};
   const tColors={choice:'#73181F',stat_check:'#8a6000',talent_check:'#1a4a1a',code_check:'#555',code_grant:'#18732D',end:'#333',encounter:'#8a1f1f',exp_grant:'#1a4a7a',rest:'#4a7a1a',item_grant:'#5a2e7a'};
@@ -2941,6 +2960,8 @@ function renderParaEditor(p,adv,previewMode){
         <span style="color:#73181F;font-weight:bold">→</span>
         <input value="${esc(e.to)}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID" style="width:58px;font-family:monospace;${iS}" maxlength="3">
         ${e.to?`<button onclick="aeJumpTo('${e.to}')" title="Vai al paragrafo ${e.to}" style="background:rgba(115,24,31,.1);border:none;color:#73181F;cursor:pointer;border-radius:4px;padding:3px 6px;font-size:.75rem">↗</button>`:''}
+        <span style="font-size:.7rem;opacity:.55;margin-left:4px">EXP:</span>
+        <input type="number" value="${e.exp||0}" min="0" max="999" oninput="aeUE(${idx},'exp',parseInt(this.value)||0)" placeholder="0" style="width:54px;${iS}" title="EXP concessa alla scelta (0 = nessuna)">
       </div>`;
     }else if(e.type==='stat_check'){
       flds=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center">
@@ -2952,6 +2973,8 @@ function renderParaEditor(p,adv,previewMode){
         <input value="${esc(e.successTo)}" oninput="aeUE(${idx},'successTo',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
         <span style="color:#d32f2f;font-size:.8rem;font-weight:bold">✗→</span>
         <input value="${esc(e.failTo)}" oninput="aeUE(${idx},'failTo',this.value)" placeholder="ID" style="width:50px;font-family:monospace;${iS}" maxlength="3">
+        <span style="font-size:.7rem;opacity:.55;white-space:nowrap">EXP succ.:</span>
+        <input type="number" value="${e.exp||0}" min="0" max="999" oninput="aeUE(${idx},'exp',parseInt(this.value)||0)" placeholder="0" style="width:52px;${iS}" title="EXP concessa al successo">
       </div>`;
     }else if(e.type==='talent_check'){
       flds=`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center">
@@ -3009,7 +3032,11 @@ function renderParaEditor(p,adv,previewMode){
         </div>
         <div>
           <div style="font-size:.66rem;opacity:.55;margin-bottom:3px">Messaggio di vittoria (opzionale)</div>
-          <textarea oninput="aeUE(${idx},'victoryMsg',this.value)" placeholder="Es: Hai sconfitto il Coboldo. Tra le sue spoglie trovi una moneta d'argento..." style="width:100%;min-height:48px;background:rgba(0,0,0,.03);border:1px solid rgba(24,115,45,.4);border-radius:4px;padding:7px;font-family:'Times New Roman',serif;font-size:.82rem;color:#1a1007;resize:vertical;outline:none">${esc(e.victoryMsg||'')}</textarea>
+          <textarea oninput="aeUE(${idx},'victoryMsg',this.value)" placeholder="Es: Hai sconfitto il Coboldo. Tra le sue spoglie trovi una moneta d'argento..." style="width:100%;min-height:48px;background:rgba(0,0,0,.03);border:1px solid rgba(24,115,45,.4);border-radius:4px;padding:7px;font-family:'EB Garamond','Times New Roman',serif;font-size:.82rem;color:#1a1007;resize:vertical;outline:none">${esc(e.victoryMsg||'')}</textarea>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+          <span style="font-size:.72rem;opacity:.65;white-space:nowrap">EXP per vittoria:</span>
+          <input type="number" value="${e.exp||0}" min="0" max="999" oninput="aeUE(${idx},'exp',parseInt(this.value)||0)" placeholder="0" style="width:64px;${iS}" title="EXP concessa in caso di vittoria">
         </div>
       </div>`;
     }else if(e.type==='exp_grant'){
@@ -3028,10 +3055,13 @@ function renderParaEditor(p,adv,previewMode){
         </select>
         <span style="color:#4a7a1a;font-weight:bold">→</span>
         <input value="${esc(e.to)}" oninput="aeUE(${idx},'to',this.value)" placeholder="ID dopo" style="width:52px;font-family:monospace;${iS}" maxlength="3">
+        <span style="font-size:.7rem;opacity:.55;white-space:nowrap">EXP:</span>
+        <input type="number" value="${e.exp||0}" min="0" max="999" oninput="aeUE(${idx},'exp',parseInt(this.value)||0)" placeholder="0" style="width:52px;${iS}" title="EXP concessa dopo il riposo">
       </div>`;
     }else if(e.type==='item_grant'){
       // All equip items for quick pick
-      const allItems=[...DB.equip_weapons,...DB.equip_protection,...DB.equip_slots];
+      const _advSetting = S.ae?.adv?.setting || null;
+      const allItems=[...DB.equip_weapons,...DB.equip_protection,...DB.equip_slots].filter(it=>itemMatchesSetting(it.equip_name,_advSetting));
       const itemOpts=allItems.map(it=>`<option value="${esc(it.equip_name)}" ${e.itemName===it.equip_name?'selected':''}>${esc(it.equip_name)}</option>`).join('');
       flds=`<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
@@ -3095,47 +3125,47 @@ function renderParaEditor(p,adv,previewMode){
 
   return`
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-    <div style="font-family:monospace;font-size:1.4rem;font-weight:bold;color:#73181F;background:rgba(115,24,31,.1);padding:8px 14px;border-radius:6px;cursor:pointer;min-height:44px;display:flex;align-items:center" title="Clicca per cambiare ID" onclick="aeChangeId('${p.id}')">${p.id}</div>
-    <input id="para-name-inp" value="${esc(p.name)}" oninput="aePN(this.value)" placeholder="Nome paragrafo..." style="flex:1;min-width:100px;${iS}">
-    <button onclick="aeSetStart('${p.id}')" title="${isStart?'Paragrafo iniziale':'Imposta come inizio'}" style="padding:8px 10px;border-radius:6px;border:1.5px solid ${isStart?'#18732D':'#84785E'};background:${isStart?'#18732D':'transparent'};color:${isStart?'white':'#1a1007'};cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center">${isStart?'▶ Inizio':'▶'}</button>
-    <button onclick="aeDupPara('${p.id}')" title="Duplica paragrafo" style="padding:8px 10px;border-radius:6px;border:1.5px solid #84785E;background:transparent;color:#1a1007;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
-    <button onclick="aeDP('${p.id}')" title="Elimina paragrafo" style="padding:8px 10px;border-radius:6px;border:1.5px solid #d32f2f;background:transparent;color:#d32f2f;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
+    <div style="font-family:monospace;font-size:1.5rem;font-weight:bold;color:#73181F;background:rgba(115,24,31,.1);padding:6px 14px;border-radius:6px;cursor:pointer" title="Clicca per cambiare ID" onclick="aeChangeId('${p.id}')">${p.id}</div>
+    <input id="para-name-inp" value="${esc(p.name)}" oninput="aePN(this.value)" placeholder="Nome paragrafo (opzionale)..." style="flex:1;min-width:120px;${iS}">
+    <button onclick="aeSetStart('${p.id}')" title="${isStart?'Paragrafo iniziale':'Imposta come inizio'}" style="padding:6px 10px;border-radius:6px;border:1.5px solid ${isStart?'#18732D':'#84785E'};background:${isStart?'#18732D':'transparent'};color:${isStart?'white':'#1a1007'};cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px">${isStart?'▶ Inizio':'▶'}</button>
+    <button onclick="aeDupPara('${p.id}')" title="Duplica paragrafo" style="padding:6px 10px;border-radius:6px;border:1.5px solid #84785E;background:transparent;color:#1a1007;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
+    <button onclick="aeDP('${p.id}')" title="Elimina paragrafo" style="padding:6px 10px;border-radius:6px;border:1.5px solid #d32f2f;background:transparent;color:#d32f2f;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
   </div>
   <!-- Tags -->
   ${(p.tags&&p.tags.length||true)?`<div style="margin-bottom:10px">
     <input value="${esc((p.tags||[]).join(', '))}" oninput="aeSetTags(this.value)" placeholder="Tag (es: combattimento, dialogo, snodo) separati da virgola..." style="width:100%;background:rgba(0,0,0,.03);border:none;border-bottom:1px dashed rgba(115,24,31,.3);padding:4px 2px;font-size:.76rem;font-family:inherit;color:#1a1007;outline:none;opacity:.7">
   </div>`:''}
   <div style="margin-bottom:16px">
-    <div class="sec-hdr" style="margin-top:0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+    <div class="sec-hdr" style="margin-top:0;display:flex;justify-content:space-between;align-items:center">
       <span>TESTO DEL PARAGRAFO</span>
-      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;gap:6px;align-items:center">
         <span id="ae-wc" style="font-size:.68rem;font-weight:normal;opacity:.5;letter-spacing:0">${wc} parole</span>
-        <button onclick="aeTogglePreview()" style="padding:4px 10px;border-radius:6px;border:1px solid rgba(115,24,31,.35);background:transparent;cursor:pointer;font-size:.72rem;font-family:inherit;color:#73181F;display:flex;align-items:center;gap:4px;min-height:32px">${SVG.eye} Anteprima</button>
+        <button onclick="aeTogglePreview()" style="padding:2px 8px;border-radius:4px;border:1px solid rgba(115,24,31,.35);background:transparent;cursor:pointer;font-size:.68rem;font-family:inherit;color:#73181F;display:flex;align-items:center;gap:4px">${SVG.eye} Anteprima</button>
       </div>
     </div>
-    <!-- Formatting toolbar + AI button -->
-    <div style="display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;align-items:center">
-      ${[['**','bold',SVG.bold,'Grassetto'],['_','italic',SVG.italic,'Corsivo'],['__','underline',SVG.underline,'Sottolineato']].map(([m,_n,icon,title])=>`
-      <button onclick="aeFmtWrap('${m}')" title="${title}" class="ae-fmt-btn" style="padding:7px 10px;border-radius:6px;border:1px solid rgba(115,24,31,.3);background:rgba(255,255,255,.4);cursor:pointer;color:#73181F;display:flex;align-items:center;gap:3px;font-size:.76rem;font-family:inherit;min-height:38px">${icon}</button>`).join('')}
+    <!-- Formatting toolbar -->
+    <div style="display:flex;gap:3px;margin-bottom:4px;flex-wrap:wrap">
+      ${[['**','bold',SVG.bold,'Grassetto (Ctrl+B)'],['_','italic',SVG.italic,'Corsivo'],['__','underline',SVG.underline,'Sottolineato']].map(([m,_n,icon,title])=>`
+      <button onclick="aeFmtWrap('${m}')" title="${title}" style="padding:4px 8px;border-radius:4px;border:1px solid rgba(115,24,31,.3);background:rgba(255,255,255,.4);cursor:pointer;color:#73181F;display:flex;align-items:center;gap:3px;font-size:.72rem;font-family:inherit">${icon}</button>`).join('')}
       <div style="flex:1;min-width:8px"></div>
       <button onclick="showAIWritingModal()" title="Assistente AI — suggerisce o migliora il testo" style="padding:7px 12px;border-radius:6px;border:1.5px solid #73181F;background:linear-gradient(135deg,rgba(90,45,145,.12),rgba(115,24,31,.08));cursor:pointer;color:#73181F;display:flex;align-items:center;gap:5px;font-size:.78rem;font-family:inherit;min-height:38px;font-weight:bold;white-space:nowrap;flex-shrink:0">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
         Assistente AI
       </button>
     </div>
-    <textarea id="para-text-ta" oninput="aePT(this.value)" style="width:100%;min-height:200px;background:rgba(0,0,0,.03);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:12px;font-family:'Times New Roman',serif;font-size:1rem;color:#1a1007;resize:vertical;outline:none;line-height:1.8" placeholder="Scrivi qui il testo narrativo del paragrafo...">${esc(p.text)}</textarea>
+    <textarea id="para-text-ta" oninput="aePT(this.value)" style="width:100%;min-height:180px;background:rgba(0,0,0,.03);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:12px;font-family:'EB Garamond','Times New Roman',serif;font-size:.95rem;color:#1a1007;resize:vertical;outline:none;line-height:1.75" placeholder="Scrivi qui il testo narrativo del paragrafo...">${esc(p.text)}</textarea>
   </div>
   <!-- Note interne -->
   <div style="margin-bottom:16px">
-    <div class="sec-hdr" style="margin-top:0">NOTE INTERNE <span style="font-weight:normal;font-size:.7rem;opacity:.5;letter-spacing:0">(non visibili al giocatore)</span></div>
-    <textarea oninput="aeSetNote(this.value)" style="width:100%;min-height:60px;background:rgba(255,249,200,.4);border:1.5px dashed rgba(180,150,0,.4);border-radius:6px;padding:8px 10px;font-family:'Times New Roman',serif;font-size:.86rem;color:#5a4800;resize:vertical;outline:none;line-height:1.6" placeholder="Appunti per l'autore, promemoria di trama, idee future...">${esc(p.notes||'')}</textarea>
+    <div class="sec-hdr" style="margin-top:0">NOTE <span style="font-weight:normal;font-size:.7rem;opacity:.5;letter-spacing:0">(non visibili al giocatore)</span></div>
+    <textarea oninput="aeSetNote(this.value)" style="width:100%;min-height:60px;background:rgba(255,249,200,.4);border:1.5px dashed rgba(180,150,0,.4);border-radius:6px;padding:8px 10px;font-family:'EB Garamond','Times New Roman',serif;font-size:.86rem;color:#5a4800;resize:vertical;outline:none;line-height:1.6" placeholder="Appunti per l'autore, promemoria di trama, idee future...">${esc(p.notes||'')}</textarea>
   </div>
   <div>
     <div class="sec-hdr">USCITE (${(p.exits||[]).length})</div>
     ${exitsHtml}
-    <div class="ae-exit-addrow" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
-      ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Cod. dona'],['end',`${SVG.flag} Fine`],['encounter',`${SVG.sword} Scontro`],['exp_grant',`${SVG.exp} EXP`],['rest',`${SVG.rest} Riposo`],['item_grant',`${SVG.bag} Inventa.`]].map(([t,l])=>`
-      <button onclick="aeAE('${t}')" style="padding:9px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007;display:flex;align-items:center;justify-content:center;gap:3px;min-height:44px" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
+      ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end',`${SVG.flag} Fine`],['encounter',`${SVG.sword} Scontro`],['rest',`${SVG.rest} Riposo`],['item_grant',`${SVG.bag} Inventario`]].map(([t,l])=>`
+      <button onclick="aeAE('${t}')" style="padding:7px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007;display:flex;align-items:center;justify-content:center;gap:3px" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
     </div>
   </div>`;
 }
@@ -3291,7 +3321,7 @@ function renderAdvCharSelect(){
   const settingNote = advSetting ? `
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;padding:8px 12px;background:rgba(115,24,31,.06);border-radius:8px;border-left:3px solid #73181F">
       ${settingBadge(advSetting)}
-      <span style="font-size:.78rem;opacity:.75">Avventura in <strong>${SETTINGS[advSetting]?.label||advSetting}</strong></span>
+      <span style="font-size:.78rem;opacity:.75">Ambientazione <strong>${SETTINGS[advSetting]?.label||advSetting}</strong></span>
     </div>` : '';
 
   return`
@@ -3352,8 +3382,8 @@ function renderAdvPlay(){
   </div>`:'';
 
   const choicesHtml=choices.map(e=>`
-  <button onclick="apGoTo('${e.to}')" class="btn btn-secondary" style="text-align:left;padding:13px 16px;margin-bottom:7px;border-color:rgba(115,24,31,.4)">
-    <span style="color:#73181F;font-weight:bold;margin-right:8px">▶</span>${esc(e.label)||`Vai al paragrafo ${e.to}`}
+  <button onclick="${parseInt(e.exp)>0?`apGrantExp(${parseInt(e.exp)||0},'${e.to}')`:`apGoTo('${e.to}')`}" class="btn btn-secondary" style="text-align:left;padding:13px 16px;margin-bottom:7px;border-color:rgba(115,24,31,.4)">
+    <span style="color:#73181F;font-weight:bold;margin-right:8px">▶</span>${esc(e.label)||`Vai al paragrafo ${e.to}`}${parseInt(e.exp)>0?` <span style="font-size:.7rem;color:#1a4a7a;font-weight:bold;margin-left:6px">+${e.exp} EXP</span>`:''}
     <span style="float:right;font-family:monospace;opacity:.4;font-size:.78rem">${e.to}</span>
   </button>`).join('');
 
@@ -3363,9 +3393,9 @@ function renderAdvPlay(){
     <div style="background:rgba(138,96,0,.07);border:1.5px solid #8a6000;border-radius:8px;padding:12px;margin-bottom:7px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;flex-wrap:wrap;gap:6px">
         <span style="font-weight:bold;color:#8a6000;font-size:.9rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> ${e.label||`Prova di ${e.stat}`}</span>
-        <span class="badge" style="background:#8a6000">${e.stat} ${sv} — 2d6 ≤ ${sv}</span>
+        <span class="badge" style="background:#8a6000">${e.stat} ${sv} — 2d6 ≤ ${sv}</span>${parseInt(e.exp)>0?`<span class="badge" style="background:#1a4a7a">+${e.exp} EXP</span>`:''}
       </div>
-      <button onclick="apRollStat('${e.stat}',${sv},'${e.successTo}','${e.failTo}')" class="btn btn-primary" style="background:#8a6000;border-color:#8a6000;width:100%;font-size:.88rem;min-height:40px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Tira i dadi</button>
+      <button onclick="apRollStat('${e.stat}',${sv},'${e.successTo}','${e.failTo}',${parseInt(e.exp)||0})" class="btn btn-primary" style="background:#8a6000;border-color:#8a6000;width:100%;font-size:.88rem;min-height:40px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Tira i dadi</button>
     </div>`;
   }).join('');
 
@@ -3414,7 +3444,7 @@ function renderAdvPlay(){
         ${e.to?`<span style="color:#18732D;font-weight:bold">✓ Vittoria → §${esc(e.to)}</span>`:''}
         ${e.defeatTo?`<span style="color:#d32f2f;font-weight:bold">✗ Sconfitta → §${esc(e.defeatTo)}</span>`:''}
       </div>`:''}
-      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${_eIdx})" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
+      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${_eIdx},${parseInt(e.exp)||0})" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
     </div>`;
   }).join('');
 
@@ -3451,7 +3481,7 @@ function renderAdvPlay(){
   const hasExits=choicesHtml||statChecksHtml||talentChecksHtml||codeChecksHtml||endsHtml||encountersHtml||expGrantsHtml||itemGrantsHtml;
 
   return`
-  <div style="min-height:100svh;display:flex;flex-direction:column;font-family:'Times New Roman',Georgia,serif;color:#1a1007;background:#D8C7A1">
+  <div style="min-height:100svh;display:flex;flex-direction:column;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007;background:#D8C7A1">
     <div style="background:#120801;border-bottom:2px solid #73181F;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:50">
       <div>
         <div style="color:#D8C7A1;font-weight:bold;font-size:.92rem">${char?esc(char.name):'???'} <span style="opacity:.5;font-size:.78rem;font-weight:normal">— ${esc(adv.title)}</span></div>
@@ -3463,7 +3493,7 @@ function renderAdvPlay(){
         ${codes.length?`<div style="display:flex;gap:4px;flex-wrap:wrap;max-width:180px;justify-content:flex-end">${codes.map(co=>`<span style="background:#18732D;color:white;font-size:.64rem;padding:2px 8px;border-radius:12px;font-family:monospace;font-weight:bold;cursor:pointer" onclick="apRemoveCode('${co}')" title="Clicca per rimuovere">${esc(co)} ×</span>`).join('')}</div>`:''}
         <button onclick="S.ap.showCharSheet=!S.ap.showCharSheet;render()" title="Scheda personaggio" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
         <button onclick="openCombat()" style="background:rgba(115,24,31,.25);border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:4px" title="Avvia combattimento">${SVG.sword}</button>
-        <button onclick="apGoToPrompt()" title="Vai a paragrafo specifico" style="background:rgba(26,52,115,.25);border:1px solid #4a6cba;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:4px">${SVG.goto} §</button>
+        <button onclick="apGoToPrompt()" title="Vai a paragrafo specifico" style="background:rgba(26,52,115,.25);border:1px solid #4a6cba;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:4px">${SVG.goto}Vai a </button>
         ${history.length?`<button onclick="apBack()" style="background:transparent;border:1px solid #73181F;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:3px">${SVG.chevL}</button>`:''}
         ${restExits.length?`<button onclick="openRestModal()" style="background:rgba(74,122,26,.25);border:1px solid #4a7a1a;color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit;display:flex;align-items:center;gap:4px" title="Riposo">${SVG.rest}</button>`:''}
         <button onclick="if(confirm('Abbandonare la partita?'))nav('adv-list')" style="background:transparent;border:1px solid rgba(115,24,31,.5);color:#D8C7A1;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.74rem;font-family:inherit">Abbandona</button>
@@ -3471,13 +3501,13 @@ function renderAdvPlay(){
     </div>
     ${S.ap.showCharSheet&&char?`
     <div onclick="S.ap.showCharSheet=false;render()" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:12px">
-      <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;width:100%;max-width:620px;max-height:93svh;overflow-y:auto;font-family:'Times New Roman',Georgia,serif;display:flex;flex-direction:column">
+      <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;width:100%;max-width:620px;max-height:93svh;overflow-y:auto;font-family:'EB Garamond','Times New Roman',Georgia,serif;display:flex;flex-direction:column">
         <!-- Header sticky -->
         <div style="padding:14px 18px 10px;border-bottom:2px solid #73181F;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;position:sticky;top:0;background:#D8C7A1;z-index:10;border-radius:12px 12px 0 0">
           <div>
             <div style="font-size:1.15rem;font-weight:bold;color:#73181F">${esc(char.name)}</div>
-            <div style="font-size:.75rem;opacity:.6">${[char.heritage,char.childhood,char.profession].filter(Boolean).map(v=>esc(v)).join(' · ')} · Lv.${char.level}</div>
-            <div style="font-size:.68rem;color:#73181F;margin-top:2px;font-style:italic">Le modifiche valgono solo per questa avventura</div>
+            <div style="font-size:.75rem;color:#73181F;margin-top:2px;font-style:italic">${[char.heritage,char.childhood,char.profession].filter(Boolean).map(v=>esc(v)).join(' · ')} · Lv.${char.level}<span style="font-size:.72rem;color:#1a4a7a;margin-top:2px">                           EXP: ${char.exp||0} / ${(char.level||1)*10}</span></div>
+            <div style="font-size:.68rem;opacity:.6">Le modifiche valgono solo per questa avventura</div>
           </div>
           <button onclick="S.ap.showCharSheet=false;render()" style="background:transparent;border:none;font-size:1.4rem;cursor:pointer;color:#73181F;padding:4px 8px;flex-shrink:0;min-width:40px;min-height:40px;display:flex;align-items:center;justify-content:center">✕</button>
         </div>
@@ -3520,18 +3550,18 @@ function renderAdvPlay(){
             // Salute + Energia + DMG/PROT
             out += '<div>';
             // HP
-            out += '<div style="font-size:.72rem;color:#18732D;font-weight:bold;margin-bottom:3px">SALUTE</div>';
+            out += '<div style="font-size:.72rem;color:#73181F;font-weight:bold;margin-bottom:3px">SALUTE</div>';
             out += '<div class="bar-outer" style="margin-bottom:5px"><div class="bar-inner" style="width:'+((L.hpMax>0?Math.min(100,L.hpCurr/L.hpMax*100):0))+'%;background:#18732D"></div><div class="bar-label">'+L.hpCurr+' / '+L.hpMax+'</div></div>';
             out += '<div style="display:flex;gap:5px;margin-bottom:10px">'
-              +'<button onclick="apAdjChar(\'hpCurr\',-1)" style="flex:1;background:#18732D;color:white;border:none;border-radius:6px;padding:6px;cursor:pointer;font-weight:bold;font-size:1.1rem;min-height:40px">−</button>'
-              +'<button onclick="apAdjChar(\'hpCurr\',1)" style="flex:1;background:#18732D;color:white;border:none;border-radius:6px;padding:6px;cursor:pointer;font-weight:bold;font-size:1.1rem;min-height:40px">+</button>'
+              +'<button onclick="apAdjChar(\'hpCurr\',-1)" style="width:25px;height:25px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">−</button>'
+              +'<button onclick="apAdjChar(\'hpCurr\',1)" style="width:25px;height:25px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>'
               +'</div>';
             // EN
-            out += '<div style="font-size:.72rem;color:#182473;font-weight:bold;margin-bottom:3px">ENERGIA</div>';
+            out += '<div style="font-size:.72rem;color:#73181F;font-weight:bold;margin-bottom:3px">ENERGIA</div>';
             out += '<div class="bar-outer" style="margin-bottom:5px"><div class="bar-inner" style="width:'+((L.enMax>0?Math.min(100,L.enCurr/L.enMax*100):0))+'%;background:#182473"></div><div class="bar-label">'+L.enCurr+' / '+L.enMax+'</div></div>';
             out += '<div style="display:flex;gap:5px;margin-bottom:10px">'
-              +'<button onclick="apAdjChar(\'enCurr\',-1)" style="flex:1;background:#182473;color:white;border:none;border-radius:6px;padding:6px;cursor:pointer;font-weight:bold;font-size:1.1rem;min-height:40px">−</button>'
-              +'<button onclick="apAdjChar(\'enCurr\',1)" style="flex:1;background:#182473;color:white;border:none;border-radius:6px;padding:6px;cursor:pointer;font-weight:bold;font-size:1.1rem;min-height:40px">+</button>'
+              +'<button onclick="apAdjChar(\'enCurr\',-1)" style="width:25px;height:25px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">−</button>'
+              +'<button onclick="apAdjChar(\'enCurr\',1)" style="width:25px;height:25px;background:#73181F;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>'
               +'</div>';
             // DMG / PROT
             out += '<div style="display:flex;gap:6px">'
@@ -4213,29 +4243,36 @@ function apStart(advId,charId){
   apSaveSession();
   nav('adv-play');
 }
-function apGrantExp(amount, toPara){
-  if(!S.ap || !S.ap.char) return;
+function apGrantExp(amount, toPara, callback){
+  // EXP is adventure-only — only touches S.ap.char, never the canonical S.chars entry
+  if(!S.ap || !S.ap.char || !amount) { if(toPara) apGoTo(toPara); else if(callback) callback(); return; }
   const ch = S.ap.char;
   ch.exp = (ch.exp||0) + (amount||0);
-  // Sync to canonical character too
-  const canon = S.chars.find(c=>c.id===S.ap.charId);
-  if(canon) canon.exp = ch.exp;
-  persist();
-  // Check level up threshold: level * 10 EXP to next level (simple formula)
+  apSaveSession(); // persist adventure snapshot only
+
   const expNeeded = (ch.level||1) * 10;
-  if(ch.exp >= expNeeded){
-    // Show level-up banner then navigate
-    const msg = `+${amount} EXP! Totale: ${ch.exp}/${expNeeded}\n\nHai raggiunto i punti necessari per salire di livello!`;
-    if(confirm(msg + '\n\nVuoi fare Level Up ora?')){
-      if(toPara){ S.ap.history.push(S.ap.currPara); S.ap.currPara=toPara; }
-      nav('levelup', {charId: S.ap.charId});
-      return;
-    }
+  const canLevelUp = ch.exp >= expNeeded;
+
+  if(canLevelUp){
+    // Show a toast first, then prompt for level up
+    showToast(`+${amount} EXP — Livello superiore disponibile!`, '#1a4a7a');
+    setTimeout(()=>{
+      if(confirm(`Hai guadagnato ${amount} EXP (totale: ${ch.exp}/${expNeeded})!\n\nVuoi salire di livello ora?`)){
+        // Store where to return after level up
+        S.ap._pendingLevelUpReturnPara = toPara || null;
+        if(toPara){ S.ap.history.push(S.ap.currPara); S.ap.currPara=toPara; }
+        nav('levelup', {charId: S.ap.charId});
+        return;
+      }
+      if(toPara) apGoTo(toPara);
+      else render();
+    }, 300);
   } else {
-    alert(`+${amount} EXP! Totale: ${ch.exp}/${expNeeded}`);
+    showToast(`+${amount} EXP  ·  ${ch.exp}/${expNeeded}`, '#1a4a7a');
+    if(toPara) apGoTo(toPara);
+    else if(callback) callback();
+    else render();
   }
-  if(toPara) apGoTo(toPara);
-  else render();
 }
 
 function apGoTo(paraId){
@@ -4313,13 +4350,15 @@ function apRemoveCode(code){
   if(!S.ap)return;
   S.ap.codes=S.ap.codes.filter(c=>c!==code);render();
 }
-function apRollStat(stat,statVal,successTo,failTo){
+function apRollStat(stat,statVal,successTo,failTo,expOnSuccess){
   if(!S.ap)return;
   openDiceOv(2,`Prova di ${stat}`,`Successo con 2d6 ≤ ${statVal} (tuo ${stat}: ${statVal})`,'stat',statVal,(vals,total)=>{
     const ok=total<=statVal;
     const dest=ok?successTo:failTo;
-    if(dest){S.ap.lastVictoryMsg='';setTimeout(()=>apGoTo(dest),200);}
-    else render();
+    const exp=ok?(parseInt(expOnSuccess)||0):0;
+    const proceed=()=>{ if(dest) setTimeout(()=>apGoTo(dest),200); else render(); };
+    if(exp>0) apGrantExp(exp, dest||null, dest?null:proceed);
+    else proceed();
   });
 }
 
@@ -4358,7 +4397,7 @@ function showAbilityInfoModal() {
   if (existing) { existing.remove(); return; }
   const d = document.createElement('div');
   d.id = 'ability-info-modal';
-  d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Times New Roman,Georgia,serif';
+  d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Georgia,serif';
   d.innerHTML = `
   <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:22px 20px;max-width:420px;width:100%;max-height:88svh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.45)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #73181F">
@@ -4393,7 +4432,7 @@ function showTemporalInfoModal(disciplinaFilter) {
   if (existing) { existing.remove(); return; }
   const d = document.createElement('div');
   d.id = 'temporal-info-modal';
-  d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Times New Roman,Georgia,serif';
+  d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Georgia,serif';
 
   // Descrizioni per disciplina
   const DISC = {
@@ -4586,7 +4625,7 @@ const NEMICI_PREDEFINITI = [
     ]
   },
   {
-    id: 'lupo-minion',
+    id: 'lupo',
     nome: 'Lupo',
     grado: 2,
     vig: 8, ist: 7, men: 3,
@@ -4711,7 +4750,7 @@ const NEMICI_PREDEFINITI = [
     hp: 10, hpMax: 10,
     en: 14, enMax: 14,
     dmg: 3, prot: 1,
-    settings: ['fantasy','medievale','moderno'],
+    settings: ['fantasy','medievale','moderno','postapoc'],
     bersaglio: ['PG con più MEN'],
     abilita: [
       {
@@ -4919,7 +4958,7 @@ const NEMICI_PREDEFINITI = [
     hp: 4, hpMax: 4,
     en: 8, enMax: 8,
     dmg: 3, prot: 1,
-    settings: ['scifi','postapoc'],
+    settings: ['scifi','postapoc','fantasy'],
     bersaglio: ['Attacco Standard'],
     abilita: [
       {
@@ -4948,8 +4987,8 @@ const NEMICI_PREDEFINITI = [
     ]
   },
   {
-    id: 'virus-di-titano',
-    nome: 'Virus di Titano',
+    id: 'virus',
+    nome: 'Virus',
     grado: 2,
     vig: 6, ist: 7, men: 5,
     hp: 18, hpMax: 18,
@@ -4990,7 +5029,7 @@ const NEMICI_PREDEFINITI = [
   },
   {
     id: 'demone-oscuro',
-    nome: 'Demone Oscuro (Boss)',
+    nome: 'Demone Oscuro',
     grado: 5,
     vig: 10, ist: 8, men: 9,
     hp: 20, hpMax: 20,
@@ -5008,13 +5047,13 @@ const NEMICI_PREDEFINITI = [
   },
   {
     id: 'cultista-capo',
-    nome: 'Cultista Capo (Boss)',
+    nome: 'Cultista Capo',
     grado: 3,
     vig: 6, ist: 6, men: 9,
     hp: 14, hpMax: 14,
     en: 18, enMax: 18,
     dmg: 4, prot: 2,
-    settings: ['fantasy','medievale','moderno'],
+    settings: ['fantasy','medievale','moderno','postapoc'],
     bersaglio: ['Attacco Standard'],
     abilita: [
       {
@@ -5073,7 +5112,7 @@ const NEMICI_PREDEFINITI = [
     hp: 5, hpMax: 5,
     en: 6, enMax: 6,
     dmg: 3, prot: 0,
-    settings: ['scifi','postapoc'],
+    settings: ['scifi','postapoc','fantasy'],
     bersaglio: ['Attacco Standard'],
     abilita: [
       {
@@ -5104,11 +5143,11 @@ const COMBAT_TUTORIAL_STEPS = [
   },
   {
     title:'Svenimento e morte (5/5)',
-    text:'Quando la Salute scende a <strong>0</strong> il personaggio sviene ed è morente. Solitamente in questo caso l\'avventura termina a meno che essa non preveda un qualche scenario particolare se ciò devesse accadere.<br><br>Ora tutto è pronto per cimentarti nel tuo primo combattimento.<br><br>Buona fortuna!'
+    text:'Quando la Salute scende a <strong>0</strong> il personaggio sviene ed è morente. Solitamente in questo caso l\'avventura termina a meno che essa non preveda un qualche scenario particolare se ciò devesse accadere.<br><br>Ora tutto è pronto per cimentarti nel tuo primo combattimento.<br><br>Buona fortuna!<br><br>Puoi riaprire questa guida in qualunque momento cliccando sul pulsante \"i\" in alto'
   }
 ];
 
-function apStartCombat(npcId, toPara, defeatTo, msgIdx){
+function apStartCombat(npcId, toPara, defeatTo, msgIdx, expOnVictory){
   if(S.ap){
     S.ap.pendingNpcId = npcId || (NEMICI_PREDEFINITI[0]?.id||'');
     S.ap.pendingCombatReturnPara = toPara || null;
@@ -5116,6 +5155,7 @@ function apStartCombat(npcId, toPara, defeatTo, msgIdx){
     S.ap.pendingVictoryMsg = (S.ap._encounterVictoryMsgs && msgIdx >= 0)
       ? (S.ap._encounterVictoryMsgs[msgIdx] || '')
       : '';
+    S.ap.pendingCombatExp = parseInt(expOnVictory)||0;
   }
   openCombat();
 }
@@ -5230,7 +5270,7 @@ function openRestModal(){
       ${statRow('Energia', ch.enCurr, ch.enMax, canDaily?dailyENGain:0)}
       <div style="font-size:.75rem;margin-top:6px;opacity:.65">Razioni disponibili: <strong>${rations}</strong></div>
       ${canDaily
-        ? `<button onclick="apDoRest('daily','${dailyExit?.to||''}')" style="margin-top:10px;width:100%;padding:10px;background:#4a7a1a;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.88rem;min-height:40px">Riposati</button>`
+        ? `<button onclick="apDoRest('daily','${dailyExit?.to||''}',${parseInt(dailyExit?.exp)||0})" style="margin-top:10px;width:100%;padding:10px;background:#4a7a1a;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.88rem;min-height:40px">Riposati</button>`
         : `<div style="margin-top:8px;font-size:.78rem;color:#c0392b;font-weight:bold">✗ Razioni insufficienti</div>`}
     </div>`;
   }
@@ -5247,7 +5287,7 @@ function openRestModal(){
       ${statRow('Energia', ch.enCurr, ch.enMax, canProl?prolENGain:0)}
       <div style="font-size:.75rem;margin-top:6px;opacity:.65">Razioni disponibili: <strong>${rations}</strong></div>
       ${canProl
-        ? `<button onclick="apDoRest('prolonged','${prolExit?.to||''}')" style="margin-top:10px;width:100%;padding:10px;background:#18732D;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.88rem;min-height:40px">Riposati</button>`
+        ? `<button onclick="apDoRest('prolonged','${prolExit?.to||''}',${parseInt(prolExit?.exp)||0})" style="margin-top:10px;width:100%;padding:10px;background:#18732D;color:white;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;font-size:.88rem;min-height:40px">Riposati</button>`
         : `<div style="margin-top:8px;font-size:.78rem;color:#c0392b;font-weight:bold">✗ Razioni insufficienti (ne servono 2)</div>`}
     </div>`;
   }
@@ -5269,7 +5309,7 @@ function closeRestModal(){
   if(d) d.remove();
 }
 
-function apDoRest(type, toPara){
+function apDoRest(type, toPara, expAmount){
   if(!S.ap || !S.ap.char) return;
   const ch = S.ap.char;
   const inv = ch.inventory || [];
@@ -5294,7 +5334,9 @@ function apDoRest(type, toPara){
   closeRestModal();
   showToast(type==='prolonged' ? '✓ Riposo completo — salute ed energia ripristinate' : '✓ Riposo giornaliero — recupero parziale', '#4a7a1a');
   apSaveSession();
-  if(toPara){
+  if(expAmount>0){
+    setTimeout(()=>apGrantExp(expAmount, toPara||null), 300);
+  } else if(toPara){
     apGoTo(toPara);
   } else {
     render();
@@ -5350,6 +5392,8 @@ function closeCombat(){
     const destPara = isVictory ? victoryPara : defeatPara;
     S.ap.lastVictoryMsg = (isVictory && victoryMsg) ? victoryMsg : '';
     S.ap._victoryMsgShown = false; // reset flag
+    const pendingExp = isVictory ? (S.ap.pendingCombatExp||0) : 0;
+    S.ap.pendingCombatExp = 0;
     if(destPara){
       S.ap.history.push(S.ap.currPara);
       S.ap.currPara = destPara;
@@ -5357,6 +5401,7 @@ function closeCombat(){
       S.ap.currentRestExits=(_p?.exits||[]).filter(e=>e.type==='rest');
     }
     S.page='adv-play';
+    if(pendingExp>0){ render(); setTimeout(()=>apGrantExp(pendingExp, null), 400); return; }
   } else {
     S.page='home';
   }
@@ -5459,7 +5504,7 @@ function openCombatItemModal(name, desc, cost){
   if(!name) return;
   var d = document.createElement('div');
   d.id = 'combat-item-info-modal';
-  d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Times New Roman,Georgia,serif';
+  d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Georgia,serif';
   d.onclick = function(e){ if(e.target===d) d.remove(); };
   d.innerHTML =
     '<div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:20px 18px;max-width:380px;width:100%;max-height:80vh;overflow-y:auto">'
@@ -5482,7 +5527,7 @@ function renderCombat(){
     const step = COMBAT_TUTORIAL_STEPS[tutorialStep];
     const total = COMBAT_TUTORIAL_STEPS.length;
     return `<div onclick="void(0)" style="position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px">
-      <div style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:24px 22px;max-width:460px;width:100%;font-family:'Times New Roman',Georgia,serif;color:#1a1007">
+      <div style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:24px 22px;max-width:460px;width:100%;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
           <h3 style="color:#73181F;margin:0;font-size:1rem;letter-spacing:2px">${step.title}</h3>
           <span style="font-size:.72rem;opacity:.5">${tutorialStep+1}/${total}</span>
@@ -5499,7 +5544,7 @@ function renderCombat(){
   // Talents modal
   const talentsHtml = showTalentsModal ? `
   <div onclick="S.combat.showTalentsModal=false;render()" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px">
-    <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:20px 18px 24px;width:100%;max-width:520px;max-height:85svh;overflow-y:auto;font-family:'Times New Roman',Georgia,serif">
+    <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:20px 18px 24px;width:100%;max-width:520px;max-height:85svh;overflow-y:auto;font-family:'EB Garamond','Times New Roman',Georgia,serif">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <h3 style="color:#73181F;margin:0;font-size:1rem;letter-spacing:2px">TALENTI</h3>
         <button onclick="S.combat.showTalentsModal=false;render()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#73181F">✕</button>
@@ -5516,7 +5561,7 @@ function renderCombat(){
   // Abilities modal (PC)
   const abilitiesHtml = showAbilitiesModal ? `
   <div onclick="S.combat.showAbilitiesModal=false;render()" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px">
-    <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:20px 18px 24px;width:100%;max-width:520px;max-height:85svh;overflow-y:auto;font-family:'Times New Roman',Georgia,serif">
+    <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:20px 18px 24px;width:100%;max-width:520px;max-height:85svh;overflow-y:auto;font-family:'EB Garamond','Times New Roman',Georgia,serif">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <h3 style="color:#73181F;margin:0;font-size:1rem;letter-spacing:2px">ABILITÀ ISTANTANEE</h3>
         <button onclick="S.combat.showAbilitiesModal=false;render()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#73181F">✕</button>
@@ -5533,7 +5578,7 @@ function renderCombat(){
   // NPC Abilities modal
   const npcAbilHtml = showNpcAbilitiesModal ? `
   <div onclick="S.combat.showNpcAbilitiesModal=false;render()" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px">
-    <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:20px 18px 24px;width:100%;max-width:520px;max-height:85svh;overflow-y:auto;font-family:'Times New Roman',Georgia,serif">
+    <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:12px;padding:20px 18px 24px;width:100%;max-width:520px;max-height:85svh;overflow-y:auto;font-family:'EB Garamond','Times New Roman',Georgia,serif">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
         <h3 style="color:#73181F;margin:0;font-size:1rem;letter-spacing:2px">ABILITÀ PNG</h3>
         <button onclick="S.combat.showNpcAbilitiesModal=false;render()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:#73181F">✕</button>
@@ -5555,7 +5600,7 @@ function renderCombat(){
     if(existing) existing.remove();
     const d = document.createElement('div');
     d.id = 'combat-item-info-modal';
-    d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Times New Roman,Georgia,serif';
+    d.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Georgia,serif';
     d.onclick = e => { if(e.target===d) d.remove(); };
     d.innerHTML = '<div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:20px 18px;max-width:380px;width:100%">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
@@ -5599,9 +5644,9 @@ function renderCombat(){
 
     function makeHpBar(adjFn){
       return '<div style="display:flex;gap:6px;align-items:center;margin-top:6px">'
-        + '<button onclick="'+adjFn+'(\'hp\',-1)" style="width:40px;height:40px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
+        + '<button onclick="'+adjFn+'(\'hp\',-1)" style="width:25px;height:25px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
         + '<span style="font-size:.82rem;flex:1;text-align:center;font-weight:bold"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:middle"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> '+data.hp+'/'+data.hpMax+'</span>'
-        + '<button onclick="'+adjFn+'(\'hp\',1)" style="width:40px;height:40px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>'
+        + '<button onclick="'+adjFn+'(\'hp\',1)" style="width:25px;height:25px;background:'+color+';color:white;border:none;border-radius:5px;cursor:pointer;font-size:1.1rem;font-weight:bold;flex-shrink:0">+</button>'
         + '</div>'
         + '<div style="height:8px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15);margin-top:4px"><div style="height:100%;background:#18732D;width:'+hpPct+'%;transition:width .25s"></div></div>';
     }
@@ -5609,9 +5654,9 @@ function renderCombat(){
     function makeEnBar(adjFn){
       if(!data.enMax) return '';
       return '<div style="display:flex;gap:6px;align-items:center;margin-top:6px">'
-        + '<button onclick="'+adjFn+'(\'en\',-1)" style="width:28px;height:28px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
+        + '<button onclick="'+adjFn+'(\'en\',-1)" style="width:25px;height:25px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">&#8722;</button>'
         + '<span style="font-size:.82rem;flex:1;text-align:center;font-weight:bold"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1007" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> '+(data.en||0)+'/'+data.enMax+'</span>'
-        + '<button onclick="'+adjFn+'(\'en\',1)" style="width:28px;height:28px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">+</button>'
+        + '<button onclick="'+adjFn+'(\'en\',1)" style="width:25px;height:25px;background:#1a3c73;color:white;border:none;border-radius:5px;cursor:pointer;font-size:1rem;font-weight:bold;flex-shrink:0">+</button>'
         + '</div>'
         + '<div style="height:8px;border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,.15);margin-top:4px"><div style="height:100%;background:#182473;width:'+enPct+'%;transition:width .25s"></div></div>';
     }
@@ -5643,10 +5688,12 @@ function renderCombat(){
     } else {
       return '<div style="flex:1;min-width:0;background:rgba(196,176,138,.2);border:2px solid #8a3000;border-radius:10px;padding:12px">'
         + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
-        +   '<div>'
-        +     '<div style="font-weight:bold;color:#8a3000;font-size:.72rem;letter-spacing:2px">'+esc(data.nome||data.name||'PNG')+'</div>'
-        +     (data.grado ? '<div style="font-size:.62rem;opacity:.5;margin-top:1px">Grado '+data.grado+'</div>' : '')
-        +   '</div>'
+		+ '<div>'
+		+   '<div style="display:flex; align-items:center; gap:8px;">'
+		+     '<div style="font-weight:bold; color:#8a3000; font-size:.72rem; letter-spacing:2px; text-transform:uppercase;">' + esc(data.nome || data.name || 'PNG') + '</div>'
+		+     (data.grado ? '<span style="font-size:.62rem; opacity:.5; margin-top:2px;">Grado ' + data.grado + '</span>' : '')
+		+   '</div>'
+		+ '</div>'
         + '</div>'
         + statRow1
         + statRow2
@@ -5659,7 +5706,7 @@ function renderCombat(){
 
 
   return `
-  <div style="min-height:100svh;display:flex;flex-direction:column;font-family:'Times New Roman',Georgia,serif;color:#1a1007;background:#D8C7A1">
+  <div style="min-height:100svh;display:flex;flex-direction:column;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007;background:#D8C7A1">
     ${tutHtml}
     <div style="background:#120801;border-bottom:2px solid #73181F;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:50">
       <div style="color:#D8C7A1;font-weight:bold;font-size:.95rem;letter-spacing:2px">COMBATTIMENTO</div>
@@ -5963,14 +6010,15 @@ function renderNpcDb(){
       <button onclick="event.stopPropagation();npcDuplicate('${n.id}')" title="Duplica" style="background:transparent;border:1px solid #73181F;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#73181F;flex-shrink:0">${SVG.copy}</button>
       <button onclick="event.stopPropagation();npcOpenEdit('${n.id}')" title="Modifica" style="background:#73181F;border:none;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0">${SVG.edit}</button>
       <button onclick="event.stopPropagation();npcDelete('${n.id}')" title="Elimina" style="background:transparent;border:1px solid #d32f2f;border-radius:5px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#d32f2f;flex-shrink:0">${SVG.trash}</button>`;
-    return`<div onclick="showNpcModal('${n.id}')" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:7px;border:1.5px solid ${isPred?'rgba(115,24,31,.3)':'#73181F'};background:${isPred?'rgba(196,176,138,.18)':'rgba(196,176,138,.28)'};margin-bottom:5px;cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='${isPred?'rgba(196,176,138,.18)':'rgba(196,176,138,.28)'}'">
+    return`<div onclick="showNpcModal('${n.id}')" style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:7px;border:1.5px solid ${isPred?'rgba(115,24,31,.3)':'#73181F'};background:${isPred?'rgba(196,176,138,.18)':'rgba(196,176,138,.28)'};margin-bottom:5px;cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='${isPred?'rgba(196,176,138,.18)':'rgba(196,176,138,.28)'}'">
       <div style="min-width:0;flex:1;overflow:hidden">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow:hidden">
           <span style="font-weight:bold;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(n.nome)}</span>
           ${isPred?'':`<span class="badge" style="font-size:.58rem;flex-shrink:0">PER</span>`}
           <span style="font-size:.68rem;color:#73181F;font-weight:bold;flex-shrink:0">Gr. ${GRADE_ROMAN2[g]}</span>
+		          ${settingIcons?`<div style="margin-top:3px"><span class="set-tags-row">${settingIcons}</span></div>`:'<div style="margin-top:2px;font-size:.7rem;opacity:.45;font-style:italic">Tutte le ambientazioni</div>'}
         </div>
-        ${settingIcons?`<div style="margin-top:3px"><span class="set-tags-row">${settingIcons}</span></div>`:'<div style="margin-top:2px;font-size:.7rem;opacity:.45;font-style:italic">Tutte le ambientazioni</div>'}
+
       </div>
       <div style="display:flex;gap:4px;flex-shrink:0;align-items:center">${actionBtns}<span style="opacity:.3;font-size:.8rem;margin-left:2px">${SVG.goto}</span></div>
     </div>`;
@@ -6249,12 +6297,12 @@ function renderCommunity(){
 
   const filterBar = `
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
-      <input value="${esc(filters.search)}" oninput="setCommunityFilter('search',this.value)" placeholder="Cerca per nome..." style="flex:2;min-width:130px;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:8px 9px;font-family:'Times New Roman',serif;font-size:.88rem;color:#1a1007;outline:none">
-      <select onchange="setCommunityFilter('setting',this.value)" style="flex:1;min-width:110px;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:8px 7px;font-family:'Times New Roman',serif;font-size:.88rem;color:#1a1007;outline:none">
+      <input value="${esc(filters.search)}" oninput="setCommunityFilter('search',this.value)" placeholder="Cerca per nome..." style="flex:2;min-width:130px;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:8px 9px;font-family:'EB Garamond','Times New Roman',serif;font-size:.88rem;color:#1a1007;outline:none">
+      <select onchange="setCommunityFilter('setting',this.value)" style="flex:1;min-width:110px;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:8px 7px;font-family:'EB Garamond','Times New Roman',serif;font-size:.88rem;color:#1a1007;outline:none">
         <option value="">Tutte le ambientazioni</option>
         ${Object.entries(SETTINGS_LABELS).map(([k,v])=>`<option value="${k}" ${filters.setting===k?'selected':''}>${v}</option>`).join('')}
       </select>
-      <select onchange="setCommunityFilter('sort',this.value)" style="flex:1;min-width:100px;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:8px 7px;font-family:'Times New Roman',serif;font-size:.88rem;color:#1a1007;outline:none">
+      <select onchange="setCommunityFilter('sort',this.value)" style="flex:1;min-width:100px;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:8px 7px;font-family:'EB Garamond','Times New Roman',serif;font-size:.88rem;color:#1a1007;outline:none">
         <option value="name" ${filters.sort==='name'?'selected':''}>Ordina: Nome</option>
         <option value="paragraphs" ${filters.sort==='paragraphs'?'selected':''}>Ordina: Lunghezza</option>
         <option value="recent" ${filters.sort==='recent'?'selected':''}>Ordina: Recenti</option>
@@ -6293,7 +6341,7 @@ function setCommunityFilter(key, val){
 
 </script>
 <!-- CREDITS OVERLAY -->
-<div id="credits-overlay" onclick="hideCreditsOv()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20001;align-items:flex-end;justify-content:center;cursor:pointer;font-family:'Times New Roman',Georgia,serif">
+<div id="credits-overlay" onclick="hideCreditsOv()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20001;align-items:flex-end;justify-content:center;cursor:pointer;font-family:'EB Garamond','Times New Roman',Georgia,serif">
   <div style="width:min(500px,94vw);background:linear-gradient(180deg,transparent 0%,rgba(12,8,5,.95) 8%,rgba(12,8,5,.98) 100%);padding:0 0 32px;pointer-events:none;position:relative">
     <div style="text-align:center;padding:20px 0 8px;font-size:.78rem;color:rgba(216,199,161,.5);letter-spacing:2px">tocca per chiudere</div>
     <div id="credits-scroll" style="overflow:hidden;max-height:82vh;pointer-events:none">
@@ -6322,13 +6370,13 @@ function setCommunityFilter(key, val){
           <div style="color:#73181F;font-size:.72rem;letter-spacing:3px;font-weight:bold;margin-bottom:14px;border-bottom:1px solid rgba(115,24,31,.3);padding-bottom:6px">COMPARTO VISIVO E UI</div>
           <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Direzione artistica e generazione immagini</span><br><span style="font-size:.88rem">Generato tramite AI <span style="opacity:.55">(Gemini, Microsoft Copilot)</span><br>con la supervisione di <strong>Lorenzo De Gasperis</strong></span></div>
           <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">UI/UX Design</span><br><span style="opacity:.45;font-style:italic">— —</span></div>
-          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Consulenza Grafica Addizionale</span><br><span style="opacity:.45;font-style:italic">— —</span></div>
+          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Consulenza Grafica Addizionale</span><br><span style="font-size:.88rem"> Amici </span></div>
         </div>
 
         <div style="margin-bottom:32px">
           <div style="color:#73181F;font-size:.72rem;letter-spacing:3px;font-weight:bold;margin-bottom:14px;border-bottom:1px solid rgba(115,24,31,.3);padding-bottom:6px">LOCALIZZAZIONE E SUONO</div>
           <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Traduzioni</span><br><strong>Lorenzo De Gasperis</strong></div>
-          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Musica e Sound Effects</span><br><span style="opacity:.45;font-style:italic">— —</span></div>
+          <div style="margin-bottom:8px"><span style="opacity:.6;font-size:.82rem">Musica e Sound Effects</span><br><span style="font-size:.88rem"> Suno AI </span></div>
         </div>
 
         <div style="margin-top:40px;opacity:.35;font-size:.75rem;letter-spacing:2px">© SAGA — Tutti i diritti riservati</div>
@@ -6338,7 +6386,7 @@ function setCommunityFilter(key, val){
 </div>
 
 <!-- 3D DICE OVERLAY -->
-<div id="dice-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:20000;align-items:center;justify-content:center;font-family:'Times New Roman',Georgia,serif;padding:12px">
+<div id="dice-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:20000;align-items:center;justify-content:center;font-family:'EB Garamond','Times New Roman',Georgia,serif;padding:12px">
   <div style="background:#D8C7A1;border:3px solid #73181F;border-radius:14px;padding:22px 24px;max-width:520px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.6)">
     <h3 id="dice-ov-title" style="color:#73181F;letter-spacing:3px;font-size:1rem;margin:0 0 3px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dices-icon lucide-dices"><rect width="12" height="12" x="2" y="10" rx="2" ry="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg> LANCIA I DADI</h3>
     <p id="dice-ov-sub" style="font-size:.83rem;opacity:.68;margin:0 0 14px"></p>
