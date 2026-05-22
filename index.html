@@ -1275,7 +1275,7 @@ function renderCharacters(){
 	  <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>
       <div>
         <h2 style="font-size:1.5rem;letter-spacing:4px;margin:0">PERSONAGGI</h2>
-        <div style="font-size:.78rem;opacity:.55;margin-top:2px">${S.chars.length} ${S.chars.length===1?'eroe':'eroi'} ${S.chars.length===1?'creato':'creati'}</div>
+        <div style="color:#73181F;font-style:italic;font-size:.85rem">${S.chars.length} ${S.chars.length===1?'eroe':'eroi'} ${S.chars.length===1?'creato':'creati'}</div>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:0;margin-bottom:16px">${charCards}</div>
@@ -3831,9 +3831,7 @@ function showAIWritingModal(){
 
   const d=document.createElement('div');
   d.id='ai-writing-modal';
-  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:19999;display:flex;align-items:flex-end;justify-content:center;font-family:\'Times New Roman\',Georgia,serif;padding:0';
-  d.onclick=e=>{if(e.target===d)d.remove();};
-
+  d.style.cssText='position: fixed;inset: 0px;background: rgba(0, 0, 0, 0.75);z-index: 19999;display: flex;align-items: flex-end;justify-content: center;font-family: \'Times New Roman\', Georgia, serif;padding: 0px;align-content: center;flex-wrap: wrap;d.onclick=e=>{if(e.target===d)d.remove();}';
   d.innerHTML=`
   <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #5a2d91;border-bottom:none;border-radius:16px 16px 0 0;width:100%;max-width:680px;max-height:90svh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.4)">
     <!-- Header -->
@@ -6034,7 +6032,6 @@ function renderNpcDb(){
       <span style="color:#73181F">${SVG.npc.replace('16','32').replace('16','32')}</span>
       <div>
         <h2 style="font-size:1.4rem;letter-spacing:3px;margin:0">DATABASE PNG</h2>
-        <div style="color:#73181F;font-style:italic;font-size:.85rem">${lista.length} di ${predefiniti.length+personali.length} personaggi non giocanti</div>
       </div>
     </div>
 
