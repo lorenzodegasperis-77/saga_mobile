@@ -1221,7 +1221,7 @@ function renderAdventures(){
         <div style="display:flex;align-items:center;gap:12px">
           <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg>
           <div>
-            <div style="font-weight:bold;font-size:1rem;color:#73181F">Avventure Personalizzate</div>
+            <div style="font-weight:bold;font-size:1rem;color:#73181F">Avventure personalizzate</div>
             <div style="font-size:.78rem;opacity:.65;margin-top:2px">Le tue avventure create o scaricate dalla community</div>
           </div>
         </div>
@@ -2774,7 +2774,6 @@ function initAE(adv){
     searchQuery:'',
     showDiagnostics:false,
     autoSaveStatus:'saved',
-    previewMode:false,
     mobileShowSidebar:false,
   };
 }
@@ -2827,7 +2826,7 @@ function renderAdvList(){
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid #73181F">
       <div style="font-size:2rem"><svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-icon lucide-map"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg></div>
       <div>
-        <h2 style="font-size:1.5rem;letter-spacing:4px;margin:0">AVVENTURE</h2>
+        <h2 style="font-size:1.5rem;letter-spacing:4px;margin:0">AVVENTURE PERSONALIZZATE</h2>
         <div style="font-size:.78rem;opacity:.55;margin-top:2px">${advs.length} ${advs.length===1?'avventura':'avventure'} ${advs.length===1?'creata':'create'}</div>
       </div>
     </div>
@@ -2846,7 +2845,7 @@ function renderAdvList(){
 // ─── RENDER: EDITOR AVVENTURA ─────────────────────────────────────────────────
 function renderAdvEdit(){
   if(!S.ae)return`<div class="frame">Errore.<br><button class="btn btn-secondary" onclick="nav('adv-list')">Indietro</button></div>`;
-  const{adv,selPara,viewMode,searchQuery,previewMode}=S.ae;
+  const{adv,selPara,viewMode,searchQuery}=S.ae;
   const selP=adv.paragraphs.find(p=>p.id===selPara);
   const diagIssues=aeGetDiagnostics(adv);
   const stats=aeGetStats(adv);
@@ -2886,8 +2885,10 @@ function renderAdvEdit(){
 
   const mainContent=viewMode==='tree'
     ?renderAdvTree(adv,selPara)
-    :selP?renderParaEditor(selP,adv,previewMode)
-    :`<div style="text-align:center;padding:60px 20px;opacity:.6"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.35;margin-bottom:12px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg><p>${adv.paragraphs.length?'Seleziona un paragrafo dalla lista.':'Aggiungi il tuo primo paragrafo con il pulsante a sinistra!'}</p></div>`;
+    :viewMode==='preview'
+      ?selP?renderParaPreview(selP,adv):`<div style="text-align:center;padding:60px 20px;opacity:.6"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.35;margin-bottom:12px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg><p>${adv.paragraphs.length?'Seleziona un paragrafo dalla lista.':'Aggiungi il tuo primo paragrafo con il pulsante a sinistra!'}</p></div>`
+      :selP?renderParaEditor(selP,adv)
+      :`<div style="text-align:center;padding:60px 20px;opacity:.6"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.35;margin-bottom:12px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg><p>${adv.paragraphs.length?'Seleziona un paragrafo dalla lista.':'Aggiungi il tuo primo paragrafo con il pulsante a sinistra!'}</p></div>`;
 
   // Pannello diagnostica
   const diagPanel=S.ae.showDiagnostics?`
@@ -3014,7 +3015,7 @@ function renderAdvEdit(){
 }
 
 // ─── PARA EDITOR ─────────────────────────────────────────────────────────────
-function renderParaEditor(p,adv,previewMode){
+function renderParaEditor(p,adv){
   const iS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 7px;font-family:'EB Garamond','Times New Roman',serif;font-size:.86rem;color:#1a1007;outline:none;border-radius:3px 3px 0 0`;
   const sS=`background:rgba(0,0,0,.04);border:none;border-bottom:1.5px solid #73181F;padding:5px 6px;font-family:'EB Garamond','Times New Roman',serif;font-size:.85rem;color:#1a1007;outline:none;cursor:pointer`;
   const isStart=p.id===adv.startParagraph;
@@ -3164,32 +3165,6 @@ function renderParaEditor(p,adv,previewMode){
     </div>`;
   }).join('');
 
-  // Preview mode
-  if(previewMode){
-    return`
-    <div style="max-width:560px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
-        <div style="font-family:monospace;font-size:1.4rem;font-weight:bold;color:#73181F;background:rgba(115,24,31,.1);padding:5px 12px;border-radius:6px">${p.id}</div>
-        ${p.name?`<div style="font-size:1rem;opacity:.7;font-style:italic">${esc(p.name)}</div>`:''}
-        <button onclick="aeTogglePreview()" style="margin-left:auto;padding:5px 12px;border-radius:6px;border:1.5px solid #73181F;background:transparent;color:#73181F;cursor:pointer;font-size:.76rem;font-family:inherit">✎ Modifica</button>
-      </div>
-      <div style="font-size:1rem;line-height:1.8;color:#1a1007;margin-bottom:24px">${para.text?para.text.split('\n').map(l=>`<p style="margin:0 0 10px">${renderMarkdown(l)||'&nbsp;'}</p>`).join(''):'<em style="opacity:.4">— Nessun testo —</em>'}</div>
-      ${(p.exits||[]).length?`<div style="border-top:1px solid rgba(115,24,31,.2);padding-top:14px">
-        ${(p.exits||[]).map(e=>{
-          const col=tColors[e.type]||'#555';
-          let lbl='';
-          if(e.type==='choice')lbl=`▶ ${esc(e.label||'Vai a')} <span style="opacity:.5;font-size:.8rem">[§${e.to}]</span>`;
-          else if(e.type==='stat_check')lbl=`Prova ${e.stat}: ✓§${e.successTo} / ✗§${e.failTo}`;
-          else if(e.type==='encounter')lbl=`Scontro → §${e.to}`;
-          else if(e.type==='end')lbl=`Fine avventura${e.label?' — '+esc(e.label):''}`;
-          else if(e.type==='exp_grant')lbl=`+${e.exp} EXP → §${e.to}`;
-          else if(e.type==='rest')lbl=`Riposo → §${e.to}`;
-          else lbl=`[${tLabels[e.type]||e.type}]`;
-          return`<div style="padding:8px 12px;margin-bottom:6px;border:1.5px solid ${col};border-radius:6px;background:rgba(255,255,255,.3);color:${col};font-size:.88rem">${lbl}</div>`;
-        }).join('')}
-      </div>`:''}
-    </div>`;
-  }
 
   const wc=p.text&&p.text.trim()?p.text.trim().split(/\s+/).length:0;
 
@@ -3210,13 +3185,13 @@ function renderParaEditor(p,adv,previewMode){
       <span>TESTO DEL PARAGRAFO</span>
       <div style="display:flex;gap:6px;align-items:center">
         <span id="ae-wc" style="font-size:.68rem;font-weight:normal;opacity:.5;letter-spacing:0">${wc} parole</span>
-        <button onclick="aeTogglePreview()" style="padding:2px 8px;border-radius:4px;border:1px solid rgba(115,24,31,.35);background:transparent;cursor:pointer;font-size:.68rem;font-family:inherit;color:#73181F;display:flex;align-items:center;gap:4px">${SVG.eye} Anteprima</button>
       </div>
     </div>
     <!-- Formatting toolbar -->
     <div style="display:flex;gap:3px;margin-bottom:4px;flex-wrap:wrap">
       ${[['**','bold',SVG.bold,'Grassetto (Ctrl+B)'],['_','italic',SVG.italic,'Corsivo'],['__','underline',SVG.underline,'Sottolineato']].map(([m,_n,icon,title])=>`
       <button onclick="aeFmtWrap('${m}')" title="${title}" style="padding:4px 8px;border-radius:4px;border:1px solid rgba(115,24,31,.3);background:rgba(255,255,255,.4);cursor:pointer;color:#73181F;display:flex;align-items:center;gap:3px;font-size:.72rem;font-family:inherit">${icon}</button>`).join('')}
+      <button onclick="aeToggleView('preview');render()" title="Anteprima paragrafo" style="padding:7px 12px;border-radius:6px;border:1.5px solid rgba(115,24,31,.4);background:transparent;color:#73181F;cursor:pointer;font-size:.78rem;font-family:inherit;min-height:38px;white-space:nowrap;flex-shrink:0">Anteprima</button>
       <div style="flex:1;min-width:8px"></div>
       <button onclick="showAIWritingModal()" title="Assistente AI — suggerisce o migliora il testo" style="padding:7px 12px;border-radius:6px;border:1.5px solid #73181F;background:linear-gradient(135deg,rgba(90,45,145,.12),rgba(115,24,31,.08));cursor:pointer;color:#73181F;display:flex;align-items:center;gap:5px;font-size:.78rem;font-family:inherit;min-height:38px;font-weight:bold;white-space:nowrap;flex-shrink:0">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
@@ -3237,6 +3212,23 @@ function renderParaEditor(p,adv,previewMode){
       ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end',`${SVG.flag} Fine`],['encounter',`${SVG.sword} Scontro`],['rest',`${SVG.rest} Riposo`],['item_grant',`${SVG.bag} Inventario`]].map(([t,l])=>`
       <button onclick="aeAE('${t}')" style="padding:7px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007;display:flex;align-items:center;justify-content:center;gap:3px" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
     </div>
+  </div>`;
+}
+
+function renderParaPreview(p,adv){
+  const isStart=p.id===adv.startParagraph;
+  return`
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+    <button onclick="aeToggleView('edit');render()" style="padding:8px 12px;border:1.5px solid rgba(115,24,31,.4);border-radius:8px;background:transparent;color:#73181F;cursor:pointer;font-size:.88rem;font-family:inherit;min-height:38px">← Torna all'editor</button>
+    <div style="flex:1;min-width:220px">
+      <div style="font-family:monospace;font-size:1.7rem;font-weight:bold;color:#73181F;margin-bottom:4px">§${p.id}</div>
+      ${p.name?`<div style="font-size:.95rem;color:#555;margin-bottom:4px">${esc(p.name)}</div>`:''}
+      ${isStart?`<div style="font-size:.78rem;color:#18732D;font-weight:bold;letter-spacing:.5px">Paragrafo iniziale</div>`:''}
+    </div>
+  </div>
+  <div style="background:rgba(255,255,255,.95);border:1.5px solid rgba(115,24,31,.2);border-radius:12px;padding:22px;box-shadow:0 10px 24px rgba(0,0,0,.06);">
+    <div style="white-space:pre-wrap;line-height:1.85;font-size:.95rem;color:#1a1007;">${esc(p.text||'')}</div>
+    ${(p.exits||[]).length?`<div style="margin-top:22px;padding-top:18px;border-top:1px solid rgba(115,24,31,.15);font-size:.86rem;color:#444"><div style="font-weight:bold;margin-bottom:10px">Uscite</div>${(p.exits||[]).map(e=>`<div style="margin-bottom:8px;line-height:1.5">${esc(e.type==='choice'?`▶ ${e.label||'Scelta'} → §${e.to}`:e.type==='stat_check'?`Prova ${e.stat}: Successo→§${e.successTo}, Fallimento→§${e.failTo}`:e.type==='talent_check'?`Talento (${e.talent}): Successo→§${e.successTo}, Fallimento→§${e.failTo}`:e.type==='code_check'?`Codice ${e.code}: Sì→§${e.to}, No→§${e.elseTo}`:e.type==='code_grant'?`[Codice: ${e.code}]${e.label?` — ${e.label}`:''}`:e.type==='encounter'?`Scontro: Vittoria→§${e.to}, Sconfitta→§${e.defeatTo}`:e.type==='exp_grant'?`+${e.exp} EXP → §${e.to}`:e.type==='rest'?`Riposo → §${e.to}`:'')} </div>`).join('')}</div>`:''}
   </div>`;
 }
 
@@ -3989,7 +3981,7 @@ function showAIWritingModal(){
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
         Genera con AI
       </button>
-      <div style="font-size:.68rem;opacity:.4;text-align:center;margin-top:6px">Powered by Claude · I testi generati possono richiedere revisione</div>
+      <div style="font-size:.68rem;opacity:.4;text-align:center;margin-top:6px">Assistente AI locale: le chiamate ai modelli esterni sono disabilitate in questa versione.</div>
     </div>
   </div>`;
 
@@ -4056,26 +4048,20 @@ Mantieni il testo conciso: preferibilmente 2-4 paragrafi brevi.`;
   if(!userMsg.trim()) userMsg='Scrivi un paragrafo narrativo per questa scena.';
 
   try{
-    const response=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:systemPrompt,
-        messages:[{role:'user',content:userMsg}]
-      })
-    });
-    const data=await response.json();
-    if(data.error){throw new Error(data.error.message||'Errore API');}
-    const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
-    // Mostra risultato
+    const placeholderText = `Questo è un placeholder locale per l'Assistente AI.
+
+Modalità selezionata: ${mode||'Nessuna'}
+${userPrompt?`Istruzioni aggiuntive: ${userPrompt}
+
+`:''}Testo generato: usa questo spazio per inserire il tuo contenuto.
+
+Nota: le chiamate ai modelli esterni sono disabilitate in questa versione.`;
     const ra=document.getElementById('ai-result-area');
     const rt=document.getElementById('ai-result-text');
-    if(ra&&rt){ra.style.display='block';rt.textContent=text;}
-    modal._lastResult=text;
+    if(ra&&rt){ra.style.display='block';rt.textContent=placeholderText;}
+    modal._lastResult=placeholderText;
   }catch(err){
-    showToast('Errore AI: '+err.message,'#c0392b');
+    showToast('Errore interno AI: '+err.message,'#c0392b');
   }finally{
     if(btn){btn.disabled=false;btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg> Genera con AI';}
   }
@@ -4181,10 +4167,6 @@ function aeSetTags(val){
   if(!S.ae||!S.ae.selPara)return;
   const p=S.ae.adv.paragraphs.find(x=>x.id===S.ae.selPara);
   if(p){p.tags=val.split(',').map(t=>t.trim()).filter(Boolean);aeMarkDirty();}
-}
-function aeTogglePreview(){
-  if(!S.ae)return;
-  S.ae.previewMode=!S.ae.previewMode;render();
 }
 function aeSetSearch(val){
   if(!S.ae)return;
@@ -6438,7 +6420,7 @@ function renderCommunity(){
       ${a.desc?`<p style="font-size:.82rem;opacity:.75;margin:0 0 10px;line-height:1.4">${esc(a.desc)}</p>`:''}
       <div style="display:flex;gap:6px;margin-bottom:6px">
         <button class="btn btn-primary" style="font-size:.78rem;padding:8px;min-height:36px" onclick="aeOpenEdit('${a.id}')">Modifica</button>
-        <button class="btn btn-secondary" style="font-size:.78rem;padding:8px;min-height:36px" onclick="aeExport('${a.id}')">Esporta</button>
+        <button class="btn btn-secondary" style="font-size:.78rem;padding:8px;min-height:36px" onclick="aeShowExportMenu('${a.id}')">Esporta</button>
         <button class="btn btn-secondary" style="font-size:.78rem;padding:8px;min-height:36px;color:#d32f2f;border-color:#d32f2f" onclick="aeConfirmDelete('${a.id}')">Elimina</button>
       </div>
       ${a.startParagraph&&a.paragraphs.length&&S.chars.length
