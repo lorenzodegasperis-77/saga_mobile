@@ -1,0 +1,22 @@
+{
+  "id": "ADV-3QYFPH9YO",
+  "title": "Nuova Avventura",
+  "desc": "",
+  "setting": "medievale",
+  "author": "dega",
+  "startParagraph": "406",
+  "paragraphs": [
+    {
+      "id": "406",
+      "name": "",
+      "text": "",
+      "exits": [],
+      "notes": "",
+      "tags": []
+    }
+  ],
+  "created": 1779615477867,
+  "language": "English",
+  "ageRating18plus": true,
+  "suggestedLevelRange": "3-5"
+}
