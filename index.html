@@ -14,185 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="js/saga_stories.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{min-height:100vh;min-height:100svh;background:#D8C7A1;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007;font-size:17px;line-height:1.6;}body{padding-bottom:env(safe-area-inset-bottom);}
-h1,h2,h3,h4,.frame>h2,.home-title,.sec-hdr,.tab-btn,.btn,.badge,.grade-badge{font-family:'Cinzel','Times New Roman',serif;}
-.input-line,input,select,textarea{font-family:'EB Garamond','Times New Roman',Georgia,serif;}
-.grade-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-family:'Cinzel',serif;font-size:.65rem;font-weight:700;letter-spacing:.5px;flex-shrink:0;}
-.grade-1{background:rgba(74,122,26,.15);color:#3a6e10;border:1px solid rgba(74,122,26,.4);}
-.grade-2{background:rgba(74,122,26,.12);color:#2d5a0d;border:1px solid rgba(74,122,26,.35);}
-.grade-3{background:rgba(184,145,42,.18);color:#8a6010;border:1px solid rgba(184,145,42,.5);}
-.grade-4{background:rgba(192,57,43,.15);color:#a02010;border:1px solid rgba(192,57,43,.4);}
-.grade-5{background:rgba(115,18,31,.18);color:#73181F;border:1px solid rgba(115,18,31,.5);}
-.info-button{width:28px;height:28px;border-radius:50%;font-weight:bold;background:#73181F;color:white;border:none;cursor:pointer;font-family:serif;font-weight:bold;font-size:1rem;}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:rgba(115,24,31,.08)}::-webkit-scrollbar-thumb{background:#73181F;border-radius:3px}
-#app{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 0;position:relative;}
-.bg-overlay{position:fixed;inset:0;pointer-events:none;z-index:0;}
-.bg-overlay::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(115,24,31,.07) 0%,transparent 65%);}
-.bg-overlay::after{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(120,80,30,.045) 3px,rgba(120,80,30,.045) 4px),repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(100,60,20,.03) 3px,rgba(100,60,20,.03) 4px),repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,0,0,.022) 10px,rgba(0,0,0,.022) 11px),repeating-linear-gradient(-45deg,transparent,transparent 10px,rgba(0,0,0,.018) 10px,rgba(0,0,0,.018) 11px);}
-@keyframes creditsScroll {
-  0% { transform: translateY(52%); } 
-  100% { transform: translateY(-100%); }
-}@keyframes splashPulse{from{filter:drop-shadow(0 0 16px rgba(115,24,31,.5));}to{filter:drop-shadow(0 0 40px rgba(115,24,31,.9));}}
-#splash{position:fixed;inset:0;z-index:9999;background:#0c0805;display:flex;align-items:center;justify-content:center;transition:opacity 1.2s ease;}
-#splash.fade{opacity:0;pointer-events:none;}
-.frame{background:#D8C7A1;border:3px solid #73181F;border-radius:12px;padding:28px 46px;width:min(620px,95vw);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18),inset 0 0 50px rgba(115,24,31,.05),inset 0 0 0 6px rgba(115,24,31,.04);position:relative;z-index:1;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23f)' opacity='0.06'/%3E%3C/svg%3E");}
-/* HEADINGS */
-h1,h2{font-family:'Cinzel',serif;}
-h3{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:2px;}
-/* BTN */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 18px;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:1.5px;transition:all .2s;border:2px solid #73181F;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;}
-.btn:hover:not(:disabled){filter:brightness(1.15);transform:scale(1.02);}
-.btn:disabled{opacity:.5;cursor:not-allowed;}
-.btn-primary{display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 14px 8px; border-radius: 10px; border: 2px solid rgb(115, 24, 31); background: rgb(115, 24, 31); color: white; cursor: pointer; font-family: inherit; transition: 0.18s; min-height: 80px; filter: none;}
-.btn-secondary{display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 14px 8px; border-radius: 10px; border: 2px solid rgb(115, 24, 31); background: transparent; color: rgb(26, 16, 7); cursor: pointer; font-family: inherit; transition: 0.18s; min-height: 80px; filter: none;}
-.btn-secondary-mini{background: transparent;color: #1a1007;display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;font-size:.82rem}
-.btn-secondary-dotted{border:2px dashed #73181F;opacity:.85;background: transparent;color: #1a1007;}
-/* BADGE */
-.badge{background:#73181F;color:white;padding:2px 8px;border-radius:5px;font-size:.62rem;font-weight:700;font-family:'Cinzel',serif;letter-spacing:.5px;}
-/* CHOICE CARD */
-.cc-card{border:1.5px solid #84785E;background:rgba(255,255,255,.3);padding:13px;margin-bottom:8px;border-radius:6px;cursor:pointer;transition:all .2s;}
-.cc-card:hover{background:rgba(2,24,31,.06);}
-.cc-card.sel{border:2px solid #73181F;background:rgba(115,24,31,.1);}
-.cc-card.dis{opacity:.4;cursor:not-allowed;}
-/* INPUT */
-.input-line{width:100%;background:rgba(0,0,0,.04);border:none;border-left:3px solid #73181F;padding:11px 10px;font-family:'EB Garamond','Times New Roman',serif;font-size:16px;color:#1a1007;outline:none;margin-bottom:8px;}
-/* MENU CONTAINER */
-.menu-c{display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;margin:0 auto;}
-/* MODAL */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:9999;}
-.modal{background:#D8C7A1;border:2px solid #73181F;border-radius:10px;padding:26px;max-width:460px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,.5);}
-/* BAR */
-.bar-outer{position:relative;height:26px;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,.25);box-shadow:inset 0 2px 4px rgba(0,0,0,.35);margin-bottom:8px;}
-.bar-inner{height:100%;transition:width .5s ease-out;}
-.bar-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:.88rem;text-shadow:1px 1px 2px #000;letter-spacing:1px;}
-/* DOT */
-.dot{width:13px;height:13px;border-radius:50%;cursor:pointer;border:1.5px solid #73181F;transition:all .2s;flex-shrink:0;display:inline-block;background:transparent;}
-.dot.on{background:#73181F;box-shadow:0 0 5px #73181F;}
-/* TOGGLE */
-.toggle-wrap{position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;flex-shrink:0;}
-.toggle-wrap input{opacity:0;width:0;height:0;position:absolute;}
-.toggle-track{position:absolute;inset:0;border-radius:24px;transition:.3s;background:#ccc;}
-.toggle-wrap input:checked+.toggle-track{background:#73181F;}
-.toggle-knob{position:absolute;height:18px;width:18px;bottom:3px;left:3px;border-radius:50%;background:white;transition:.3s;}
-.toggle-wrap input:checked~.toggle-knob{left:23px;}
-/* CHAR CARD */
-.char-card{background:rgba(196,176,138,.3);border:2px solid #73181F;border-radius:10px;padding:14px 18px;cursor:pointer;transition:all .18s;margin-bottom:10px;}
-.char-card:hover{background:rgba(196,176,138,.6);transform:translateX(3px);}
-/* EQUIP CARD */
-.equip-card{padding:13px;margin-bottom:8px;border-radius:6px;border:1.5px solid #84785E;background:rgba(255,255,255,.3);}
-.equip-card.sel{border:2px solid #73181F;background:rgba(115,24,31,.1);}
-/* SMALL BTN */
-.sm-btn{border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-weight:bold;font-size:1.1rem;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:#73181F;color:white;}
-.sm-btn:disabled{background:#ccc;cursor:not-allowed;}
-/* SECTION HDR */
-.sec-hdr{font-weight:700;color:#73181F;letter-spacing:2px;font-size:.72rem;font-family:'Cinzel',serif;margin:14px 0 5px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
-/* SHEET tab btn */
-.tab-btn{padding:7px 15px;border:2px solid #73181F;border-radius:6px;background:transparent;color:#1a1007;cursor:pointer;font-family:'Cinzel',serif;font-weight:600;font-size:.75rem;letter-spacing:1.5px;transition:all .2s;}
-.tab-btn.active{background:#73181F;color:white;}
-
-/* ── MOBILE RESPONSIVE ──────────────────────────────────── */
-/* Touch-target baseline */
-.btn{min-height:48px;}
-.tab-btn{min-height:44px;}
-.sm-btn{width:36px;height:36px;font-size:1.2rem;}
-/* iOS input zoom prevention */
-input,select,textarea{font-size:16px !important;font-family:'EB Garamond','Times New Roman',serif !important;}
-/* Remove hover transform on touch devices */
-@media(hover:none){
-  .btn:hover:not(:disabled){filter:none;transform:none;}
-  .char-card:hover{transform:none;}
-}
-@media(max-width:640px){
-  #app{padding:0;justify-content:flex-start;}
-  .frame{width:100vw;max-width:100vw;border-left:none;border-right:none;border-radius:0;padding:18px 16px;min-height:100svh;border-top:3px solid #73181F !important;border-bottom:3px solid #73181F !important;box-shadow:none;}
-  .btn{font-size:.9rem;letter-spacing:.5px;}
-  .btn-group-2col{grid-template-columns:1fr 1fr;display:grid;gap:8px;}
-  .cc-card{padding:11px 10px;}
-  .equip-card{padding:10px 8px;}
-  .char-card{padding:12px 14px;}
-  .modal{width:96%;padding:20px 14px;border-radius:8px;}
-  .tab-row{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;gap:6px;padding-bottom:4px;margin-bottom:16px;scrollbar-width:none;}
-  .tab-row::-webkit-scrollbar{display:none;}
-  .tab-btn{flex-shrink:0;padding:10px 14px;font-size:.8rem;}
-  .sh-2col{grid-template-columns:1fr !important;}
-  .cc-layout{flex-direction:column !important;padding:0 !important;width:100vw !important;gap:0 !important;}
-  .cc-sidebar{width:100% !important;position:sticky !important;top:0 !important;z-index:100 !important;border-radius:0 !important;border-left:none !important;border-right:none !important;border-top:none !important;padding:10px 14px !important;display:flex !important;flex-direction:row !important;flex-wrap:wrap !important;gap:6px 14px !important;align-items:center !important;background:#D8C7A1 !important;box-shadow:0 3px 12px rgba(0,0,0,.18) !important;}
-  .cc-sidebar h3{width:100%;margin:0 0 4px !important;font-size:.9rem !important;border-bottom:none !important;padding-bottom:0 !important;}
-  .cc-sidebar p{display:none !important;}
-  .cc-sidebar hr{display:none !important;}
-  .cc-sidebar-stat{display:flex;align-items:center;gap:4px;background:rgba(115,24,31,.1);border-radius:6px;padding:3px 8px;font-size:.78rem;font-weight:bold;}
-  .cc-main{border-left:none !important;border-right:none !important;border-radius:0 !important;padding:16px !important;}
-  .lu-layout{flex-direction:column !important;padding:0 !important;width:100vw !important;gap:0 !important;}
-  .lu-sidebar{width:100% !important;position:sticky !important;top:0 !important;z-index:100 !important;border-radius:0 !important;border-left:none !important;border-right:none !important;border-top:none !important;padding:10px 14px !important;background:#D8C7A1 !important;box-shadow:0 3px 12px rgba(0,0,0,.18) !important;}
-  .lu-main{border-left:none !important;border-right:none !important;border-radius:0 !important;padding:16px !important;}
-  .sh-frame{border-left:none !important;border-right:none !important;border-radius:0 !important;border-top:3px solid #73181F !important;border-bottom:3px solid #73181F !important;padding:16px 14px !important;min-height:100svh;width:100vw !important;max-width:100vw !important;}
-  .adj-btn{min-width:52px !important;min-height:44px !important;font-size:1.1rem !important;}
-  #credits-overlay>div{border-radius:0 !important;}
-  #dice-overlay>div{max-width:100vw !important;width:100vw !important;border-left:none !important;border-right:none !important;border-radius:12px 12px 0 0 !important;position:fixed;bottom:0;padding:18px 16px 28px !important;}
-  #dice-overlay{align-items:flex-end !important;}
-  .step-indicator{font-size:.72rem;}
-  .cc-nav-btns{flex-wrap:wrap;}
-  .sh-origins-row{flex-direction:column !important;gap:4px !important;font-size:.82rem;}
-  .home-title{font-size:2.4rem !important;letter-spacing:4px !important;}
-  .home-subtitle{margin-bottom:20px !important;}
-  .settings-frame{min-height:100svh !important;border-radius:0 !important;border-left:none;border-right:none;border-top:3px solid #73181F !important;}
-}
-@media(max-width:380px){
-  .cc-sidebar-stat{font-size:.7rem;padding:2px 6px;}
-  .tab-btn{font-size:.72rem;padding:8px 10px;}
-  .btn{font-size:.82rem;}
-}
-/* ── ADVENTURE EDITOR MOBILE ──────────────────────────── */
-/* Sidebar overlay su mobile */
-.ae-sidebar-overlay{display:none;position:fixed;inset:0;background:transparent;z-index:80;}
-.ae-sidebar-panel{width:min(280px,85vw);height:100svh;overflow-y:auto;display:flex;flex-direction:column;background:rgba(216,199,161,.98);border-right:2px solid #73181F;box-shadow:4px 0 20px rgba(0,0,0,.2);}
-@media(max-width:640px){
-  .ae-sidebar-desktop{display:none !important;}
-  .ae-sidebar-overlay{display:flex !important;pointer-events:none;transition:background .25s;}
-  .ae-sidebar-overlay.open{pointer-events:all;background:rgba(0,0,0,.55);}
-  .ae-sidebar-overlay.open .ae-sidebar-panel{transform:translateX(0);}
-  .ae-sidebar-panel{transform:translateX(-100%);transition:transform .25s ease;}
-  .ae-main-area{max-height:calc(100svh - 52px) !important;padding:12px 10px !important;}
-  .ae-header-meta{display:none !important;}
-  .ae-header-compact{display:flex !important;}
-  .ae-exit-grid{grid-template-columns:1fr 1fr !important;}
-  /* Para editor touch targets */
-  .ae-fmt-btn{min-width:42px !important;min-height:42px !important;padding:10px !important;}
-  .ae-exit-addrow button{min-height:44px !important;font-size:.78rem !important;}
-}
-@media(min-width:641px){
-  .ae-sidebar-desktop{display:flex !important;}
-  .ae-sidebar-overlay,.ae-mobile-toggle{display:none !important;}
-  .ae-header-compact{display:none !important;}
-  .ae-header-meta{display:contents !important;}
-}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-/* COMBAT responsive — stack verticale su schermi stretti */
-@media(max-width:480px){
-  .combat-combatants{flex-direction:column !important;}
-  .combat-combatants>div{width:100% !important;flex:none !important;}
-}
-/* Touch target minimo per bottoni azione piccoli */
-.action-btn-sm{min-width:44px !important;min-height:44px !important;}
-/* Extra depth on mobile cards */
-@media(max-width:640px){
-  .char-card,.cc-card,.equip-card{box-shadow:0 1px 4px rgba(0,0,0,.12);}
-  .card{box-shadow:0 1px 4px rgba(0,0,0,.12);}
-}
-/* CARD INFO */
-.card{background:rgba(196,176,138,.45);border:2px solid #73181F;border-radius:10px;padding:15px;margin-bottom:12px;text-align:left;transition:all;}
-.card:hover{background:rgba(196,176,138,.6);transform:translateX(3px);}
-
-/* SETTING TAGS */
-.set-tag{position:relative;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;cursor:pointer;flex-shrink:0;transition:transform .15s;}
-.set-tag:hover{transform:scale(1.8);}
-.set-tip{position:absolute;bottom:calc(100%+5px);left:50%;transform:translateX(-50%);background:#1a1007;color:#D8C7A1;padding:3px 9px;border-radius:4px;font-size:.62rem;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;font-family:'EB Garamond','Times New Roman',Georgia,serif;letter-spacing:.5px;}
-.set-tag:hover .set-tip{opacity:1;}
-.set-tag.tip-show .set-tip{opacity:1;}
-.set-tags-row{display:inline-flex;gap:2px;align-items:center;flex-wrap:wrap;}
-</style>
+<link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
 <div class="bg-overlay"></div>
@@ -205,7 +27,6 @@ input,select,textarea{font-size:16px !important;font-family:'EB Garamond','Times
 <div id="app"></div>
 <audio id="bgMusic" src="music/Whisper in the Shadows_1.mp3" loop></audio>
 <script>
-'use strict';
 // ─── SVG ICONS ────────────────────────────────────────────────────────────────
 const SVG = {
   dice:      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="10" width="12" height="12" rx="2"/><path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6"/><path d="M6 18h.01"/><path d="M10 14h.01"/><path d="M15 6h.01"/><path d="M18 9h.01"/></svg>',
@@ -893,13 +714,6 @@ function load(){
     const st=_sget('saga-settings');if(st)S.settings=JSON.parse(st);
     const av=_sget('saga-adventures');if(av)S.adventures=JSON.parse(av);
     normalizeAdventures();
-    const sagaList = loadSagaStories();
-    if(sagaList && sagaList.length){
-      if(!S.adventures)S.adventures=[];
-      sagaList.forEach(s=>{
-        if(!S.adventures.find(a=>a.id===s.id||a.title===s.title))S.adventures.push(s);
-      });
-    }
     const nv=_sget('saga-npcs');if(nv)S.npcs=JSON.parse(nv);
   }catch(e){}
   S.loaded=true;
@@ -914,6 +728,15 @@ function normalizeAdventures(){
     a.author = a.author || '';
     return a;
   });
+}
+
+function findAdventureById(advId){
+  if(!advId) return null;
+  const custom=(S.adventures||[]).find(a=>a.id===advId);
+  if(custom) return custom;
+  if(typeof loadSagaStories!=='function') return null;
+  const sagaList=loadSagaStories();
+  return sagaList.find(a=>a.id===advId) || null;
 }
 
 // Load saga stories defined as global consts in js/saga_stories.js
@@ -2773,9 +2596,9 @@ function renderAdvList(){
       </div>
       ${a.desc?`<p style="font-size:.82rem;opacity:.75;margin:0 0 10px;line-height:1.4">${esc(a.desc)}</p>`:''}
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px">
-        <button class="btn btn-primary" style="font-size:.78rem;padding:8px;min-height:36px" onclick="aeOpenEdit('${a.id}')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-pen-icon lucide-square-pen"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg> Modifica</button>
-        <button class="btn btn-secondary" style="font-size:.78rem;padding:8px;min-height:36px" onclick="aeExport('${a.id}')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-up-icon lucide-file-up"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/></svg> Esporta</button>
-        <button class="btn btn-secondary" style="font-size:.78rem;padding:8px;min-height:36px;color:#d32f2f;border-color:#d32f2f" onclick="aeConfirmDelete('${a.id}')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+        <button class="btn btn-primary-mini" onclick="aeOpenEdit('${a.id}')">Modifica</button>
+        <button class="btn btn-secondary" onclick="aeShowExportMenu('${a.id}')">Esporta</button>
+        <button class="btn btn-secondary" style="min-height:36px;color:#d32f2f;border-color:#d32f2f" onclick="aeConfirmDelete('${a.id}')">Elimina</button>
       </div>
       ${a.startParagraph&&a.paragraphs.length&&S.chars.length
         ?`<button class="btn btn-primary" style="width:100%;font-size:.82rem;min-height:40px;background:#18732D;border-color:#18732D" onclick="aePickChar('${a.id}')">▶ GIOCA</button>`
@@ -2795,7 +2618,7 @@ function renderAdvList(){
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
       <button class="btn btn-primary" onclick="aeCreateNew()">+ Crea avventura</button>
-      <button class="btn btn-secondary" onclick="document.getElementById('adv-import-inp').click()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg> Importa JSON</button>
+      <button class="btn btn-secondary-mini" onclick="document.getElementById('adv-import-inp').click()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg> Importa JSON</button>
     </div>
     ${cards}
 	    <input id="adv-import-inp" type="file" accept=".json" style="display:none" onchange="aeImportFile(event)">
@@ -3307,7 +3130,7 @@ function renderAdvTree(adv,selPara){
 // ─── RENDER: SELEZIONE PERSONAGGIO ───────────────────────────────────────────
 function renderAdvCharSelect(){
   const advId=S.params.advId;
-  const adv=(S.adventures||[]).find(a=>a.id===advId);
+  const adv=findAdventureById(advId);
   if(!adv)return`<div class="frame">Avventura non trovata.<br><br><button class="btn btn-secondary" style="max-width:200px;margin:0 auto" onclick="nav('adv-list')">Indietro</button></div>`;
 
   const advSetting=adv.setting||null;
@@ -3407,7 +3230,7 @@ function renderAdvPlay(){
   </div>`:'';
 
   const choicesHtml=choices.map(e=>`
-  <button onclick="${parseInt(e.exp)>0?`apGrantExp(${parseInt(e.exp)||0},'${e.to}')`:`apGoTo('${e.to}')`}" class="btn btn-secondary" style="text-align:left;padding:13px 16px;margin-bottom:7px;border-color:rgba(115,24,31,.4)">
+  <button onclick="${parseInt(e.exp)>0?`apGrantExp(${parseInt(e.exp)||0},'${e.to}')`:`apGoTo('${e.to}')`}" class="btn btn-secondary-mini" style="padding:13px 16px;margin-bottom:7px;border-color:rgba(115,24,31,.4)">
     <span style="color:#73181F;font-weight:bold;margin-right:8px">▶</span>${esc(e.label)||`Vai al paragrafo ${e.to}`}${parseInt(e.exp)>0?` <span style="font-size:.7rem;color:#1a4a7a;font-weight:bold;margin-left:6px">+${e.exp} EXP</span>`:''}
     <span style="float:right;font-family:monospace;opacity:.4;font-size:.78rem">${e.to}</span>
   </button>`).join('');
@@ -3431,7 +3254,7 @@ function renderAdvPlay(){
     <div style="background:rgba(26,74,26,.07);border:1.5px solid ${has?'#18732D':'#84785E'};border-radius:8px;padding:12px;margin-bottom:7px">
       <div style="font-size:.8rem;margin-bottom:7px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Talento: <strong>${esc(e.talent)}</strong></div>
       <div style="font-size:.82rem;margin-bottom:9px">${has?`<span style="color:#18732D;font-weight:bold">✓ Possiedi questo talento!</span>`:`<span style="color:#888;font-style:italic">✗ Non possiedi questo talento.</span>`}</div>
-      ${dest?`<button onclick="apGoTo('${dest}')" class="btn btn-${has?'primary':'secondary'}" style="${has?'background:#18732D;border-color:#18732D;':''};width:100%;font-size:.88rem;min-height:38px">▶ ${has?`Vai al ${e.successTo}`:`Vai al ${e.failTo||'?'}`}</button>`:''}
+      ${dest?`<button onclick="apGoTo('${dest}')" class="btn btn-secondary-mini">▶ ${has?`Vai al ${e.successTo}`:`Vai al ${e.failTo||'?'}`}</button>`:''}
     </div>`;
   }).join('');
 
@@ -3442,7 +3265,7 @@ function renderAdvPlay(){
     <div style="background:rgba(85,85,85,.05);border:1.5px solid ${has?'#18732D':'#84785E'};border-radius:8px;padding:12px;margin-bottom:7px">
       <div style="font-size:.8rem;margin-bottom:7px;color:#555"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> ${e.label||'Verifica codice'}: <strong style="font-family:monospace">${esc(e.code)}</strong></div>
       <div style="font-size:.82rem;margin-bottom:9px">${has?`<span style="color:#18732D;font-weight:bold">✓ Hai il codice!</span>`:`<span style="color:#888;font-style:italic">✗ Non hai questo codice.</span>`}</div>
-      ${dest?`<button onclick="apGoTo('${dest}')" class="btn btn-secondary" style="width:100%;font-size:.88rem;min-height:38px">▶ ${has?`Vai al ${e.to}`:`Vai al ${e.elseTo}`}</button>`:''}
+      ${dest?`<button onclick="apGoTo('${dest}')" class="btn btn-secondary-mini">▶ ${has?`Vai al ${e.to}`:`Vai al ${e.elseTo}`}</button>`:''}
     </div>`;
   }).join('');
 
@@ -3469,7 +3292,7 @@ function renderAdvPlay(){
         ${e.to?`<span style="color:#18732D;font-weight:bold">✓ Vittoria → §${esc(e.to)}</span>`:''}
         ${e.defeatTo?`<span style="color:#d32f2f;font-weight:bold">✗ Sconfitta → §${esc(e.defeatTo)}</span>`:''}
       </div>`:''}
-      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${_eIdx},${parseInt(e.exp)||0})" class="btn btn-primary" style="background:#8a1f1f;border-color:#8a1f1f;width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
+      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${_eIdx},${parseInt(e.exp)||0})" class="btn btn-primary" style="width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
     </div>`;
   }).join('');
 
@@ -3721,8 +3544,9 @@ function aeImportFile(ev){
   ev.target.value='';
 }
 function aePickChar(advId){
-  const adv=(S.adventures||[]).find(a=>a.id===advId);
-  if(adv && adv.ageRating18plus){
+  const adv=findAdventureById(advId);
+  if(!adv){alert('Avventura non trovata.');return;}
+  if(adv.ageRating18plus){
     // if user already confirmed age globally, proceed
     if(_sget('saga-age-18-confirmed')==='true'){
       nav('adv-char-select',{advId});
@@ -4284,7 +4108,7 @@ if(!window._aeKeyBound){window._aeKeyBound=true;document.addEventListener('keydo
 
 // ─── HANDLER: GIOCO ──────────────────────────────────────────────────────────
 function apStart(advId,charId){
-  const adv=(S.adventures||[]).find(a=>a.id===advId);
+  const adv=findAdventureById(advId);
   if(!adv){alert('Avventura non trovata.');return;}
   S.ap=initAP(adv,charId);
   apSaveSession();
@@ -6220,7 +6044,7 @@ const ONBOARDING_STEPS = [
   {
     title: 'Crea il tuo personaggio',
     icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
-    text: 'Ogni personaggio ha tre caratteristiche fondamentali:\n<br><br>• <strong>VIG (Vigore)</strong> — forza fisica e resistenza al danno<br>• <strong>IST (Istinto)</strong> — agilità, riflessi e percezione<br>• <strong>MEN (Mente)</strong> — intelligenza, volontà e carisma\n<br><br>Vai su <em>I miei personaggi → Nuovo personaggio</em> per iniziare.',
+    text: 'Ogni personaggio ha tre caratteristiche fondamentali:\n<br><br>• <strong>VIG (Vigore)</strong> — forza fisica e resistenza al danno<br>• <strong>IST (Istinto)</strong> — agilità, riflessi e percezione<br>• <strong>MEN (Mente)</strong> — intelligenza, volontà e carisma\n<br><br>Vai su <em>Eroi → Nuovo personaggio</em> per iniziare.',
   },
   {
     title: 'Avventure e paragrafi',
@@ -6382,9 +6206,9 @@ function renderCommunity(){
       </div>
       ${a.desc?`<p style="font-size:.82rem;opacity:.75;margin:0 0 10px;line-height:1.4">${esc(a.desc)}</p>`:''}
       <div style="display:flex;gap:6px;margin-bottom:6px">
-        <button class="btn btn-primary" style="font-size:.78rem;padding:8px;min-height:36px" onclick="aeOpenEdit('${a.id}')">Modifica</button>
-        <button class="btn btn-secondary" style="font-size:.78rem;padding:8px;min-height:36px" onclick="aeShowExportMenu('${a.id}')">Esporta</button>
-        <button class="btn btn-secondary" style="font-size:.78rem;padding:8px;min-height:36px;color:#d32f2f;border-color:#d32f2f" onclick="aeConfirmDelete('${a.id}')">Elimina</button>
+        <button class="btn btn-primary-mini" onclick="aeOpenEdit('${a.id}')">Modifica</button>
+        <button class="btn btn-secondary" onclick="aeShowExportMenu('${a.id}')">Esporta</button>
+        <button class="btn btn-secondary" style="min-height:36px;color:#d32f2f;border-color:#d32f2f" onclick="aeConfirmDelete('${a.id}')">Elimina</button>
       </div>
       ${a.startParagraph&&a.paragraphs.length&&S.chars.length
         ?`<button class="btn btn-primary" style="width:100%;font-size:.82rem;min-height:40px;background:#18732D;border-color:#18732D" onclick="aePickChar('${a.id}')">▶ GIOCA</button>`

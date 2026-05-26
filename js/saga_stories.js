@@ -1,6 +1,6 @@
 const Il_Parcheggio = {
   "id": "ADV-PZ7P6HW4L",
-  "title": "Il parcheggio_cina2",
+  "title": "Il Parcheggio",
   "desc": "Una mattina qualunque — o quasi.",
   "author": "LDG",
   "startParagraph": "001",
@@ -894,7 +894,43 @@ const Il_Parcheggio = {
   "suggestedLevelRange": "1-2"
 };
 
+const Il_castello = {
+  "id": "ADV-PZ7P6HW5L",
+  "title": "Il Castello",
+  "desc": "Un castello.",
+  "author": "LDG",
+  "startParagraph": "001",
+  "setting": "fantasy",
+  "paragraphs": [
+    {
+      "id": "001",
+      "name": "Uscita",
+      "text": "Entri nella sala principale del castello. Davanti a te ci sono due porte.",
+      "exits": [
+        {
+          "id": "PG-XAJI0G6DP",
+          "type": "choice",
+          "label": "prendo la porta a sinistra.",
+          "to": "030"
+        },
+        {
+          "id": "PG-BHSAHYTHV",
+          "type": "choice",
+          "label": "Prendo la porta a destra.",
+          "to": "739"
+        }
+      ]
+    }
+  ],
+
+  "language": "Italiano",
+  "ageRating18plus": false,
+  "suggestedLevelRange": "1-2"
+};
+
 (function(){
 window.__sagaStories = window.__sagaStories || [];
 if(typeof Il_Parcheggio !== 'undefined') window.__sagaStories.push(Il_Parcheggio);
+if(typeof Il_castello !== 'undefined') window.__sagaStories.push(Il_castello);
+
 })();
