@@ -946,8 +946,8 @@ function renderHome(){
 
     <!-- RIGA SECONDARIA -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-      <button onclick="nav('settings')" class="btn btn-secondary-mini">${svgSettings} Impostazioni</button>
-      <button onclick="showCreditsOv()" class="btn btn-secondary-mini">${svgCredits} Crediti</button>
+      <button onclick="nav('settings')" class="btn btn-secondary-mini" style="font-weight:100">${svgSettings} Impostazioni</button>
+      <button onclick="showCreditsOv()" class="btn btn-secondary-mini" style="font-weight:100">${svgCredits} Crediti</button>
     </div>
 
     <!-- FOOTER — 4 azioni -->
@@ -4169,7 +4169,8 @@ function apSaveSession(){
     hpCurr:char?.hpCurr??0,hpMax:char?.hpMax??0,
     enCurr:char?.enCurr??0,enMax:char?.enMax??0,
     savedAt:Date.now(),
-    charSnapshot:char?JSON.parse(JSON.stringify(char)):null
+    charSnapshot:char?JSON.parse(JSON.stringify(char)):null,
+    advSnapshot:JSON.parse(JSON.stringify(adv))
   };
   if(existing>=0)S.sessions[existing]=rec;
   else S.sessions.unshift(rec);
@@ -4185,14 +4186,16 @@ function deleteSession(sessId){
 function apResumeSession(sessId){
   const sess=S.sessions.find(s=>s.sessId===sessId);
   if(!sess)return;
-  const adv=(S.adventures||[]).find(a=>a.id===sess.advId);
+  let adv=findAdventureById(sess.advId);
+  if(!adv && sess.advSnapshot) adv=sess.advSnapshot;
   if(!adv){alert('Avventura non trovata o eliminata.');return;}
+  const advData=JSON.parse(JSON.stringify(adv));
   const ch=S.chars.find(c=>c.id===sess.charId);
   // Usa lo snapshot di sessione se esiste (save state per avventura),
   // altrimenti ricade sul personaggio canonico in S.chars
   const charBase=sess.charSnapshot||ch;
   S.ap={
-    adv,charId:sess.charId,
+    adv:advData,charId:sess.charId,
     char:charBase?JSON.parse(JSON.stringify(charBase)):null,
     currPara:sess.currPara,
     codes:[...(sess.codes||[])],
