@@ -1,5 +1,5 @@
 {
-  "id": "ADV-0AX4629EM",
+  "id": "ADV-Q8DDQKJ9O",
   "title": "Il parcheggio_cina2",
   "desc": "Una mattina qualunque — o quasi.",
   "author": "LDG",
@@ -9,7 +9,7 @@
     {
       "id": "001",
       "name": "Uscita",
-      "text": "Il portone di ferro si chiude con un rimbombo che pare una risata metallica. Sei già rientrato una volta, per le chiavi della macchina, mentre frugavi tra i mobili del corridoio imprecando come un idiota. Ora ti ritrovi di nuovo fuori, con la borsa del pranzo stretta in mano e un vago senso di déjà-vu. L'orologio al polso corre più veloce della logica: la riunione di stamattina è una di quelle \"o dentro o fuori\", e il tempo ti sta sgusciando tra le dita. Ti lanci giù per le scale, ma sul pianerottolo del secondo piano c'è la signora Nina, immobile come un semaforo rotto, con due buste della spesa che sembrano sacchi di sabbia.",
+      "text": "Il portone di ferro si chiude dietro di te con un rimbombo che riecheggia per la tromba delle scale. È già la seconda volta stamattina. prima avevi lasciato le chiavi dell'auto sul mobile del corridoio, poi hai realizzato di aver dimenticato anche il pranzo. Ora ti ritrovi di nuovo sul pianerottolo, con la borsetta termica stretta in mano e un vago senso di déjà-vu. L'orologio al polso corre veloce: la riunione di stamattina è una di quelle \"o dentro o fuori\", e il tempo sembra quasi sgusciarti via tra le dita. Ti lanci giù per le scale, ma sul pianerottolo del secondo piano c'è la signora Nina, immobile come un semaforo rotto, con due buste della spesa che sembrano sacchi di sabbia.",
       "exits": [
         {
           "id": "PG-XAJI0Y6DP",
@@ -28,7 +28,7 @@
     {
       "id": "030",
       "name": "Saluto",
-      "text": "«Buongiorno, signora Nina!» canti, con un entusiasmo che non ti appartiene. Lei si gira al rallentatore, gli occhi stanchi dietro lenti spesse come fondi di bottiglia. Ai suoi piedi, le buste della spesa grondano peso: senti il tintinnio di barattoli e il tonfo sordo delle patate.\n«Oh, caro... che mattinata. Mio nipote doveva aiutarmi, ma ha avuto un imprevisto. Sai, i giovani d'oggi vivono dentro quei telefoni...»\nDentro di te, l'orologio urla: 8:05. La riunione è tra meno di un'ora, e il traffico là fuori non ti aspetterà.",
+      "text": "«Buongiorno, signora Nina!» le dici sorridendo con entusiasmo. Lei si gira a rallentatore. I suoi gli occhi sembrano così stanchi dietro quelle lenti spesse come fondi di bottiglia. Ai suoi piedi, delle grosse buste della spesa: senti il tintinnio di barattoli e il tonfo sordo delle patate.\n«Oh, cielo buongiorno... che mattinata. Mio nipote doveva aiutarmi, ma ha avuto un imprevisto. Sai, i giovani d'oggi vivono dentro quei telefoni...»\nDentro di te, l'orologio urla: 8:05. La riunione è tra meno di un'ora, e il traffico là fuori non ti aspetterà.",
       "exits": [
         {
           "id": "PG-3A3ZMF8MD",
@@ -47,7 +47,7 @@
     {
       "id": "055",
       "name": "Passo oltre",
-      "text": "Il portiere, una mummia moderna sepolta dietro il bancone, alza appena il giornale. «Bella giornata», borbotta senza convinzione, mentre fuori il cielo è una lastra di piombo. Spalanchi il portone e l'aria gelida ti schiaffeggia le guance, ripulendoti dai rimasugli di sonno. Il traffico ruggisce in lontananza, i clacson abbaiano, e il fumo degli scarichi danza nell'aria fredda come un fantasma di città. Ti fermi un attimo sul marciapiede, chiavi in mano, stomaco in subbuglio. Il mondo non ha aspettato i tuoi ritardi.",
+      "text": "Il portiere, una mummia del mondo moderno sepolta dietro il bancone, alza appena il giornale. «Bella giornata», borbotta senza convinzione, mentre fuori il cielo è una lastra di piombo. Spalanchi il portone e l'aria gelida ti schiaffeggia le guance, ripulendoti dai rimasugli di sonno. Il traffico ruggisce in lontananza, i clacson abbaiano, e il fumo degli scarichi danza nell'aria fredda come un fantasma di città. Ti fermi un attimo sul marciapiede, chiavi in mano, stomaco in subbuglio. Il mondo non ha aspettato i tuoi ritardi.",
       "exits": [
         {
           "id": "PG-3W5UZBIKC",
@@ -66,7 +66,7 @@
     {
       "id": "101",
       "name": "Aiuto Nina",
-      "text": "«Non si preoccupi, l'aiuto io.» Afferri le buste come fossero manubri: ti arrivano addosso odori di lavanda, caffè vecchio e detersivo. Nina ti guida fino alla sua cucina, inondandoti di ringraziamenti e di un biscotto fatto in casa che declini con garbo, sentendoti un po' in colpa. Poggi le buste sul tavolo e riparti, col suo «bravo ragazzo» che ti scalda il petto. Hai perso minuti preziosi, ma forse la gratitudine è un buon carburante. Segna una stanghetta sulla scheda.",
+      "text": "«Non si preoccupi, l'aiuto io.» Afferri le buste come fossero i manubri di una palestra: ti arrivano addosso odori di lavanda, caffè e detersivo. \nNina ti guida fino alla sua cucina, inondandoti di ringraziamenti e offrendoti dei biscotti fatti in casa che declini con garbo, sentendoti un po' in colpa. Poggi le buste sul tavolo e riparti, col suo «che bravi questi ragazzi» che ti scalda il petto. Hai perso minuti preziosi, ma forse la gratitudine è un buon carburante. Segna una stanghetta sulla scheda.",
       "exits": [
         {
           "id": "PG-XVG0FN9XU",
@@ -79,7 +79,7 @@
     {
       "id": "121",
       "name": "Attacco del gabbiano",
-      "text": "Mentre cammini svelto, un'ombra grigia e bianca ti sbarra la strada. Un gabbiano, ma non uno qualunque: è un piccolo dinosauro metropolitano, ali semiaperte, zampe palmate che artigliano il cemento. Ti fissa con un occhio giallo e vitreo, privo di empatia, ed emette un verso strozzato che suona come una dichiarazione di guerra. Sembra difendere un confine invisibile. Il bus potrebbe passare da un momento all'altro, e questo duello visivo sta diventando assurdo.",
+      "text": "Mentre cammini in maniera svelta, un'ombra grigia e bianca ti sbarra la strada. Un gabbiano, ma non uno qualunque: è un piccolo dinosauro metropolitano, ali semiaperte, zampe palmate che artigliano il cemento. Ti fissa con un occhio giallo e vitreo, privo di empatia, ed emette un verso strozzato che suona come una dichiarazione di guerra. Sembra difendere un confine invisibile. Il bus potrebbe passare da un momento all'altro, e questo duello visivo sta diventando assurdo.",
       "exits": [
         {
           "id": "PG-Y41IBLJH7",
@@ -888,5 +888,8 @@
         }
       ]
     }
-  ]
+  ],
+  "language": "Italiano",
+  "ageRating18plus": false,
+  "suggestedLevelRange": "1-2"
 }
