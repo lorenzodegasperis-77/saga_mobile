@@ -605,12 +605,9 @@ const SETTINGS={
 
 const _ALL=['fantasy','medievale','moderno','scifi','western','postapoc'];
 const ITEM_SETTINGS={
-  // Weapons — tutte le ambientazioni (si adattano in forma)
   'Arma semplice':_ALL,'Arma letale':_ALL,
   'Armi a distanza leggere':_ALL,'Armi a distanza medie':_ALL,'Armi a distanza pesanti':_ALL,
-  // Protections — tutte
   'Protezione leggera':_ALL,'Protezione media':_ALL,'Protezione pesante':_ALL,'Protezione a mano':_ALL,
-  // Equipment
   'Ampolla incendiaria':_ALL,
   'Antitossina':_ALL,
   'Calmante':_ALL,
@@ -682,6 +679,7 @@ const ITEM_SETTINGS={
   'Individuazione psichica':_ALL,'Memoria fotografica':_ALL,'Mente affilata':_ALL,
   'Concentrazione profonda':['fantasy','scifi','postapoc'],
   'Focalizzazione mentale':_ALL,
+  
   // Abilities — tutte (psioniche in sci-fi, magiche in fantasy)
 };
 function getItemSettings(name){return ITEM_SETTINGS[name]||_ALL;}
@@ -1113,17 +1111,15 @@ function renderHome(){
 
 	
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <button onclick="nav('adventures')" class="btn btn-primary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Gioca<br>Avvia un\'avventura</br>
+        <button onclick="nav('adventures')" class="btn btn-primary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Gioca<p style="font-weight:100;">Avvia un\'avventura</p>
         </button>
-        <button onclick="nav('stories')" class="btn btn-secondary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>Crea<br>Scrivi storie</br>
+        <button onclick="nav('stories')" class="btn btn-secondary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>Crea<p style="font-weight:100;">Scrivi storie</p>
         </button>
-        <button onclick="nav('characters')" class="btn btn-secondary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>Eroi<br>I miei personaggi</br>
+        <button onclick="nav('characters')" class="btn btn-secondary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>Eroi<p style="font-weight:100;">I miei personaggi</p>
         </button>
-        <button onclick="nav('npc-db')" class="btn btn-secondary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg>PNG<br>Database nemici</br>
-          La tua opinione
+        <button onclick="nav('npc-db')" class="btn btn-secondary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg>PNG<p style="font-weight:100;">Database nemici</p>
         </button>
       </div>
-
 
     <!-- RIGA SECONDARIA -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
