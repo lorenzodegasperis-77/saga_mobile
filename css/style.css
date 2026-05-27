@@ -23,6 +23,8 @@ h1{font-family:'Cinzel',serif; font-size:3rem;letter-spacing:8px;color:#1a1007;m
 h2{font-family:'Cinzel',serif; font-size:1.5rem;letter-spacing:2px;color:#1a1007;margin:0 0 3px}
 h3{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:2px;}
 .subtitle{color:#73181F;font-style:italic;font-size:.82rem}
+.home-subtitle{color:#73181F;font-style:italic;margin-bottom:24px;font-size:.92rem;}
+
 
 /* BTN */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px 18px;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:1.5px;transition:all .2s;border:2px solid #73181F;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;}
@@ -136,7 +138,7 @@ input,select,textarea{font-size:16px !important;font-family:'EB Garamond','Times
   .cc-nav-btns{flex-wrap:wrap;}
   .sh-origins-row{flex-direction:column !important;gap:4px !important;font-size:.82rem;}
   .home-title{font-size:2.4rem !important;letter-spacing:4px !important;}
-  .home-subtitle{margin-bottom:20px !important;}
+  .home-subtitle{margin-bottom:20px}
   .settings-frame{min-height:100svh !important;border-radius:0 !important;border-left:none;border-right:none;border-top:3px solid #73181F !important;}
 }
 @media(max-width:380px){
