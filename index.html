@@ -901,7 +901,7 @@ function renderHome(){
       <div onclick="apResumeSession('${s.sessId}')" style="padding:10px 12px;border-bottom:1px solid rgba(115,24,31,.12);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .15s;border-radius:6px" onmouseover="this.style.background='rgba(115,24,31,.07)'" onmouseout="this.style.background=''">
         <div style="min-width:0;flex:1;overflow:hidden">
           <div style="font-weight:bold;color:#73181F;font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(s.advTitle||'—')}</div>
-          <div style="font-size:.76rem;opacity:.65;margin-top:1px">${esc(s.charName)} · §${esc(s.currPara||'—')}${s.hpMax?` · <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;vertical-align:middle"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> ${s.hpCurr}/${s.hpMax}`:''}</div>
+          <div style="font-size:.76rem;opacity:.65;margin-top:1px">${esc(s.charName)} · §${esc(s.currPara||'—')}${s.hpMax?` · <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;vertical-align:middle"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> ${s.hpCurr}/${s.hpMax}`:''}${s.enMax?` <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;vertical-align:middle"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> ${s.enCurr}/${s.enMax}`:''}</div>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
           <span class="badge" style="font-size:.65rem">Lv.${esc(s.charLevel)}</span>
@@ -929,7 +929,7 @@ function renderHome(){
     <!-- RIPRENDI — CTA primario -->
     <div style="margin-bottom:20px">
       <div style="font-size:.68rem;color:#73181F;letter-spacing:2px;font-weight:bold;margin-bottom:8px">PARTITE SALVATE</div>
-      <div style="border-radius:10px;border:2px solid rgba(115,24,31,.25);overflow:hidden;background:rgba(196,176,138,.15)">${sessionList}</div>
+      <div style="border-radius:10px;border:2px solid rgba(115,24,31,.25);overflow:hidden;background:transparent;gap:6px;padding:9px 8px;color:rgb(115, 24, 31);cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:bold;transition:0.15s;">${sessionList}</div>
     </div>` : ''}
 
 	
@@ -953,19 +953,19 @@ function renderHome(){
     <!-- FOOTER — 4 azioni -->
     <div style="padding-top:14px;border-top:1px dashed rgba(115,24,31,.25)">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <button onclick="homeDonate()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 8px;border-radius:8px;border:1.5px solid rgba(115,24,31,.4);background:transparent;color:#73181F;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:bold;transition:all .15s" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">
+        <button onclick="homeDonate()" class="card-home" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           Offrimi un caffè
         </button>
-        <button onclick="homeManual()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 8px;border-radius:8px;border:1.5px solid rgba(115,24,31,.4);background:transparent;color:#73181F;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:bold;transition:all .15s" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">
+        <button onclick="homeManual()" class="card-home" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
           Manuale SAGA
         </button>
-        <button onclick="homeShare()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 8px;border-radius:8px;border:1.5px solid rgba(115,24,31,.4);background:transparent;color:#73181F;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:bold;transition:all .15s" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">
+        <button onclick="homeShare()" class="card-home" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           Condividi
         </button>
-        <button onclick="homeFeedback()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 8px;border-radius:8px;border:1.5px solid rgba(115,24,31,.4);background:transparent;color:#73181F;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:bold;transition:all .15s" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">
+        <button onclick="homeFeedback()" class="card-home" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           La tua opinione
         </button>
@@ -986,7 +986,7 @@ function renderAdventures(){
   const sagaCount = sagaList.length;
   return`
   <div class="frame sh-frame" style="width:min(640px,95vw);text-align:left;padding:24px 32px">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid #73181F">
+    <div class="header">
       <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#73181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
       <div>
         <h2>NUOVA AVVENTURA</h2>
@@ -5910,8 +5910,8 @@ function renderNpcDb(){
     </div>
 
     <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="npcNew()" style="flex:2;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.plus} Nuovo PNG</button>
-      <label class="btn btn-secondary" style="flex:1;min-width:100px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px">↑ Importa<input type="file" accept=".json" onchange="npcImport(event)" style="display:none"></label>
+      <button class="btn btn-primary" onclick="npcNew()" style="flex:1;">${SVG.plus} Nuovo PNG</button>
+      <label class="btn btn-secondary" style="flex:1">↑ Importa<input type="file" accept=".json" onchange="npcImport(event)" style="display:none"></label>
     </div>
 
     ${sortBar}

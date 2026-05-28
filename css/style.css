@@ -50,6 +50,7 @@ h3{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:2px;}
 
 /* MENU CONTAINER */
 .menu-c{display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;margin:0 auto;}
+.header{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:10px;border-bottom:2px solid #73181F}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:9999;}
@@ -77,7 +78,7 @@ h3{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:2px;}
 .char-card:hover{background:rgba(196,176,138,.6);transform:translateX(3px);}
 	.char-card-in-in{font-size:.78rem;opacity:.65;margin-top:2px}
 	.char-card-in{font-weight:bold;font-size:1rem;color:#73181F}
-
+.card-home{border-radius:10px;border:2px solid rgba(115, 24, 31, 0.25);overflow:hidden;background:transparent;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 8px;color:rgb(115, 24, 31);cursor:pointer;font-family:inherit;font-size:0.78rem;font-weight:bold;transition:0.15s;}
 
 /* EQUIP CARD */
 .equip-card{padding:13px;margin-bottom:8px;border-radius:6px;border:1.5px solid #84785E;background:rgba(255,255,255,.3);}
