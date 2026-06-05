@@ -307,7 +307,7 @@ equip_weapons:[
     {equip_name:'Sacchetto di biglie',equip_bonus:'Può essere sparso sul terreno (azione): i nemici devono superare una prova di IST per muoversi nel prossimo turno.',equip_cost:15,equip_inventory:'3 = 1 slot'},
     {equip_name:'Specchio d\'acciaio',equip_bonus:'Permette di guardare dietro gli angoli o riflettere un segnale luminoso.',equip_cost:10,equip_inventory:'1 slot'},
     {equip_name:'Talismano protettivo',equip_bonus:'Una volta al giorno, riduce di 2 il Danno subito.',equip_cost:70,equip_inventory:'1 slot'},
-	{equip_name:'Multitool', equip_bonus:'Un piccolo strumento con pinze e cacciaviti. Permette di riparare o manomettere piccoli oggetti meccanici. La prova di IST ha vantaggio.', equip_cost:15, equip_inventory:'1 slot'},
+	{equip_name:'Coltellino svizzero', equip_bonus:'Un piccolo strumento con pinze e cacciaviti. Permette di riparare o manomettere piccoli oggetti meccanici. La prova di IST ha vantaggio.', equip_cost:15, equip_inventory:'1 slot'},
 	{equip_name:'Scanner portatile', equip_bonus:'Con 1 azione, rivela la posizione di nemici o trappole entro 20m (Prova MEN con vantaggio).', equip_cost:90, equip_inventory:'1 slot'},
     {equip_name:'Cavo dati/link', equip_bonus:'Permette di collegarsi a terminali remoti. +1 alle prove MEN per hacking.', equip_cost:25, equip_inventory:'1 slot'},
     {equip_name:'Dose di adrenalina', equip_bonus:'Uso immediato: acquisisci 2 Azioni extra in questo turno, ma subisci 1 Grado condizione negativa a VIG e IST nel prossimo.', equip_cost:100, equip_inventory:'2 = 1 slot'},
@@ -466,7 +466,7 @@ const ITEM_SETTINGS={
   'Medicina':['moderno','scifi'],
   'Zaino':_ALL,
   'Scanner portatile': ['scifi','moderno'],
-  'Multitool': ['scifi','moderno','postapoc'],
+  'Coltellino svizzero': ['scifi','moderno','postapoc'],
   'Cavo dati/link': ['scifi','moderno'],
   'Dose di adrenalina': ['scifi','moderno'],
   'Granata stordente': ['scifi','moderno'],
@@ -854,6 +854,12 @@ function render(){
   const app=document.getElementById('app');
   const focusId=document.activeElement?.id||null;
   const focusSel=document.activeElement?.dataset?.focusKey||null;
+  
+  // Salvare scroll positions dei div con overflow-y
+  const scrollStates = {};
+  document.querySelectorAll('[data-preserve-scroll]').forEach(el => {
+    scrollStates[el.id] = el.scrollTop;
+  });
 
   let html='';
   if(S.page==='home')html=renderHome();
@@ -880,6 +886,14 @@ function render(){
   if(S.page==='adv-edit' && S.ae && S.ae.viewMode==='tree'){
     requestAnimationFrame(_initAdvTree);
   }
+  
+  // Ripristinare scroll positions dopo il rendering
+  requestAnimationFrame(() => {
+    Object.entries(scrollStates).forEach(([id, scrollTop]) => {
+      const el = document.getElementById(id);
+      if(el) el.scrollTop = scrollTop;
+    });
+  });
 
   // restore focus
   if(focusId){const el=document.getElementById(focusId);if(el){el.focus();if(el.setSelectionRange&&el.value)try{el.setSelectionRange(el.value.length,el.value.length);}catch(e){}}}
@@ -2680,7 +2694,7 @@ function renderAdvEdit(){
       const isSel=p.id===selPara;
       const hasErr=brokenParas.has(p.id)||deadParas.has(p.id);
       const isOrphan=orphanParas.has(p.id);
-      return`<div onclick="aeSelectParaAndEdit('${p.id}')" style="padding:7px 9px;border-radius:6px;cursor:pointer;border:1.5px solid ${isSel?'#73181F':hasErr?'rgba(192,57,43,.4)':isOrphan?'rgba(130,130,130,.35)':'transparent'};background:${isSel?'rgba(115,24,31,.1)':hasErr?'rgba(192,57,43,.05)':'transparent'};margin-bottom:3px;display:flex;align-items:center;gap:5px;font-size:.82rem">
+      return`<div onclick="aeSelectParaAndEdit('${p.id}')" style="padding:7px 9px;border-radius:6px;cursor:pointer;border:1.5px solid ${isSel?'#73181F':hasErr?'rgba(115,24,31,.5)':isOrphan?'rgba(115,24,31,.55)':'transparent'};background:${isSel?'rgba(115,24,31,.1)':hasErr?'rgba(115,24,31,.25)':'transparent'};margin-bottom:3px;display:flex;align-items:center;gap:5px;font-size:.82rem">
         ${p.id===adv.startParagraph?`<span style="font-size:.55rem;background:#18732D;color:white;border-radius:3px;padding:1px 4px;flex-shrink:0">▶</span>`:`<span style="font-size:.55rem;opacity:0;flex-shrink:0">▶</span>`}
         <span style="font-family:monospace;font-weight:bold;color:${p.id===adv.startParagraph?'#18732D':isSel?'#73181F':'#73181F'};flex-shrink:0">${p.id}</span>
         <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;opacity:.75">${esc(p.name||'—')}</span>
@@ -2728,7 +2742,7 @@ function renderAdvEdit(){
       <input value="${esc(searchQuery||'')}" oninput="aeSetSearch(this.value)" placeholder="Cerca paragrafo..." style="width:100%;background:rgba(255,255,255,.5);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:6px 8px;font-size:.82rem;font-family:inherit;color:#1a1007;outline:none">
     </div>
     ${hasHistory?`<div style="padding:2px 8px 4px"><button onclick="aeNavBack()" style="width:100%;padding:6px;background:rgba(115,24,31,.08);border:1px solid rgba(115,24,31,.2);border-radius:5px;cursor:pointer;font-size:.76rem;font-family:inherit;color:#73181F;text-align:left;min-height:36px">← §${S.ae.paraHistory[S.ae.paraHistory.length-1]}</button></div>`:''}
-    <div style="flex:1;overflow-y:auto;padding:4px 8px">
+    <div id="ae-sidebar-scroll" data-preserve-scroll="true" style="flex:1;overflow-y:auto;padding:4px 8px">
       <div style="font-size:.66rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:6px;padding:0 2px">PARAGRAFI (${filteredParas.length}${sq?'/'+adv.paragraphs.length:''})</div>
       ${paraList}
     </div>
@@ -2813,7 +2827,7 @@ function renderAdvEdit(){
         ${sidebarContent}
       </div>
       <!-- MAIN CONTENT -->
-      <div class="ae-main-area" style="flex:1;padding:16px 18px;overflow-y:auto;max-height:calc(100svh - 86px)">
+      <div id="ae-main-area-scroll" data-preserve-scroll="true" class="ae-main-area" style="flex:1;padding:16px 18px;overflow-y:auto;max-height:calc(100svh - 86px)">
         ${mainContent}
       </div>
     </div>
