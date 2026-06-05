@@ -34,7 +34,9 @@ h3{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:2px;}
 .btn-primary-mini{display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 2px; padding: 14px 8px; border-radius: 10px; border: 2px solid rgb(115, 24, 31); background: rgb(115, 24, 31); color: white; cursor: pointer; font-family: inherit; transition: 0.18s; min-height: 80px; filter: none;}
 .btn-secondary{display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 14px 8px; border-radius: 10px; border: 2px solid rgb(115, 24, 31); background: transparent; color: rgb(26, 16, 7); cursor: pointer; font-family: inherit; transition: 0.18s; min-height: 80px; filter: none;}
 .btn-secondary-mini{background: transparent;color: #1a1007;display:flex;align-items:center;justify-content:center;gap:2px;min-height:44px;font-size:.82rem;font-family: inherit;border:2px solid #73181F;border-radius:10px;padding:10px 8px;transition:all .18s;}
-.btn-secondary-dotted{border:2px dashed #73181F;opacity:.85;background: transparent;color: #1a1007;}
+.btn-secondary-dotted{border:2px dashed #73181F;opacity:.85;background: transparent;color: #1a1007;padding: 14px 8px;}
+.double-btns{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #84785E;padding-top:14px;gap:10px;}
+.btn-mini-editor{flex:1;padding:6px 3px;border-radius:5px;border:1.5px solid rgba(115,24,31,.35);background:transparent;color:#73181F;cursor:pointer;font-size:.64rem;font-family:inherit;min-height:36px;}
 
 /* BADGE */
 .badge{background:#73181F;color:white;padding:2px 8px;border-radius:5px;font-size:.62rem;font-weight:700;font-family:'Cinzel',serif;letter-spacing:.5px;}
@@ -51,6 +53,7 @@ h3{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:2px;}
 /* MENU CONTAINER */
 .menu-c{display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;margin:0 auto;}
 .header{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:10px;border-bottom:2px solid #73181F}
+.menu-scroll{overflow-y:auto;max-height:min(420px,52vh);padding-right:2px;margin-top:4px;}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:9999;}

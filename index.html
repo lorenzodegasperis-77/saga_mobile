@@ -1151,7 +1151,7 @@ function renderCreate(){
   <div class="cc-sidebar" style="width:230px;flex-shrink:0;background:#D8C7A1;border:2px solid #73181F;border-radius:8px;padding:16px;position:sticky;top:20px;font-size:.88rem;color:#1a1007">
     <h3 style="margin:0 0 6px;border-bottom:1px solid #73181F;padding-bottom:6px;color:#73181F;font-size:1rem;display:flex;align-items:center;gap:5px">${esc(cs.name||'Eroe Ignoto')}${settingBadge(cs.setting)}</h3>
     ${cs.sex?`<p style="font-style:italic;opacity:.65;margin-bottom:10px;font-size:.82rem">${esc(cs.sex)}</p>`:''}
-    ${[['VIG',stats.vig],['IST',stats.ins],['MEN',stats.min]].map(([k,v])=>`<span class="cc-sidebar-stat">${k} <strong>${v}</strong></span>`).join('')}
+    ${[['VIG',stats.vig],['IST',stats.ins],['MEN',stats.min]].map(([k,v])=>`<span class="cc-sidebar-stat">${k} <strong>${v}</strong></span>    `).join('')}
     <hr style="margin:8px 0;border-color:rgba(115,24,31,.2)">
     <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Salute Max:</span><strong>${stats.vig*2}</strong></div>
     <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>Energia Max:</span><strong>${stats.min*2}</strong></div>
@@ -1171,7 +1171,7 @@ function renderCreate(){
   <div class="cc-layout" style="width:min(1060px,97vw);z-index:1;display:flex;gap:18px;align-items:flex-start;padding:16px 8px;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007">
     ${sidebar}
     <div class="cc-main" style="flex:1;background:#D8C7A1;border:2px solid #73181F;border-radius:8px;padding:20px 24px;box-shadow:0 6px 20px rgba(0,0,0,.1)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
         <span class="step-indicator" style="font-size:.78rem;color:#73181F;opacity:.7">${cc.step===0?"":"Passo "+cc.step+" di 10"}</span>
         <div style="display:flex;gap:10px">
           <button onclick="ccOpenGuide()" class="info-button">i</button>
@@ -1217,11 +1217,11 @@ function renderCCSetting(cs){
       </div>`;
     }).join('')}
   </div>
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px;flex-wrap:wrap">
+  <div class="double-btns">
     ${cs.setting
-      ? `<button class="btn btn-secondary" style="flex:1;max-width:220px;border:2px dashed #73181F" onclick="generateRandomChar(S.cc.cs.setting)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>Casuale</button>`
+      ? `<button class="btn btn-secondary-dotted" onclick="generateRandomChar(S.cc.cs.setting)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:5px"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>Casuale</button>`
       : `<div></div>`}
-    <button class="btn btn-primary" style="flex:1;max-width:220px" onclick="if(!S.cc.cs.setting){ccAlertSetting();return;}ccGoStep(1)">IL TUO EROE ›</button>
+    <button class="btn btn-primary" style="max-width:50%" onclick="if(!S.cc.cs.setting){ccAlertSetting();return;}ccGoStep(1)">IL TUO EROE ›</button>
   </div>`;
 }
 
@@ -1235,9 +1235,9 @@ function renderCCStep1(cs){
     <option value="Femmina" ${cs.sex==='Femmina'?'selected':''}>Femmina</option>
     <option value="Altro" ${cs.sex==='Altro'?'selected':''}>Altro / Non specificato</option>
   </select>
-  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(0)">‹ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.name.trim()){alert('Inserisci il nome del personaggio!');return;}if(!S.cc.cs.sex){alert('Scegli il sesso!');return;}ccGoStep(2)">ORIGINI ›</button>
+  <div class="double-btns">
+    <button class="btn btn-secondary" onclick="ccGoStep(0)">‹ INDIETRO</button>
+    <button class="btn btn-primary" onclick="if(!S.cc.cs.name.trim()){alert('Inserisci il nome del personaggio!');return;}if(!S.cc.cs.sex){alert('Scegli il sesso!');return;}ccGoStep(2)">ORIGINI ›</button>
   </div>`;
 }
 
@@ -1256,9 +1256,9 @@ function renderCCOrigins(title,subtitle,items,type,selected,nextLabel='AVANTI �
       VIG${item.vig>=0?'+':''}${item.vig} IST${item.ins>=0?'+':''}${item.ins} MEN${item.min>=0?'+':''}${item.min}
     </div>
   </div>`).join('')}
-  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(${prev})">‹ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.origins.${type}){alert('${validation.replace(/'/g,"\\'")}');return;}ccGoStep(${next})">${esc(nextLabel)}</button>
+  <div class="double-btns">
+    <button class="btn btn-secondary" onclick="ccGoStep(${prev})">‹ INDIETRO</button>
+    <button class="btn btn-primary" onclick="if(!S.cc.cs.origins.${type}){alert('${validation.replace(/'/g,"\\'")}');return;}ccGoStep(${next})">${esc(nextLabel)}</button>
   </div>`;
 }
 
@@ -1274,9 +1274,9 @@ function renderCCCredits(cs){
         <div style="font-size:4rem;color:#73181F;font-weight:bold;margin:10px 0">${cs.credits}</div>
         <p>Hai ottenuto <strong>${cs.credits}</strong> Crediti.</p>`}
   </div>
-  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(6)">‹ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.cc.cs.hasRolled){alert('Tira i dadi prima!');return;}ccGoStep(8)">EQUIPAGGIAMENTO ›</button>
+  <div class="double-btns">
+    <button class="btn btn-secondary" onclick="ccGoStep(6)">‹ INDIETRO</button>
+    <button class="btn btn-primary" onclick="if(!S.cc.cs.hasRolled){alert('Tira i dadi prima!');return;}ccGoStep(8)">EQUIPAGGIAMENTO ›</button>
   </div>`;
 }
 
@@ -1347,20 +1347,20 @@ function renderCCEquip(title,items,remaining,prev,next,nextLabel='AVANTI \u276f'
     `;
     const tier = tiers[activeTab];
     const group = filterBySetting(items.filter(it => it.equip_cost >= tier.min && it.equip_cost <= tier.max));
-    contentHtml = tabsHtml + toggleEquipBtn + `<div style="margin-bottom:14px">${group.length?group.map(it => renderItem(it, items.indexOf(it))).join(''):'<p style="opacity:.5;font-style:italic;padding:10px 0">Nessun oggetto in questa fascia per l\u2019ambientazione scelta.</p>'}</div>`;
+contentHtml = tabsHtml + toggleEquipBtn + `<div style="overflow-y:auto;max-height:min(320px,45vh);padding-right:4px;margin-bottom:14px">${group.length?group.map(it => renderItem(it, items.indexOf(it))).join(''):'<p style="opacity:.5;font-style:italic;padding:10px 0">Nessun oggetto in questa fascia per l\u2019ambientazione scelta.</p>'}</div>`;
   } else {
     // Armi e Protezioni — filtrate
     const filtered = filterBySetting(items);
-    contentHtml = toggleEquipBtn + `<div style="margin-bottom:14px">${filtered.map(it => renderItem(it, items.indexOf(it))).join('')}</div>`;
+    contentHtml = toggleEquipBtn + `<div style="overflow-y:auto;max-height:min(320px,45vh);padding-right:4px;margin-bottom:14px">${filtered.map(it => renderItem(it, items.indexOf(it))).join('')}</div>`;
   }
 
   return`
   <h3 style="color:#73181F;margin-bottom:6px">${esc(title)}</h3>
   <div style="margin-bottom:6px;font-weight:bold;color:#18732D;font-size:.9rem">Crediti rimanenti: ${remaining}</div>
   ${contentHtml}
-  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(${prev})">\u276e INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:220px" onclick="${isLast?'ccFinish()':'ccGoStep('+next+')'}">${esc(nextLabel)}</button>
+  <div class="double-btns">
+    <button class="btn btn-secondary" onclick="ccGoStep(${prev})">\u276e INDIETRO</button>
+    <button class="btn btn-primary" onclick="${isLast?'ccFinish()':'ccGoStep('+next+')'}">${esc(nextLabel)}</button>
   </div>`;
 }
 
@@ -1368,6 +1368,11 @@ function renderCCTalents(cc,cs,stats){
   const setting=cs.setting;
   const showAll=cc.showAllItems;
   const toggleBtn=setting?`<button onclick="ccToggleShowAll()" style="background:none;border:1px solid #73181F;border-radius:5px;padding:3px 10px;font-size:.72rem;cursor:pointer;color:#73181F;font-weight:bold;flex-shrink:0">${showAll?'▾ Solo '+SETTINGS[setting].label:'▸ Mostra tutti'}</button>`:'';
+  const validStatsCount = [stats.vig, stats.ins, stats.min].filter(val => val >= 6).length;
+    let dynamicVh = 21; // valore di fallback originale se fossero 0
+  if (validStatsCount === 3) dynamicVh = 18;
+  if (validStatsCount === 2) dynamicVh = 24;
+  if (validStatsCount === 1) dynamicVh = 45;
   return`
   <h3 style="color:#73181F;margin-bottom:6px">Talenti (Max 3)</h3>
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:10px">
@@ -1386,7 +1391,8 @@ function renderCCTalents(cc,cs,stats){
         <span>${cat}</span>
         ${!statOk?`<button onclick="ccToggleCat('${cat}')" style="background:none;border:1px solid #73181F;border-radius:4px;padding:1px 8px;font-size:.72rem;cursor:pointer;color:#73181F;font-weight:bold">${isOpen?'▾ chiudi':'▸ mostra'}</button>`:''}
       </div>
-      ${!statOk&&!isOpen?`<div style="font-size:.82rem;color:#888;font-style:italic;padding:5px 0 8px"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Richiede ${cat} ≥ 6 per accedere a questi talenti (il tuo è ${catStat}).</div>`:''}
+      <div class="menu-scroll" style="max-height: min(420px, ${dynamicVh}vh);">
+      ${!statOk&&!isOpen?`<div style="font-size:.82rem;color:#888;font-style:italic;padding:5px 0 8px"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Richiede ${cat} ≥ 6 per accedere a questi talenti (attuale ${catStat}).</div>`:''}
       ${(statOk||isOpen)?talentsOfCat.map((t,idx)=>{
         const dbIdx=DB.talents.indexOf(t);
         const count=cs.talents.filter(x=>x.talent_name===t.talent_name).length;
@@ -1405,25 +1411,25 @@ function renderCCTalents(cc,cs,stats){
         if(r.talent)rp.push(r.talent);
         const catC={VIG:'#8B0000',IST:'#1a4a1a',MEN:'#1a1a6e'}[cat];
         return`
-        <div class="cc-card ${sel?'sel':''} ${!clickable?'dis':''}" onclick="${clickable?`ccToggleTalent(${dbIdx})`:'void(0)'}">
+        <div class="cc-card ${sel?'sel':''} ${!clickable?'dis':''}" style="padding: 10px;margin-bottom: 6px;" onclick="${clickable?`ccToggleTalent(${dbIdx})`:'void(0)'}">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-              <span style="font-weight:bold;color:#73181F">${esc(t.talent_name)}</span>${t.talent_name.startsWith('Abilità temporale')?`<button onclick="event.stopPropagation();showTemporalInfoModal('${t.talent_name.replace('Abilità temporale - ','')}')" style="background:rgba(24,24,110,.15);border:1.5px solid #1a1a6e;border-radius:50%;width:18px;height:18px;cursor:pointer;font-weight:bold;font-size:.65rem;color:#1a1a6e;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;margin-left:4px">i</button>`:''}
+              <span style="font-weight:bold;color:#73181F;font-size:.9rem">${esc(t.talent_name)}</span>${t.talent_name.startsWith('Abilità temporale')?`<button onclick="event.stopPropagation();showTemporalInfoModal('${t.talent_name.replace('Abilità temporale - ','')}')" style="background:rgba(24,24,110,.15);border:1.5px solid #1a1a6e;border-radius:50%;width:18px;height:18px;cursor:pointer;font-weight:bold;font-size:.65rem;color:#1a1a6e;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;margin-left:4px">i</button>`:''}
               <span class="badge" style="background:${catC};font-size:.65rem">${cat}</span>
               ${max>1&&max<99?`<span class="badge" style="background:#555;font-size:.65rem">max ${max}</span>`:''}
               ${max===99?`<span class="badge" style="background:#555;font-size:.65rem">ripetibile</span>`:''}
-              ${settingTagsHtml(t.talent_name)}
             </div>
             <span class="badge" style="flex-shrink:0">${esc(t.talent_cost)}</span>
           </div>
           ${rp.length?`<div style="font-size:.73rem;margin-top:4px;color:${reqMet?'#18732D':'#d32f2f'};font-weight:bold">${reqMet?'✓':'✗'} Req: ${esc(rp.join(' · '))}</div>`:''}
-          <div style="font-size:.81rem;margin-top:4px;opacity:.8">${esc(t.talent_description)}</div>
+          <div style="font-size:.75rem;opacity:.8">${esc(t.talent_description)}</div>
           ${sel?`<div style="font-size:.72rem;margin-top:4px;color:#73181F;font-weight:bold">✓ Selezionato${count>1?` ×${count}`:''}</div>`:''}
         </div>`}).join(''):''}
+        </div>
     </div>`}).join('')}
-  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(4)">‹ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:230px" onclick="ccGoStep(6)">ABILITÀ ISTANTANEE ›</button>
+  <div class="double-btns">
+    <button class="btn btn-secondary" onclick="ccGoStep(4)">‹ INDIETRO</button>
+    <button class="btn btn-primary" onclick="ccGoStep(6)">ABILITÀ ISTANTANEE ›</button>
   </div>`;
 }
 
@@ -1452,10 +1458,7 @@ function renderCCAbilities(cc,cs){
     const visibleAbilities=DB.abilities.filter((a,i)=>showAll||!setting||itemMatchesSetting(a.ability_name,setting)||cs.abilities.some(x=>x.ability_name===a.ability_name));
     const toggleAbBtn=setting?`<button onclick="ccToggleShowAll()" style="background:none;border:1px solid #73181F;border-radius:5px;padding:3px 10px;font-size:.72rem;cursor:pointer;color:#73181F;font-weight:bold">${showAll?'▾ Solo '+SETTINGS[setting].label:'▸ Mostra tutte'}</button>`:'';
     abContent=`
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:10px">
-      <p style="font-size:.84rem;opacity:.75;margin:0">Abile nella psiche ×${psycheCount} — fino a <strong>${maxAb}</strong> abilità. Selezionate: ${cs.abilities.length}/${maxAb}${setting&&!showAll?' — filtrate per <strong>'+SETTINGS[setting].label+'</strong>':''}</p>
-      ${toggleAbBtn}
-    </div>
+    <div class="menu-scroll" style="max-height:min(65vh);">
     ${visibleAbilities.map(a=>{
       const i=DB.abilities.indexOf(a);
       const sel=cs.abilities.some(x=>x.ability_name===a.ability_name);
@@ -1463,19 +1466,20 @@ function renderCCAbilities(cc,cs){
       return`
       <div class="cc-card ${sel?'sel':''} ${maxReached?'dis':''}" onclick="${maxReached?'void(0)':`ccToggleAbility(${i})`}">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span style="font-weight:bold;color:#73181F">${esc(a.ability_name)}</span>${settingTagsHtml(a.ability_name)}</div>
+          <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span style="font-weight:bold;color:#73181F">${esc(a.ability_name)}</span></div>
           <span class="badge" style="flex-shrink:0">${esc(a.ability_cost)}</span>
         </div>
         <div style="font-size:.81rem;margin-top:3px;opacity:.8">${esc(a.ability_description)}</div>
         ${sel?`<div style="font-size:.72rem;margin-top:3px;color:#73181F;font-weight:bold">✓ Selezionata</div>`:''}
-      </div>`}).join('')}`;
-  }
+      </div>`}).join('')}</div>`;
+      }
   return`
+    
   <div style="display:flex;align-items:center;margin-bottom:6px"><h3 style="color:#73181F;margin:0">Abilità Istantanee</h3><button onclick="showAbilityInfoModal()" style="background:rgba(115,24,31,.12);border:1.5px solid #73181F;border-radius:50%;width:22px;height:22px;cursor:pointer;font-weight:bold;font-size:.82rem;color:#73181F;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;margin-left:8px">i</button></div>
   ${abContent}
-  <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
-    <button class="btn btn-secondary" style="max-width:160px" onclick="ccGoStep(5)">‹ INDIETRO</button>
-    <button class="btn btn-primary" style="max-width:220px" onclick="ccGoStep(7)">CREDITI ›</button>
+  <div class="double-btns">
+    <button class="btn btn-secondary" onclick="ccGoStep(5)">‹ INDIETRO</button>
+    <button class="btn btn-primary" onclick="ccGoStep(7)">CREDITI ›</button>
   </div>`;
 }
 
@@ -1550,6 +1554,10 @@ function ccToggleTalent(dbIdx){
   const stats=ccStats();
   const count=cs.talents.filter(x=>x.talent_name===t.talent_name).length;
   const max=t.talent_max||1;
+  const scrollPositions = [];
+  document.querySelectorAll('.menu-scroll').forEach((el, index) => {
+    scrollPositions[index] = el.scrollTop;
+  });
   if(count>0){
     const arr=cs.talents;
     for(let i=arr.length-1;i>=0;i--){if(arr[i].talent_name===t.talent_name){arr.splice(i,1);break;}}
@@ -1564,7 +1572,12 @@ function ccToggleTalent(dbIdx){
     const maxAb=psycheCount*3;
     if(cs.abilities.length>maxAb)cs.abilities=cs.abilities.slice(0,maxAb);
   }
-  render();
+    render();
+    document.querySelectorAll('.menu-scroll').forEach((el, index) => {
+    if (scrollPositions[index] !== undefined) {
+      el.scrollTop = scrollPositions[index];
+    }
+  });
 }
 function ccToggleAbility(i){
   const a=DB.abilities[i];
@@ -1573,9 +1586,18 @@ function ccToggleAbility(i){
   if(!psycheCount){alert("Richiede il talento 'Abile nella Psiche'!");return;}
   const maxAb=psycheCount*3;
   const has=cs.abilities.some(x=>x.ability_name===a.ability_name);
+  const scrollPositions = [];
+  document.querySelectorAll('.menu-scroll').forEach((el, index) => {
+    scrollPositions[index] = el.scrollTop;
+  });
   if(has){cs.abilities=cs.abilities.filter(x=>x.ability_name!==a.ability_name);}
   else{if(cs.abilities.length>=maxAb){alert(`Massimo ${maxAb} abilità!`);return;}cs.abilities.push(a);}
   render();
+      document.querySelectorAll('.menu-scroll').forEach((el, index) => {
+    if (scrollPositions[index] !== undefined) {
+      el.scrollTop = scrollPositions[index];
+    }
+  });
 }
 function ccFinish(){
   const cs=S.cc.cs;
@@ -1906,7 +1928,7 @@ function renderLevelUp(){
         <div style="font-size:1.8rem;font-weight:bold">${char[k]||0}</div>
       </div>`).join('')}
     </div>`:''}
-    <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+    <div class="double-btns">
       <button class="btn btn-secondary" style="max-width:160px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
       <button class="btn btn-primary" style="max-width:220px" onclick="${needsAttr&&!lu.attrBoost?`alert('Scegli una Caratteristica!')`:(needsExtra?`luGoStep(2)`:`luFinish()`)}">${needsExtra?'AVANTI ›':'CONFERMA LIVELLO ✓'}</button>
     </div>`;
@@ -1959,7 +1981,7 @@ function renderLevelUp(){
             ${blocked?`<div style="font-size:.71rem;color:#999;margin-top:2px">Già preso al massimo</div>`:''}
           </div>`}).join(''):''}
       </div>`;}).join('')}
-    <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+    <div class="double-btns">
       <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(1)">‹ INDIETRO</button>
       <button class="btn btn-secondary" style="max-width:120px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
       <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newTalent){alert('Scegli un talento!');return;}luGoStep(3)">AVANTI ›</button>
@@ -1992,7 +2014,7 @@ function renderLevelUp(){
         </div>
         <div style="font-size:.81rem;margin-top:3px;opacity:.8">${esc(a.ability_description)}</div>
       </div>`}).join('')}
-    <div style="display:flex;justify-content:space-between;margin-top:20px;border-top:1px solid #84785E;padding-top:14px;gap:10px">
+    <div class="double-btns">
       <button class="btn btn-secondary" style="max-width:160px" onclick="luGoStep(2)">‹ INDIETRO</button>
       <button class="btn btn-secondary" style="max-width:120px;color:#73181F;font-size:.8rem" onclick="luCancel()">✕ Annulla</button>
       <button class="btn btn-primary" style="max-width:220px" onclick="if(!S.lu.newAbility){alert('Seleziona almeno una abilita prima di procedere!');return;}luFinish()">CONFERMA LIVELLO ✓</button>
@@ -2721,7 +2743,7 @@ function renderAdvEdit(){
       </div>
       <div style="display:flex;gap:4px">
         <button onclick="S.ae.showDiagnostics=!S.ae.showDiagnostics;S.ae.showStats=false;render()" style="flex:1;padding:6px 3px;border-radius:5px;border:1.5px solid ${diagIssues.length?'#c0392b':'rgba(115,24,31,.35)'};background:${S.ae.showDiagnostics?'rgba(192,57,43,.15)':'transparent'};color:${diagIssues.length?'#c0392b':'#73181F'};cursor:pointer;font-size:.64rem;font-family:inherit;min-height:36px">${diagIssues.length?`⚠ ${diagIssues.length}`:'✓'} Errori</button>
-        <button onclick="S.ae.showStats=!S.ae.showStats;S.ae.showDiagnostics=false;render()" style="flex:1;padding:6px 3px;border-radius:5px;border:1.5px solid rgba(115,24,31,.35);background:${S.ae.showStats?'rgba(115,24,31,.1)':'transparent'};color:#73181F;cursor:pointer;font-size:.64rem;font-family:inherit;min-height:36px">${SVG.stats} Stat</button>
+        <button onclick="S.ae.showStats=!S.ae.showStats;S.ae.showDiagnostics=false;render()" class="btn btn-secondary-mini" style="flex:1;padding:6px 3px;border-radius:5px;border:1.5px solid rgba(115,24,31,.35);background:${S.ae.showStats?'rgba(115,24,31,.1)':'transparent'};color:#73181F;cursor:pointer;font-size:.64rem;font-family:inherit;min-height:36px">${SVG.stats} Stat</button>
       </div>
     </div>
     ${diagPanel}${statsPanel}`;
@@ -2994,7 +3016,7 @@ function renderParaEditor(p,adv){
     ${exitsHtml}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
       ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end',`${SVG.flag} Fine`],['encounter',`${SVG.sword} Scontro`],['rest',`${SVG.rest} Riposo`],['item_grant',`${SVG.bag} Inventario`]].map(([t,l])=>`
-      <button onclick="aeAE('${t}')" style="padding:7px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007;display:flex;align-items:center;justify-content:center;gap:3px" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
+      <button onclick="aeAE('${t}')" class="card-home" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">${l}</button>`).join('')}
     </div>
   </div>`;
 }
@@ -3714,7 +3736,7 @@ function showAIWritingModal(){
   d.id='ai-writing-modal';
   d.style.cssText='position: fixed;inset: 0px;background: rgba(0, 0, 0, 0.75);z-index: 19999;display: flex;align-items: flex-end;justify-content: center;font-family: \'Times New Roman\', Georgia, serif;padding: 0px;align-content: center;flex-wrap: wrap;d.onclick=e=>{if(e.target===d)d.remove();}';
   d.innerHTML=`
-  <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #5a2d91;border-bottom:none;border-radius:16px 16px 0 0;width:100%;max-width:680px;max-height:90svh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.4)">
+  <div onclick="event.stopPropagation()" style="background:#D8C7A1;border:2px solid #5a2d91;border-bottom:none;border-radius:16px 16px 16px 16px;width:100%;max-width:680px;max-height:90svh;display:flex;flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.4)">
     <!-- Header -->
     <div style="padding:14px 18px 10px;border-bottom:1.5px solid rgba(90,45,145,.25);display:flex;align-items:center;gap:10px;flex-shrink:0">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a2d91" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
@@ -5916,7 +5938,7 @@ function renderNpcDb(){
     ${filterBar}
     ${resetBtn?`<div style="margin-bottom:10px">${resetBtn}</div>`:''}
 
-    <div style="margin-top:4px">${rows}</div>
+    <div class="menu-scroll">${rows}</div>
 
     <button class="btn btn-secondary-mini" onclick="nav('home')" style="margin-top:14px">‹ TORNA AL MENU</button>
   </div>`;
