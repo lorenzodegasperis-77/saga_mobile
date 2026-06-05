@@ -3277,7 +3277,7 @@ function renderAdvPlay(){
         <span style="font-weight:bold;color:#8a6000;font-size:.9rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> ${e.label||`Prova di ${e.stat}`}</span>
         <span class="badge" style="background:#8a6000">${e.stat} ${sv} — 2d6 ≤ ${sv}</span>${parseInt(e.exp)>0?`<span class="badge" style="background:#1a4a7a">+${e.exp} EXP</span>`:''}
       </div>
-      <button onclick="apRollStat('${e.stat}',${sv},'${e.successTo}','${e.failTo}',${parseInt(e.exp)||0})" class="btn btn-primary" style="background:#8a6000;border-color:#8a6000;width:100%;font-size:.88rem;min-height:40px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Tira i dadi</button>
+      <button onclick="apRollStat('${e.stat}',${sv},'${e.successTo}','${e.failTo}',${parseInt(e.exp)||0})" class="btn btn-primary" style="background:#8a6000;border-color:#8a6000;flex-direction: row;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Tira i dadi</button>
     </div>`;
   }).join('');
 
@@ -3326,7 +3326,7 @@ function renderAdvPlay(){
         ${e.to?`<span style="color:#18732D;font-weight:bold">✓ Vittoria → §${esc(e.to)}</span>`:''}
         ${e.defeatTo?`<span style="color:#d32f2f;font-weight:bold">✗ Sconfitta → §${esc(e.defeatTo)}</span>`:''}
       </div>`:''}
-      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${_eIdx},${parseInt(e.exp)||0})" class="btn btn-primary" style="width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.sword} ${esc(btnLabel)}</button>
+      <button onclick="apStartCombat('${e.npcId||''}','${e.to||''}','${e.defeatTo||''}',${_eIdx},${parseInt(e.exp)||0})" class="btn btn-primary" style="display:flex;align-items:center;justify-content:center;gap:6px;flex-direction: row;">${SVG.sword} ${esc(btnLabel)}</button>
     </div>`;
   }).join('');
 
@@ -3355,8 +3355,8 @@ function renderAdvPlay(){
         ${applied?`<span style="font-size:.7rem;background:${isAdd?'#18732D':'#8a3000'};color:white;padding:2px 8px;border-radius:10px;font-weight:bold">${isAdd?SVG.check+' Aggiunto':SVG.x+' Rimosso'}</span>`:''}
       </div>
       ${e.itemDesc?`<div style="font-size:.78rem;opacity:.7;margin-bottom:8px;line-height:1.5">${esc(e.itemDesc)}</div>`:''}
-      ${!applied?`<button onclick="apApplyItemGrant(${globalIdx})" class="btn btn-primary" style="background:${color};border-color:${color};width:100%;font-size:.88rem;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px">${SVG.bag.replace('currentColor','white')} ${isAdd?'Aggiungi all\'inventario':'Rimuovi dall\'inventario'}</button>`
-        :`<div style="font-size:.76rem;opacity:.6;text-align:center;font-style:italic">Inventario aggiornato. Usa il tasto indietro per continuare.</div>`}
+      ${!applied?`<button onclick="apApplyItemGrant(${globalIdx})" class="btn btn-primary" style="background:${color};border-color:${color};display:flex;align-items:center;justify-content:center;gap:6px;flex-direction:row;">${SVG.bag.replace('currentColor','white')} ${isAdd?'Aggiungi all\'inventario':'Rimuovi dall\'inventario'}</button>`
+        :`<div style="font-size:.76rem;opacity:.6;text-align:center;font-style:italic">Inventario aggiornato</div>`}
     </div>`;
   }).join('');
 
