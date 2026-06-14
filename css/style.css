@@ -170,8 +170,6 @@ input,select,textarea{font-size:16px !important;font-family:'EB Garamond','Times
   .ae-exit-addrow button{min-height:44px !important;font-size:.78rem !important;}
 }
 @media(min-width:641px){
-  .ae-sidebar-desktop{display:flex !important;}
-  .ae-sidebar-overlay,.ae-mobile-toggle{display:none !important;}
   .ae-header-compact{display:none !important;}
   .ae-header-meta{display:contents !important;}
 }
