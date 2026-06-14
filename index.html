@@ -1677,7 +1677,7 @@ function renderSheet(){
           <div style="display:flex;flex-direction:column;align-items:center;font-size:.74rem;color:#73181F;font-weight:bold">
             EXP<input id="sh-exp" type="number" value="${L.exp||0}" style="width:54px;text-align:center;border:none;background:transparent;font-size:1.05rem;font-family:inherit;outline:none;color:#1a1007" oninput="shSetExp(this.value)">
           </div>
-          ${L.level<10?`<button title="Passa di livello" onclick="nav('levelup',{charId:'${esc(L.id)}'})" class="info-button">+</button>`:''}
+          ${L.level<10?`<button title="Passa di livello" onclick="nav('levelup',{charId:'${esc(L.id)}'})" style="background:#73181F;color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-weight:bold;font-size:1.1rem;display:flex;align-items:center;justify-content:center">+</button>`:''}
           <button onclick="shOpenDelete()" style="background:transparent;color:#d32f2f;border:1.5px solid #d32f2f;border-radius:6px;padding:4px 9px;cursor:pointer;font-size:.75rem;font-weight:bold;letter-spacing:.5px;font-family:inherit">✕ Elimina</button>
         </div>
       </div>
@@ -1708,7 +1708,7 @@ function renderSheetGenerale(L,eff,cKey,dmg,prot,twpEff){
   <div class="sh-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
     <div>
       <div style="margin-bottom:20px;border-bottom:1px solid rgba(115,24,31,.2);padding-bottom:14px">
-        <h3>CARATTERISTICHE</h3>
+        <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">CARATTERISTICHE</h3>
         ${[['vig','VIG'],['ins','IST'],['min','MEN']].map(([k,l])=>{
           const penalty=(k==='vig'&&twpEff.vigPenalty>0)?twpEff.vigPenalty:0;
           const displayVal=eff(k)-penalty;
@@ -1722,7 +1722,7 @@ function renderSheetGenerale(L,eff,cKey,dmg,prot,twpEff){
         </div>`}).join('')}
       </div>
       <div>
-        <h3>COMBATTIMENTO</h3>
+        <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:10px">COMBATTIMENTO</h3>
         <div style="font-size:.78rem;color:#73181F;font-weight:bold;margin-bottom:4px">SALUTE</div>
         <div class="bar-outer"><div class="bar-inner" style="width:${L.hpMax>0?Math.min(100,(L.hpCurr/L.hpMax)*100):0}%;background:#18732D"></div><div class="bar-label">${L.hpCurr} / ${L.hpMax}</div></div>
         <div style="display:flex;gap:8px;margin-bottom:12px">
@@ -1744,7 +1744,7 @@ function renderSheetGenerale(L,eff,cKey,dmg,prot,twpEff){
       </div>
     </div>
     <div>
-      <h3>EQUIPAGGIAMENTO ATTIVO</h3>
+      <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">EQUIPAGGIAMENTO ATTIVO</h3>
       ${equipSlots.map(([lbl,k])=>{
         // items available for this slot: not "used up" in other slots
         const avail=getAvailableForSlot(L,k);
@@ -1774,7 +1774,7 @@ function renderSheetInventario(L){
   const items=(L.inventory||[]);
   const slotsUsed=items.reduce((s,i)=>s+parseSlotCost(i.slot)*(i.quantity||1),0);
   return`
-  <h3>OGGETTI NELLO ZAINO</h3>
+  <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">OGGETTI NELLO ZAINO</h3>
   ${items.length===0?'<p style="opacity:.55;font-style:italic">Zaino vuoto.</p>':''}
   ${items.map((item,idx)=>`
   <div style="border:1px solid #73181F;border-radius:8px;padding:12px;margin-bottom:8px;background:rgba(255,255,255,.3)">
@@ -1794,7 +1794,7 @@ function renderSheetInventario(L){
 
 function renderSheetTalenti(L){
   return`
-  <h3>TALENTI APPRESI</h3>
+  <h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin-bottom:12px">TALENTI APPRESI</h3>
   ${!(L.talents&&L.talents.length)?'<p style="opacity:.55;font-style:italic">Nessun talento.</p>':''}
   ${(L.talents||[]).map(t=>{
     const isTemporal=t.talent_name.startsWith('Abilità temporale');
@@ -1815,7 +1815,7 @@ function renderSheetTalenti(L){
 
 function renderSheetAbilita(L){
   return`
-  <div>ABILITÀ ISTANTANEE</h3><button onclick="showAbilityInfoModal()" style="background:rgba(115,24,31,.12);border:1.5px solid #73181F;border-radius:50%;width:22px;height:22px;cursor:pointer;font-weight:bold;font-size:.82rem;color:#73181F;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;margin-left:8px">i</button></div>
+  <div style="display:flex;align-items:center;margin-bottom:12px"><h3 style="color:#73181F;letter-spacing:2px;font-size:.88rem;margin:0">ABILITÀ ISTANTANEE</h3><button onclick="showAbilityInfoModal()" style="background:rgba(115,24,31,.12);border:1.5px solid #73181F;border-radius:50%;width:22px;height:22px;cursor:pointer;font-weight:bold;font-size:.82rem;color:#73181F;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;margin-left:8px">i</button></div>
   ${!(L.abilities&&L.abilities.length)?'<p style="opacity:.55;font-style:italic">Nessuna abilità.</p>':''}
   ${(L.abilities||[]).map(a=>`
   <div style="border:1px solid #73181F;border-radius:8px;padding:12px;margin-bottom:8px;background:rgba(255,255,255,.3)">
