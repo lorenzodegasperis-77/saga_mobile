@@ -156,7 +156,7 @@ input,select,textarea{font-size:16px !important;font-family:'EB Garamond','Times
 .ae-sidebar-overlay{display:none;position:fixed;inset:0;background:transparent;z-index:80;}
 .ae-sidebar-panel{width:min(280px,85vw);height:100svh;overflow-y:auto;display:flex;flex-direction:column;background:rgba(216,199,161,.98);border-right:2px solid #73181F;box-shadow:4px 0 20px rgba(0,0,0,.2);}
 @media(max-width:640px){
-  .ae-sidebar-desktop{display:none !important;}
+  .ae-sidebar-desktop{display:none}
   .ae-sidebar-overlay{display:flex !important;pointer-events:none;transition:background .25s;}
   .ae-sidebar-overlay.open{pointer-events:all;background:rgba(0,0,0,.55);}
   .ae-sidebar-overlay.open .ae-sidebar-panel{transform:translateX(0);}
