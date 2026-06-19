@@ -2701,7 +2701,7 @@ function renderAdvEdit(){
       const isSel=p.id===selPara;
       const hasErr=brokenParas.has(p.id)||deadParas.has(p.id);
       const isOrphan=orphanParas.has(p.id);
-      return`<div onclick="aeSelectParaAndEdit('${p.id}')" style="padding:7px 9px;border-radius:6px;cursor:pointer;border:1.5px solid ${isSel?'#73181F':hasErr?'rgba(115,24,31,.5)':isOrphan?'rgba(115,24,31,.55)':'transparent'};background:${isSel?'rgba(115,24,31,.1)':hasErr?'rgba(115,24,31,.25)':'transparent'};margin-bottom:3px;display:flex;align-items:center;gap:5px;font-size:.82rem">
+      return`<div onclick="aeSelectParaAndEdit('${p.id}')" style="padding:7px 9px;border-radius:6px;cursor:pointer;border:1.5px solid ${isSel?'#73181F':hasErr?'rgba(192,57,43,.4)':isOrphan?'rgba(130,130,130,.35)':'transparent'};background:${isSel?'rgba(115,24,31,.1)':hasErr?'rgba(192,57,43,.05)':'transparent'};margin-bottom:3px;display:flex;align-items:center;gap:5px;font-size:.82rem">
         ${p.id===adv.startParagraph?`<span style="font-size:.55rem;background:#18732D;color:white;border-radius:3px;padding:1px 4px;flex-shrink:0">▶</span>`:`<span style="font-size:.55rem;opacity:0;flex-shrink:0">▶</span>`}
         <span style="font-family:monospace;font-weight:bold;color:${p.id===adv.startParagraph?'#18732D':isSel?'#73181F':'#73181F'};flex-shrink:0">${p.id}</span>
         <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;opacity:.75">${esc(p.name||'—')}</span>
@@ -2749,7 +2749,7 @@ function renderAdvEdit(){
       <input value="${esc(searchQuery||'')}" oninput="aeSetSearch(this.value)" placeholder="Cerca paragrafo..." style="width:100%;background:rgba(255,255,255,.5);border:1.5px solid rgba(115,24,31,.3);border-radius:6px;padding:6px 8px;font-size:.82rem;font-family:inherit;color:#1a1007;outline:none">
     </div>
     ${hasHistory?`<div style="padding:2px 8px 4px"><button onclick="aeNavBack()" style="width:100%;padding:6px;background:rgba(115,24,31,.08);border:1px solid rgba(115,24,31,.2);border-radius:5px;cursor:pointer;font-size:.76rem;font-family:inherit;color:#73181F;text-align:left;min-height:36px">← §${S.ae.paraHistory[S.ae.paraHistory.length-1]}</button></div>`:''}
-    <div id="ae-sidebar-scroll" data-preserve-scroll="true" style="flex:1;overflow-y:auto;padding:4px 8px; max-height:60svh">
+    <div style="flex:1;overflow-y:auto;padding:4px 8px">
       <div style="font-size:.66rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:6px;padding:0 2px">PARAGRAFI (${filteredParas.length}${sq?'/'+adv.paragraphs.length:''})</div>
       ${paraList}
     </div>
@@ -2759,20 +2759,22 @@ function renderAdvEdit(){
     <div style="padding:8px;border-top:1px solid rgba(115,24,31,.2)">
       <div style="font-size:.66rem;letter-spacing:2px;color:#73181F;font-weight:bold;margin-bottom:6px">VISUALIZZA</div>
       <div style="display:flex;gap:4px;margin-bottom:6px">
+        <button onclick="aeToggleView('edit');S.ae.mobileShowSidebar=false;render()" style="flex:1;padding:8px 3px;border-radius:5px;border:1.5px solid #73181F;background:${viewMode==='edit'?'#73181F':'transparent'};color:${viewMode==='edit'?'white':'#1a1007'};cursor:pointer;font-size:.7rem;font-family:inherit;min-height:40px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg> Editor</button>
+        <button onclick="aeToggleView('tree');S.ae.mobileShowSidebar=false;render()" style="flex:1;padding:8px 3px;border-radius:5px;border:1.5px solid #73181F;background:${viewMode==='tree'?'#73181F':'transparent'};color:${viewMode==='tree'?'white':'#1a1007'};cursor:pointer;font-size:.7rem;font-family:inherit;min-height:40px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><path d="M18 9a3 3 0 0 0-3-3H6"/><path d="M18 21a3 3 0 0 0-3-3H6"/></svg> Albero</button>
       </div>
       <div style="display:flex;gap:4px">
         <button onclick="S.ae.showDiagnostics=!S.ae.showDiagnostics;S.ae.showStats=false;render()" style="flex:1;padding:6px 3px;border-radius:5px;border:1.5px solid ${diagIssues.length?'#c0392b':'rgba(115,24,31,.35)'};background:${S.ae.showDiagnostics?'rgba(192,57,43,.15)':'transparent'};color:${diagIssues.length?'#c0392b':'#73181F'};cursor:pointer;font-size:.64rem;font-family:inherit;min-height:36px">${diagIssues.length?`⚠ ${diagIssues.length}`:'✓'} Errori</button>
-        <button onclick="S.ae.showStats=!S.ae.showStats;S.ae.showDiagnostics=false;render()" class="btn btn-secondary-mini" style="flex:1;padding:6px 3px;border-radius:5px;border:1.5px solid rgba(115,24,31,.35);background:${S.ae.showStats?'rgba(115,24,31,.1)':'transparent'};color:#73181F;cursor:pointer;font-size:.64rem;font-family:inherit;min-height:36px">${SVG.stats} Stat</button>
+        <button onclick="S.ae.showStats=!S.ae.showStats;S.ae.showDiagnostics=false;render()" style="flex:1;padding:6px 3px;border-radius:5px;border:1.5px solid rgba(115,24,31,.35);background:${S.ae.showStats?'rgba(115,24,31,.1)':'transparent'};color:#73181F;cursor:pointer;font-size:.64rem;font-family:inherit;min-height:36px">${SVG.stats} Stat</button>
       </div>
     </div>
     ${diagPanel}${statsPanel}`;
 
   return`
-  <div style="width:100vw;max-width:1100px;display:flex;flex-direction:column;z-index:1;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007;min-height:95svh;background:#e9e0cc">
+  <div style="width:100vw;max-width:1100px;display:flex;flex-direction:column;z-index:1;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007;min-height:100svh;background:#D8C7A1">
     <!-- MOBILE SIDEBAR OVERLAY -->
     <div class="ae-sidebar-overlay ${S.ae.mobileShowSidebar?'open':''}" onclick="S.ae.mobileShowSidebar=false;render()">
       <div class="ae-sidebar-panel" onclick="event.stopPropagation()" style="display:flex;flex-direction:column">
-        <div style="padding:10px 12px;border-bottom:2px solid #73181F;display:flex;align-items:center;justify-content:space-between;background:#e9e0cc;position:sticky;top:0;z-index:2">
+        <div style="padding:10px 12px;border-bottom:2px solid #73181F;display:flex;align-items:center;justify-content:space-between;background:#D8C7A1;position:sticky;top:0;z-index:2">
           <span style="font-weight:bold;color:#73181F;letter-spacing:2px;font-size:.82rem">PARAGRAFI</span>
           <button onclick="S.ae.mobileShowSidebar=false;render()" style="background:transparent;border:none;color:#73181F;font-size:1.3rem;cursor:pointer;line-height:1;padding:4px 8px;min-width:40px;min-height:40px">✕</button>
         </div>
@@ -2780,7 +2782,7 @@ function renderAdvEdit(){
       </div>
     </div>
     <!-- HEADER -->
-    <div style="background:#e9e0cc;border-bottom:2px solid #73181F;padding:8px 10px;display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.12)">
+    <div style="background:#D8C7A1;border-bottom:2px solid #73181F;padding:8px 10px;display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.12)">
       <button onclick="nav('adv-list')" title="Torna alla lista" style="background:transparent;border:none;color:#73181F;cursor:pointer;font-size:1.2rem;padding:4px 6px;line-height:1;flex-shrink:0">‹</button>
       <!-- Mobile: sidebar toggle -->
       <button class="ae-mobile-toggle" onclick="S.ae.mobileShowSidebar=!S.ae.mobileShowSidebar;render()" style="background:rgba(115,24,31,.1);border:1.5px solid #73181F;color:#73181F;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:36px;display:flex;align-items:center;gap:4px">
@@ -2828,11 +2830,11 @@ function renderAdvEdit(){
     ${adv.desc!==undefined?`<div style="background:rgba(0,0,0,.04);border-bottom:1px solid rgba(115,24,31,.15);padding:5px 14px"><input value="${esc(adv.desc||'')}" oninput="aeSetMeta('desc',this.value)" placeholder="Descrizione breve dell'avventura..." style="width:100%;background:transparent;border:none;font-size:.8rem;font-family:inherit;color:#1a1007;outline:none;opacity:.75"></div>`:''}
     <div style="display:flex;flex:1;overflow:hidden">
       <!-- SIDEBAR -->
-      <div class="ae-sidebar-desktop" style="width:200px;flex-shrink:0;border-right:2px solid rgba(115,24,31,.2);flex-direction:column;background:rgba(216,199,161,.4);max-height:calc(85svh)">
+      <div class="ae-sidebar-desktop" style="width:200px;flex-shrink:0;border-right:2px solid rgba(115,24,31,.2);flex-direction:column;background:rgba(216,199,161,.4);overflow:hidden;max-height:calc(100svh - 86px)">
         ${sidebarContent}
       </div>
       <!-- MAIN CONTENT -->
-      <div id="ae-main-area-scroll" data-preserve-scroll="true" class="ae-main-area" style="flex:1;padding:10px 10px;overflow-y:auto;max-height:calc(90svh - 86px)">
+      <div class="ae-main-area" style="flex:1;padding:16px 18px;overflow-y:auto;max-height:calc(100svh - 86px)">
         ${mainContent}
       </div>
     </div>
@@ -2994,8 +2996,8 @@ function renderParaEditor(p,adv){
   const wc=p.text&&p.text.trim()?p.text.trim().split(/\s+/).length:0;
 
   return`
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-    <div style="font-family:monospace;font-weight:bold;color:#73181F;background:rgba(115,24,31,.1);padding:4px 10px;border-radius:6px;cursor:pointer" title="Clicca per cambiare ID" onclick="aeChangeId('${p.id}')">${p.id}</div>
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <div style="font-family:monospace;font-size:1.5rem;font-weight:bold;color:#73181F;background:rgba(115,24,31,.1);padding:6px 14px;border-radius:6px;cursor:pointer" title="Clicca per cambiare ID" onclick="aeChangeId('${p.id}')">${p.id}</div>
     <input id="para-name-inp" value="${esc(p.name)}" oninput="aePN(this.value)" placeholder="Nome paragrafo (opzionale)..." style="flex:1;min-width:120px;${iS}">
     <button onclick="aeSetStart('${p.id}')" title="${isStart?'Paragrafo iniziale':'Imposta come inizio'}" style="padding:6px 10px;border-radius:6px;border:1.5px solid ${isStart?'#18732D':'#84785E'};background:${isStart?'#18732D':'transparent'};color:${isStart?'white':'#1a1007'};cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px">${isStart?'▶ Inizio':'▶'}</button>
     <button onclick="aeDupPara('${p.id}')" title="Duplica paragrafo" style="padding:6px 10px;border-radius:6px;border:1.5px solid #84785E;background:transparent;color:#1a1007;cursor:pointer;font-size:.76rem;font-family:inherit;flex-shrink:0;min-height:34px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></button>
@@ -3016,6 +3018,7 @@ function renderParaEditor(p,adv){
     <div style="display:flex;gap:3px;margin-bottom:4px;flex-wrap:wrap">
       ${[['**','bold',SVG.bold,'Grassetto (Ctrl+B)'],['_','italic',SVG.italic,'Corsivo'],['__','underline',SVG.underline,'Sottolineato']].map(([m,_n,icon,title])=>`
       <button onclick="aeFmtWrap('${m}')" title="${title}" style="padding:4px 8px;border-radius:4px;border:1px solid rgba(115,24,31,.3);background:rgba(255,255,255,.4);cursor:pointer;color:#73181F;display:flex;align-items:center;gap:3px;font-size:.72rem;font-family:inherit">${icon}</button>`).join('')}
+      <button onclick="aeToggleView('preview');render()" title="Anteprima paragrafo" style="padding:7px 12px;border-radius:6px;border:1.5px solid rgba(115,24,31,.4);background:transparent;color:#73181F;cursor:pointer;font-size:.78rem;font-family:inherit;min-height:38px;white-space:nowrap;flex-shrink:0">Anteprima</button>
       <div style="flex:1;min-width:8px"></div>
       <button onclick="showAIWritingModal()" title="Assistente AI — suggerisce o migliora il testo" style="padding:7px 12px;border-radius:6px;border:1.5px solid #73181F;background:linear-gradient(135deg,rgba(90,45,145,.12),rgba(115,24,31,.08));cursor:pointer;color:#73181F;display:flex;align-items:center;gap:5px;font-size:.78rem;font-family:inherit;min-height:38px;font-weight:bold;white-space:nowrap;flex-shrink:0">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
@@ -3034,7 +3037,7 @@ function renderParaEditor(p,adv){
     ${exitsHtml}
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">
       ${[['choice','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7a1 1 0 0 1-1-1V9"/><path d="M12 12v3"/></svg> Scelta'],['stat_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M8 12h.01"/><path d="M16 12h.01"/></svg> Prova stat'],['code_check','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg> Verifica cod.'],['code_grant','<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1.5" fill="currentColor" stroke="none"/></svg> Dona cod.'],['end',`${SVG.flag} Fine`],['encounter',`${SVG.sword} Scontro`],['rest',`${SVG.rest} Riposo`],['item_grant',`${SVG.bag} Inventario`]].map(([t,l])=>`
-      <button onclick="aeAE('${t}')" class="card-home" onmouseover="this.style.background='rgba(115,24,31,.08)'" onmouseout="this.style.background='transparent'">${l}</button>`).join('')}
+      <button onclick="aeAE('${t}')" style="padding:7px 4px;border:1.5px solid rgba(115,24,31,.3);border-radius:6px;background:rgba(255,255,255,.3);cursor:pointer;font-size:.72rem;font-family:inherit;color:#1a1007;display:flex;align-items:center;justify-content:center;gap:3px" onmouseover="this.style.background='rgba(115,24,31,.1)'" onmouseout="this.style.background='rgba(255,255,255,.3)'">${l}</button>`).join('')}
     </div>
   </div>`;
 }
@@ -3043,6 +3046,7 @@ function renderParaPreview(p,adv){
   const isStart=p.id===adv.startParagraph;
   return`
   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+    <button onclick="aeToggleView('edit');render()" style="padding:8px 12px;border:1.5px solid rgba(115,24,31,.4);border-radius:8px;background:transparent;color:#73181F;cursor:pointer;font-size:.88rem;font-family:inherit;min-height:38px">← Torna all'editor</button>
     <div style="flex:1;min-width:220px">
       <div style="font-family:monospace;font-size:1.7rem;font-weight:bold;color:#73181F;margin-bottom:4px">§${p.id}</div>
       ${p.name?`<div style="font-size:.95rem;color:#555;margin-bottom:4px">${esc(p.name)}</div>`:''}
@@ -3125,7 +3129,7 @@ function renderAdvTree(adv,selPara){
     const isSel=p.id===selPara;
     const isStart=p.id===adv.startParagraph;
     const isEncounter=(p.exits||[]).some(e=>e.type==='encounter');
-    const fill=isSel?'#73181F':isStart?'#18732D':isEncounter?'#8a1f1f':pos.disc?'#bbb':'#e9e0cc';
+    const fill=isSel?'#73181F':isStart?'#18732D':isEncounter?'#8a1f1f':pos.disc?'#bbb':'#D8C7A1';
     const stk=isSel||isStart?fill:'#84785E';
     const tc=isSel||isStart?'white':'#1a1007';
     const encNpc=isEncounter?(NEMICI_PREDEFINITI.find(n=>n.id===(p.exits||[]).find(e=>e.type==='encounter')?.npcId)?.nome||'?'):'';
@@ -3632,6 +3636,10 @@ function aeSetMeta(field,val){
   aePushUndo();
   S.ae.adv[field]=val;
   aeMarkDirty();
+}
+function aeToggleView(mode){
+  if(!S.ae)return;
+  S.ae.viewMode=mode;render();
 }
 function aeSelectParaAndEdit(id){
   if(!S.ae)return;
