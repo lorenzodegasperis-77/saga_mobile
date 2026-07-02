@@ -361,7 +361,7 @@ equip_weapons:[
     {cat:'IST',talent_name:'Riflessi rapidi',talent_description:'Reagisci prontamente alle minacce: ottieni un bonus di +1 alla tua IST quando è necessario determinare l\'ordine di combattimento.',talent_cost:'4 Energia',talent_req:{ist:8},talent_max:1},
     {cat:'IST',talent_name:'Tiro Preciso',talent_description:'Migliora la precisione con armi a distanza. Quando attacchi con armi a distanza hai vantaggio alla prova IST.',talent_cost:'4 Energia',talent_req:{},talent_max:1},
     // MEN
-    {cat:'MEN',talent_name:'Abile nella psiche',talent_description:'Scegli 3 abilità speciali istantanee dalla lista. Può essere scelto più volte.',talent_cost:'Passivo',talent_req:{},talent_max:99},
+    {cat:'MEN',talent_name:'Abile nella psiche',talent_description:'Scegli 2 abilità speciali istantanee dalla lista. Può essere scelto più volte.',talent_cost:'Passivo',talent_req:{},talent_max:99},
     {cat:'MEN',talent_name:'Abilità temporale - Primordiale',talent_description:'Puoi eseguire abilità speciali temporali i cui effetti rientrino nella disciplina di Primordiale.',talent_cost:'Passivo',talent_req:{},talent_max:1},
     {cat:'MEN',talent_name:'Abilità temporale - Materiale',talent_description:'Puoi eseguire abilità speciali temporali i cui effetti rientrino nella disciplina di Materiale.',talent_cost:'Passivo',talent_req:{},talent_max:1},
     {cat:'MEN',talent_name:'Abilità temporale - Spirituale',talent_description:'Puoi eseguire abilità speciali temporali i cui effetti rientrino nella disciplina di Spirituale.',talent_cost:'Passivo',talent_req:{},talent_max:1},
@@ -385,13 +385,9 @@ equip_weapons:[
     {ability_name:'Confusione',ability_description:'Una creatura è frastornata. Il suo VIG è ridotto in base al lv abilità o finché non supera una prova di MEN.',ability_cost:'2-6 Energia'},
     {ability_name:'Cura Ferite',ability_description:'Ristora (1d6 + 1)*lv abilità Salute a una creatura che puoi toccare.',ability_cost:'2-6 Energia'},
     {ability_name:'Groviglio',ability_description:'Un groviglio o corda costringe un bersaglio a rallentare. La sua IST è ridotta in base al lv abilità o finché non supera una prova di VIG.',ability_cost:'2-6 Energia'},
-    {ability_name:'Illusione minore',ability_description:'Crei un\'immagine, suono o odore (max dimensione sedia). Una prova di MEN permette di riconoscerla come falsa.',ability_cost:'2-6 Energia'},
-    {ability_name:'Immagine speculare',ability_description:'Crei lv abilità duplicati. I nemici devono superare prova MEN o colpire un\'illusione che svanisce se colpita.',ability_cost:'2-6 Energia'},
-    {ability_name:'Ingrandire o ridurre',ability_description:'Ingrandire: VIG aumenta di lv abilità, riduce IST. Ridurre: IST aumenta di lv abilità, riduce VIG.',ability_cost:'2-6 Energia'},
-    {ability_name:'Invisibilità',ability_description:'Una creatura che tocchi è invisibile finché non compie un\'azione.',ability_cost:'2-6 Energia'},
-    {ability_name:'Levitazione',ability_description:'Un oggetto fino a 50kg*lv si libra a 60cm dal suolo. Il bersaglio può resistere con prova di VIG.',ability_cost:'2-6 Energia'},
+    {ability_name:'Illusione',ability_description:'Crei un\'immagine, suono o odore (max dimensione sedia). Una prova di MEN permette di riconoscerla come falsa.',ability_cost:'2-6 Energia'},
+    {ability_name:'Duplice immagine',ability_description:'Crei lv abilità duplicati. I nemici devono superare prova MEN o colpire un\'illusione che svanisce se colpita.',ability_cost:'2-6 Energia'},
     {ability_name:'Luce',ability_description:'Un oggetto toccato emette luce intensa in un raggio di 3m * lv abilità. Può essere attivata senza azioni.',ability_cost:'2-6 Energia'},
-    {ability_name:'Muro Elementale',ability_description:'Un muro (lato 3m*lv) di ghiaccio, fuoco o terra si innalza per 3 round senza infliggere danni.',ability_cost:'2-6 Energia'},
     {ability_name:'Nube di Nebbia',ability_description:'Un cubo di nebbia denso (lato 3*lv metri) si diffonde rendendo difficile la visibilità.',ability_cost:'2-6 Energia'},
     {ability_name:'Pacificare',ability_description:'Una creatura vicina prova avversione per la violenza e non combatte per lv abilità turni.',ability_cost:'2-6 Energia'},
     {ability_name:'Paura',ability_description:'Una creatura vicina diventa terrorizzata. La sua MEN è ridotta in base al lv abilità o finché non supera una prova di VIG.',ability_cost:'2-6 Energia'},
@@ -400,7 +396,6 @@ equip_weapons:[
     {ability_name:'Sonno',ability_description:'Una creatura cade in un sonno leggero. La sua MEN è ridotta in base al lv abilità o finché non supera prova di IST.',ability_cost:'2-6 Energia'},
     {ability_name:'Telecinesi',ability_description:'Muovi un oggetto (max 20kg * lv) entro un raggio di 10 metri per lv abilità.',ability_cost:'2-6 Energia'},
     {ability_name:'Telepatia',ability_description:'Due creature condividono i pensieri per 1 minuto per lv abilità (max distanza 30m * lv).',ability_cost:'2-6 Energia'},
-    {ability_name:'Teletrasporto',ability_description:'Un oggetto o persona viene trasportato in un raggio di 5 metri * lv abilità.',ability_cost:'2-6 Energia'},
     {ability_name:'Trauma',ability_description:'Un bersaglio toccato subisce Danno pari al lv abilità all\'inizio di ogni turno per lv abilità + 1 turni.',ability_cost:'2-6 Energia'},
     {ability_name:'Velocità',ability_description:'Tocchi una creatura. Per i prossimi lv abilità turni possiede un\'azione in più.',ability_cost:'2-6 Energia'},
   ],
@@ -1604,7 +1599,7 @@ function ccToggleAbility(i){
   const cs=S.cc.cs;
   const psycheCount=cs.talents.filter(t=>t.talent_name.toLowerCase().includes('psiche')).length;
   if(!psycheCount){alert("Richiede il talento 'Abile nella Psiche'!");return;}
-  const maxAb=psycheCount*3;
+  const maxAb=psycheCount*2;
   const has=cs.abilities.some(x=>x.ability_name===a.ability_name);
   const scrollPositions = [];
   document.querySelectorAll('.menu-scroll').forEach((el, index) => {
@@ -2010,10 +2005,10 @@ function renderLevelUp(){
     const availAb=DB.abilities.filter(a=>!(char.abilities||[]).some(x=>x.ability_name===a.ability_name));
     stepContent=`
     <h2 style="color:#73181F;margin-bottom:6px">Nuova Abilità Speciale</h2>
-    ${isPsyche?`<div style="padding:8px 12px;background:rgba(24,115,45,.1);border:1px solid #18732D;border-radius:7px;margin-bottom:12px;font-size:.85rem;color:#18732D;font-weight:bold"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg> Hai preso "Abile nella psiche"! Scegli 1 abilità base + fino a 3 aggiuntive.</div>`:''}
+    ${isPsyche?`<div style="padding:8px 12px;background:rgba(24,115,45,.1);border:1px solid #18732D;border-radius:7px;margin-bottom:12px;font-size:.85rem;color:#18732D;font-weight:bold"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg> Hai preso "Abile nella psiche"! Scegli 1 abilità base + fino a 2 aggiuntive.</div>`:''}
     <p style="font-size:.84rem;opacity:.7;margin-bottom:14px">
       Abilità base: ${lu.newAbility?`✓ ${esc(lu.newAbility.ability_name)}`:'<em>nessuna</em>'}
-      ${isPsyche?`<br>Bonus (${lu.extraAbilities.length}/3): ${lu.extraAbilities.length?lu.extraAbilities.map(a=>esc(a.ability_name)).join(', '):'<em>nessuna</em>'}`:''}
+      ${isPsyche?`<br>Bonus (${lu.extraAbilities.length}/2): ${lu.extraAbilities.length?lu.extraAbilities.map(a=>esc(a.ability_name)).join(', '):'<em>nessuna</em>'}`:''}
     </p>
     ${availAb.map((a,i)=>{
       const realIdx=DB.abilities.indexOf(a);
@@ -2044,7 +2039,7 @@ function renderLevelUp(){
   return`
   <div class="lu-layout" style="width:min(860px,97vw);z-index:1;display:flex;gap:18px;align-items:flex-start;padding:16px 8px;font-family:'EB Garamond','Times New Roman',Georgia,serif;color:#1a1007">
     ${sidebar}
-    <div class="lu-main" style="flex:1;background:#e9e0cc;border:2px solid #73181F;border-radius:8px;padding:22px">${stepContent}</div>
+    <div class="lu-main" style="flex:1;background:#e9e0cc;overflow-y: auto;max-height: 75svh;border:2px solid #73181F;border-radius:8px;padding:22px">${stepContent}</div>
   </div>`;
 }
 
@@ -2063,7 +2058,7 @@ function luSelectAbility(dbIdx){
   if(isBase){lu.newAbility=null;render();return;}
   if(isExtra){lu.extraAbilities=lu.extraAbilities.filter(x=>x.ability_name!==a.ability_name);render();return;}
   if(!lu.newAbility){lu.newAbility=a;render();return;}
-  if(isPsyche&&lu.extraAbilities.length<3){lu.extraAbilities.push(a);render();return;}
+  if(isPsyche&&lu.extraAbilities.length<2){lu.extraAbilities.push(a);render();return;}
 }
 function luFinish(){
   const char=S.chars.find(c=>c.id===S.params.charId);
